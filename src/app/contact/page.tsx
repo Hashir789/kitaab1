@@ -1,7 +1,4 @@
-"use client";
-
-export default function Home() {
-
+export default function Contact() {
   return (
     <div>
       <div style={{ color: "#f8f9fa" }}>Hashir</div>

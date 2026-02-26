@@ -1,0 +1,63 @@
+.toast {
+  right: 20px;
+  bottom: 20px;
+  z-index: 1000;
+  max-width: 320px;
+  position: fixed;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  background: rgb(240, 240, 240);
+  border: 1px solid rgb(230, 230, 230);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  font-family: "Google Sans Flex", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.toastFadeOut {
+  animation: toastFadeOut 0.3s ease-in forwards;
+}
+
+.toastContent {
+  gap: 0.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.toastTitle {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: rgb(90, 90, 90);
+}
+
+.toastMessage {
+  font-size: 14px;
+  line-height: 1.4;
+  color: rgb(140, 140, 140);
+}
+
+.toastSuccess {
+  border-left: 4px solid rgb(100, 200, 100);
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toastFadeOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}

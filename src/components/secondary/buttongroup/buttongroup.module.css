@@ -1,0 +1,92 @@
+.buttonGroup {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  position: relative;
+  border-radius: 10px;
+  width: var(--container-width);
+  height: var(--container-height);
+  background: rgb(240, 240, 240);
+  border: 1px solid rgb(230, 230, 230);
+}
+
+.buttonGroup::after {
+  z-index: 0;
+  content: "";
+  position: absolute;
+  border-radius: 5px;
+  top: var(--padding);
+  left: var(--active-left);
+  width: var(--button-width);
+  height: var(--button-height);
+  transition: left 0.4s ease-in-out;
+  background-color: rgb(100, 100, 100);
+}
+
+.buttonItem {
+  z-index: 1;
+  position: absolute;
+  top: var(--padding);
+}
+
+.buttonItem > * {
+  border: none;
+  display: flex;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 5px;
+  align-items: center;
+  text-decoration: none;
+  justify-content: center;
+  background: transparent;
+  color: rgb(90, 90, 90);
+  width: var(--button-width);
+  height: var(--button-height);
+  transition: color 0.4s ease, background-color 0.4s ease;
+  font-family: "Google Sans Flex", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.buttonItem > *:hover {
+  color: rgb(60, 60, 60);
+  background-color: rgb(225, 225, 225);
+}
+
+.buttonItemActive > * {
+  font-weight: 600;
+  color: rgb(245, 245, 245);
+}
+
+.buttonItemActive > *:hover {
+  color: rgb(255, 255, 255);
+  background-color: rgb(80, 80, 80);
+}
+
+@media (max-width: 1124px) {
+  .buttonItem a {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    color: inherit;
+    align-items: center;
+    text-decoration: none;
+    justify-content: center;
+  }
+}
+
+.buttonItem > *:focus-visible,
+.buttonItemActive > *:focus-visible {
+  outline-offset: 2px;
+  outline: 2px solid rgb(100, 100, 100);
+}
+
+.buttonItem:not(:last-child)::after {
+  top: 50%;
+  width: 2px;
+  content: "";
+  position: absolute;
+  transform: translateY(-50%);
+  right: calc(var(--gap) / -2 - 1px);
+  background-color: rgb(200, 200, 200);
+  height: calc(var(--button-height) - 14px);
+}

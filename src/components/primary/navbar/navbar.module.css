@@ -1,0 +1,39 @@
+.nav {
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  margin: 0 auto;
+  position: fixed;
+  max-width: 1534px;
+  padding: 20px 68px;
+  align-items: flex-end;
+  box-sizing: border-box;
+  background-color: #f8f9fa;
+  justify-content: space-between;
+}
+
+.logo {
+  width: auto;
+  height: 60px;
+  display: flex;
+  margin-bottom: 6px;
+  align-items: center;
+  text-decoration: none;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+@media (max-width: 710px) {
+  .nav {
+    gap: 12px;
+    padding: 16px 20px;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .logo {
+    margin-bottom: 0;
+    justify-content: center;
+  }
+}

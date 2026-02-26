@@ -1,0 +1,22 @@
+{
+  "name": "Kitaab – Islamic Deed Tracker",
+  "short_name": "Kitaab",
+  "description": "Track your daily Hasanaat and Sayyi'aat. Be your own accountant and build spiritual consistency.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f9fa",
+  "theme_color": "#646464",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

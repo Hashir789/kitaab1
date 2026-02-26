@@ -1,0 +1,43 @@
+.skeleton {
+  overflow: hidden;
+  position: relative;
+  background: #e5e7eb;
+  display: inline-block;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.shimmer::before {
+  inset: 0;
+  content: '';
+  position: absolute;
+  transform: translateX(-100%);
+  animation: shimmer 1.8s infinite;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.7) 45%,
+    rgba(255, 255, 255, 0.9) 50%,
+    rgba(255, 255, 255, 0.7) 55%,
+    transparent 100%
+  );
+}
+
+@keyframes shimmer {
+  to {
+    transform: translateX(200%);
+  }
+}
+
+.shimmerFast::before {
+  animation: shimmer 1.2s infinite;
+}
+
+.shimmerSlow::before {
+  animation: shimmer 2.4s infinite ease-in-out;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.6) 50%,
+    transparent
+  );
+}

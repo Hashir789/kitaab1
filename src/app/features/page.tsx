@@ -1,7 +1,4 @@
-"use client";
-
-export default function Home() {
-
+export default function Features() {
   return (
     <div>
       <div style={{ color: "#f8f9fa" }}>Hashir</div>
@@ -50,6 +47,6 @@ export default function Home() {
       <div style={{ color: "#f8f9fa" }}>Hashir</div>
       <div style={{ color: "#f8f9fa" }}>Hashir</div>
       <div style={{ color: "#f8f9fa" }}>Hashir</div>
-    </div>
+   </div>
   );
 }

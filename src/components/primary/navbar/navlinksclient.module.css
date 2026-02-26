@@ -1,0 +1,114 @@
+.navListContainer {
+  width: 100%;
+  display: flex;
+  margin-right: 2rem;
+  margin-bottom: 24px;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.navList {
+  width: 448px;
+  height: 47px;
+  margin: 0;
+  list-style: none;
+  position: relative;
+  border-radius: 10px;
+  background: rgb(240, 240, 240);
+  border: 1px solid rgb(230, 230, 230);
+}
+
+.navList::after {
+  top: 5px;
+  z-index: 0;
+  content: "";
+  width: 100px;
+  height: 35px;
+  position: absolute;
+  border-radius: 5px;
+  left: var(--active-left);
+  transition: left 0.4s ease-in-out;
+  background-color: rgb(100, 100, 100);
+}
+
+.navItem {
+  top: 5px;
+  z-index: 1;
+  position: absolute;
+}
+
+.navItem a {
+  height: 35px;
+  width: 100px;
+  display: flex;
+  cursor: pointer;
+  font-weight: 500;
+  border-radius: 5px;
+  align-items: center;
+  text-decoration: none;
+  justify-content: center;
+  color: rgb(90, 90, 90);
+  transition: color 0.4s ease, background-color 0.4s ease;
+}
+
+.navItem a:hover {
+  color: rgb(60, 60, 60);
+  background-color: rgb(225, 225, 225);
+}
+
+.navItemActive a {
+  font-weight: 600;
+  color: rgb(245, 245, 245);
+}
+
+.navItemActive a:hover {
+  color: rgb(255, 255, 255);
+  background-color: rgb(80, 80, 80);
+}
+
+.navItem a:focus-visible,
+.navItemActive a:focus-visible {
+  outline-offset: 2px;
+  outline: 2px solid rgb(100, 100, 100);
+}
+
+.navItem1 {
+  left: 5px;
+}
+
+.navItem2 {
+  left: 117px;
+}
+
+.navItem3 {
+  left: 229px;
+}
+
+.navItem4 {
+  left: 341px;
+}
+
+.navItem1::after,
+.navItem2::after,
+.navItem3::after {
+  top: 7px;
+  width: 2px;
+  right: -7px;
+  content: "";
+  height: 21px;
+  position: absolute;
+  background-color: rgb(200, 200, 200);
+}
+
+@media (max-width: 710px) {
+  .navListContainer {
+    margin-right: 0;
+    margin-bottom: 0;
+    justify-content: center;
+  }
+
+  .navList {
+    width: 100%;
+    max-width: 448px;
+  }
+}
