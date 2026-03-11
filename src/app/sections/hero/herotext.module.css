@@ -1,0 +1,100 @@
+.leftPortion {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.leftContent {
+  width: 100%;
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.contentWrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.titleLine1 {
+  width: 100%;
+  line-height: 1;
+  font-size: 64px;
+  text-align: left;
+  color: rgb(90, 90, 90);
+  font-family: "Fredoka", sans-serif;
+}
+
+.titleLine2 {
+  width: 100%;
+  line-height: 1;
+  font-size: 64px;
+  text-align: left;
+  color: rgb(60, 60, 60);
+  font-family: "Fredoka", sans-serif;
+}
+
+.subtitle {
+  width: 100%;
+  font-size: 18px;
+  line-height: 1.5;
+  margin-top: 50px;
+  text-align: left;
+  align-self: flex-start;
+  color: rgb(90, 90, 90);
+  font-family: "Google Sans Flex", sans-serif;
+}
+
+.kitaabSpan {
+  font-weight: bold;
+  font-style: italic;
+}
+
+.buttonGroupContainer {
+  margin-top: 50px;
+  align-self: flex-start;
+}
+
+@media (max-width: 1124px) {
+  .leftPortion {
+    width: 100%;
+    height: auto;
+  }
+  .titleLine1,
+  .titleLine2,
+  .subtitle {
+    text-align: center;
+  }
+  .subtitle,
+  .buttonGroupContainer {
+    align-self: center;
+  }
+  .leftContent {
+    flex: 0 0 auto;
+    min-height: auto;
+  }
+  .buttonGroupContainer {
+    margin-bottom: 100px;
+  }
+}
+
+@media (max-width: 710px) {
+  .titleLine1,
+  .titleLine2 {
+    font-size: 48px;
+    padding: 0 20px;
+  }
+  .subtitle {
+    padding: 0 20px;
+  }
+  .buttonGroupContainer {
+    margin-bottom: 0px;
+  }
+}

@@ -1,0 +1,10 @@
+.body {
+  overflow-x: hidden;
+}
+
+.placeholder {
+  height: 1px;
+  display: block;
+  color: #f8f9fa;
+  margin-top: 400px;
+}

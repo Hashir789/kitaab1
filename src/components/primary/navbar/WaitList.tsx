@@ -6,42 +6,16 @@ import styles from "./waitlist.module.css";
 import { useState, useEffect } from "react";
 import Toast from "../../secondary/toast/Toast";
 import Skeleton from "../../secondary/skeleton/Skeleton";
+import { useAppSelector } from "@/store/hooks";
 
 export default function WaitList() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [count, setCount] = useState<number | null>(null);
   const [isLoadingCount, setIsLoadingCount] = useState(true);
   const [helperMessage, setHelperMessage] = useState<string | null>(null);
-  const [isBelow880, setIsBelow880] = useState(false);
-  const [isBelow710, setIsBelow710] = useState(false);
+  const isBelow880 = useAppSelector((state) => state.ui.isBelow880);
+  const isBelow710 = useAppSelector((state) => state.ui.isBelow710);
   const [showToast, setShowToast] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const mq880 = window.matchMedia("(max-width: 880px)");
-    const mq710 = window.matchMedia("(max-width: 710px)");
-
-    const handle880 = (event: MediaQueryListEvent) => {
-      setIsBelow880(event.matches);
-    };
-
-    const handle710 = (event: MediaQueryListEvent) => {
-      setIsBelow710(event.matches);
-    };
-
-    // Set initial values
-    setIsBelow880(mq880.matches);
-    setIsBelow710(mq710.matches);
-
-    mq880.addEventListener("change", handle880);
-    mq710.addEventListener("change", handle710);
-
-    return () => {
-      mq880.removeEventListener("change", handle880);
-      mq710.removeEventListener("change", handle710);
-    };
-  }, []);
 
   useEffect(() => {
     const fetchCount = async () => {
@@ -109,7 +83,6 @@ export default function WaitList() {
           return;
         }
 
-        // Treat any 2xx as success
         resetForm();
         if (data.count !== undefined) {
           setCount(data.count);

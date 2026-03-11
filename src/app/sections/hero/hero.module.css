@@ -1,0 +1,25 @@
+.container {
+  width: 100%;
+  display: flex;
+  padding: 0px 68px;
+  max-width: 1534px;
+  align-items: center;
+  flex-direction: row;
+  margin: 111px auto 0;
+  justify-content: center;
+  height: calc(100vh - 111px);
+}
+
+@media (max-width: 1124px) {
+  .container {
+    width: 100%;
+    padding: 400px 0 0px;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 710px) {
+  .container {
+    padding: 500px 0 0px;
+  }
+}

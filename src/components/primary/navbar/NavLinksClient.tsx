@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { TiHome } from "react-icons/ti";
 import { usePathname } from "next/navigation";
+import { useAppSelector } from "@/store/hooks";
 import styles from "./navlinksclient.module.css";
 import { IoIosPaperPlane } from "react-icons/io";
 import { BsClipboard2Fill } from "react-icons/bs";
@@ -38,16 +39,14 @@ export default function NavLinksClient({
 }: NavLinksClientProps) {
   const pathname = usePathname();
   const activeIndex = items.findIndex(item => item.href === pathname);
-  const [isWide, setIsWide] = useState(true);
+  const isBelow1124 = useAppSelector((state) => state.ui.isBelow1124);
+  const isBelow710 = useAppSelector((state) => state.ui.isBelow710);
   const [iconButtonWidth, setIconButtonWidth] = useState(40);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const handleResize = () => {
-      const viewportWidth = window.innerWidth;
-      setIsWide(viewportWidth > 1124);
-
-      if (viewportWidth < 710 && containerRef.current) {
+      if (isBelow710 && containerRef.current) {
         const groupWidth = containerRef.current.offsetWidth;
         const computed = (groupWidth - 46) / 4;
         setIconButtonWidth(computed);
@@ -62,11 +61,11 @@ export default function NavLinksClient({
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [isBelow710]);
 
   return (
     <div ref={containerRef} className={styles.navListContainer}>
-      { isWide ? (
+      { !isBelow1124 ? (
         <ButtonGroup
           activeIndex={activeIndex}
           buttonWidth={buttonWidth}

@@ -1,0 +1,21 @@
+.chartContainer {
+  width: 100%;
+  max-height: 350px;
+  position: relative;
+  aspect-ratio: 1.5 / 1;
+}
+
+@media (max-width: 1124px) {
+  .chartContainer {
+    padding: 0 68px;
+    max-width: 1534px;
+    margin-bottom: 100px;
+  }
+}
+
+@media (max-width: 710px) {
+  .chartContainer {
+    padding: 0 20px;
+    aspect-ratio: 1.5 / 1;
+  }
+}
