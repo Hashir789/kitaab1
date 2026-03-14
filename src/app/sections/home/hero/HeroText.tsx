@@ -1,8 +1,6 @@
-"use client";
-
 import Link from "next/link";
-import { motion } from "framer-motion";
 import styles from "./herotext.module.css";
+import Motion from "@/components/secondary/motion/Motion";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
 
 export default function HeroText() {
@@ -30,7 +28,8 @@ export default function HeroText() {
   };
 
   return (
-    <motion.section
+    <Motion
+      as="section"
       className={styles.leftPortion}
       aria-labelledby="hero-heading"
       itemScope
@@ -41,30 +40,41 @@ export default function HeroText() {
     >
       <div className={styles.leftContent}>
         <div className={styles.contentWrapper}>
-          <motion.h1
+          <Motion
+            as="h1"
             id="hero-heading"
             className={styles.titleLine1}
             variants={itemVariants}
+            initial="hidden"
+            animate="visible"
           >
             Be your own
-          </motion.h1>
-          <motion.h2
+          </Motion>
+          <Motion
+            as="h2"
             className={styles.titleLine2}
             variants={itemVariants}
+            initial="hidden"
+            animate="visible"
           >
             Accountant
-          </motion.h2>
-          <motion.p
+          </Motion>
+          <Motion
+            as="p"
             className={styles.subtitle}
             itemProp="description"
             variants={itemVariants}
+            initial="hidden"
+            animate="visible"
           >
             Track your deeds, reflect, grow, and improve every day — with{" "}
             <span className={styles.kitaabSpan}>Kitaab</span>.
-          </motion.p>
-          <motion.div
+          </Motion>
+          <Motion
             className={styles.buttonGroupContainer}
             variants={itemVariants}
+            initial="hidden"
+            animate="visible"
           >
             <ButtonGroup
               buttonWidth={150}
@@ -74,9 +84,9 @@ export default function HeroText() {
               <Link href="/features">Explore Kitaab</Link>
               <Link href="/contact">Learn More</Link>
             </ButtonGroup>
-          </motion.div>
+          </Motion>
         </div>
       </div>
-    </motion.section>
+    </Motion>
   );
 }

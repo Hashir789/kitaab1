@@ -6,22 +6,22 @@ import styles from "./herorightportion.module.css";
 import { useState, useEffect, useRef } from "react";
 import { IoCaretDownOutline } from "react-icons/io5";
 import LiesChart from "@/components/secondary/lieschart/LiesChart";
-import PrayerChart, { PrayerFilter } from "@/components/secondary/prayerchart/PrayerChart";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
+import PrayerChart, { PrayerFilter } from "@/components/secondary/prayerchart/PrayerChart";
 
 type PrayerLabel = PrayerFilter;
 
 export default function HeroRightPortion() {
   const [slide, setSlide] = useState(true);
-  const [skipTimer, setSkipTimer] = useState(false);
-  const skipTimerRef = useRef(skipTimer);
   const [fullWidth, setFullWidth] = useState(100);
+  const [skipTimer, setSkipTimer] = useState(false);
+  const rightButtonGroupRef = useRef<HTMLDivElement>(null);
+  const isBelow710 = useAppSelector((state) => state.ui.isBelow710);
+  const prayerDropdownShellRef = useRef<HTMLDivElement | null>(null);
   const [isPrayerDropdownOpen, setIsPrayerDropdownOpen] = useState(false);
   const [selectedPrayer, setSelectedPrayer] = useState<PrayerLabel>("All");
-  const isBelow710 = useAppSelector((state) => state.ui.isBelow710);
-  const rightButtonGroupRef = useRef<HTMLDivElement>(null);
-  const prayerDropdownShellRef = useRef<HTMLDivElement | null>(null);
-
+  const skipTimerRef = useRef(skipTimer);
+  
   useEffect(() => {
     skipTimerRef.current = skipTimer;
   }, [skipTimer]);

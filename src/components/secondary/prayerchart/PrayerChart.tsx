@@ -141,6 +141,7 @@ export default function PrayerChart({ filter }: PrayerChartProps) {
           variablepie: {
             size: chartSize,
             borderWidth: 4,
+            borderColor: "#f8f9fa",
             borderRadius: borderRadius,
             dataLabels: {
               enabled: true,
@@ -165,6 +166,7 @@ export default function PrayerChart({ filter }: PrayerChartProps) {
             zMin: 0,
             name: "prayers",
             data: chartData,
+            borderColor: "#f8f9fa",
             colors: [
               "rgb(150, 150, 150)",
               "rgb(116, 116, 116)",
@@ -261,6 +263,7 @@ export default function PrayerChart({ filter }: PrayerChartProps) {
       style={{
         width: "100%",
         height: "100%",
+        border: "1px solid #f8f9fa",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",

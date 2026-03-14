@@ -4,18 +4,18 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import styles from "./waitlist.module.css";
 import { useState, useEffect } from "react";
+import { useAppSelector } from "@/store/hooks";
 import Toast from "../../secondary/toast/Toast";
 import Skeleton from "../../secondary/skeleton/Skeleton";
-import { useAppSelector } from "@/store/hooks";
 
 export default function WaitList() {
+  const [showToast, setShowToast] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [count, setCount] = useState<number | null>(null);
   const [isLoadingCount, setIsLoadingCount] = useState(true);
-  const [helperMessage, setHelperMessage] = useState<string | null>(null);
   const isBelow880 = useAppSelector((state) => state.ui.isBelow880);
   const isBelow710 = useAppSelector((state) => state.ui.isBelow710);
-  const [showToast, setShowToast] = useState(false);
+  const [helperMessage, setHelperMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCount = async () => {
