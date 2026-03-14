@@ -4,28 +4,37 @@
   src: url("https://verses.quran.foundation/fonts/quran/hafs/v1/woff2/p283.woff2") format("woff2");
 }
 
-.container {
+@font-face {
+  font-display: swap;
+  font-family: "p234-v1";
+  src: url("https://verses.quran.foundation/fonts/quran/hafs/v1/woff2/p234.woff2") format("woff2");
+}
+
+.ayahCard {
   width: 100%;
-  display: flex;
-  max-width: 1534px;
-  padding: 100px 68px;
-  align-items: center;
-  height: calc(100vh - 111px);
-  background: rgb(240, 240, 240);
-}
-
-.left {
-  width: 60%;
   height: 100%;
+  display: flex;
   flex-shrink: 0;
+  position: relative;
+  align-items: center;
+  border-radius: 16px;
+  flex-direction: column;
+  justify-content: center;
+  transition: all 0.3s ease;
+  background: rgb(240, 240, 240);
+  box-shadow: 0 2px 4px #0000001a;
+  border: 1px solid rgb(230, 230, 230);
 }
 
-.ayahCardWhite {
-  background: rgb(255, 255, 255) !important;
+.ayahCard:hover {
+  box-shadow: 0 4px 6px #0000001a;
 }
 
 .ayah {
+  margin: 0;
   width: 80%;
+  padding: 0;
+  border: none;
   display: block;
   direction: rtl;
   line-height: 1.6;
@@ -34,6 +43,10 @@
   box-sizing: border-box;
   color: rgb(60, 60, 60);
   font-family: "p283-v1", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.ayah[data-font="p234-v1"] {
+  font-family: "p234-v1", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 .translation {
@@ -58,47 +71,8 @@
   text-transform: uppercase;
 }
 
-.quoteIconRight {
-  right: 0;
-  bottom: 0;
-  font-size: 2rem;
-  position: absolute;
-  color: rgb(90, 90, 90);
-}
-
-.quoteIconLeft {
-  top: 0;
-  left: 0;
-  font-size: 2rem;
-  position: absolute;
-  color: rgb(90, 90, 90);
-}
-
-.right {
-  flex-shrink: 0;
-  font-size: 16px;
-  font-weight: 500;
-  margin-left: 68px;
-  position: relative;
-  padding: 34px 68px;
-  text-align: justify;
-  width: calc(40% - 68px);
-  color: rgb(100, 100, 100);
-}
-
-.margin {
-  margin-top: 24px;
-}
-
 @media (max-width: 1124px) {
-  .container {
-    height: auto;
-    padding: 68px;
-    margin-top: 350px;
-    flex-direction: column;
-  }
-  .left {
-    width: 100%;
+  .ayahCard {
     height: auto;
   }
   .ayah {
@@ -108,23 +82,10 @@
   .translation {
     padding-bottom: 150px;
   }
-  .right {
-    width: 100%;
-    font-size: 14px;
-    margin: 40px 0 0;
-    padding: 34px 50px;
-  }
 }
 
 @media (max-width: 710px) {
-  .container {
-    height: auto;
-    margin-top: 400px;
-    padding: 40px 20px;
-    flex-direction: column;
-  }
-  .left {
-    width: 100%;
+  .ayahCard {
     height: auto;
   }
   .ayah {

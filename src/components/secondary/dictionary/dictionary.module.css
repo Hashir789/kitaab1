@@ -1,0 +1,117 @@
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  min-height: 0;
+  color: #212529;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #ffffff;
+  flex-direction: column;
+  padding: 0.875rem 1rem;
+  box-sizing: border-box;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  font-family: "Google Sans Flex", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.word {
+  flex-shrink: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  margin: 0 0 0.75rem 0;
+  word-break: break-word;
+  letter-spacing: -0.02em;
+  padding-bottom: 0.75rem;
+  color: rgb(90, 90, 90);
+  overflow-wrap: break-word;
+  border-bottom: 1px solid rgb(200, 200, 200);
+}
+
+.entriesContainer {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  row-gap: 0.5rem;
+  column-gap: 0.75rem;
+  align-content: start;
+  grid-template-columns: auto 1fr;
+}
+
+.entry {
+  display: contents;
+}
+
+.label {
+  margin: 0;
+  grid-column: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+  align-self: flex-start;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.value {
+  grid-column: 2;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: #4b5563;
+  align-self: flex-start;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.pronunciationValue {
+  color: #6b7280;
+  font-style: italic;
+}
+
+.pronunciation {
+  color: #6b7280;
+  font-style: italic;
+}
+
+.meaning {
+  margin: 0;
+  grid-column: 2;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: #374151;
+  word-break: break-word;
+  align-self: flex-start;
+  overflow-wrap: break-word;
+}
+
+.darkMode {
+  color: #f8f9fa;
+  background: rgb(60, 60, 60);
+  border-color: rgb(80, 80, 80);
+}
+
+.darkMode .word {
+  color: #f8f9fa;
+  text-align: center;
+  border-bottom-color: rgb(80, 80, 80);
+}
+
+.darkMode .label {
+  color: rgb(180, 180, 180);
+}
+
+.darkMode .value {
+  color: #f8f9fa;
+}
+
+.darkMode .pronunciationValue {
+  color: #f8f9fa;
+}
+
+.darkMode .meaning {
+  color: #f8f9fa;
+}

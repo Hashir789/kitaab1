@@ -1,4 +1,5 @@
 import styles from "./beta.module.css";
+import Ayah from "@/components/secondary/ayah/Ayah";
 import Motion from "@/components/secondary/motion/Motion";
 import { BiSolidQuoteAltLeft, BiSolidQuoteAltRight } from "react-icons/bi";
 
@@ -9,26 +10,26 @@ export default function Beta() {
         className={styles.left}
         initial={{ opacity: 0, x: -40 }}
         whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true, amount: 0.8 }}
+        viewport={{ amount: 0.8 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <p
-          className={styles.ayah}
-          data-font-scale="3"
-          data-font="p283-v1"
-        >
-          ﮭ ﮮ ﮯ ﮰ ﮱ ﯓ ﯔ
-        </p>
-        <p className={styles.translation}>
-          Read your <strong>kitaab</strong>. You yourself are sufficient as your accountant today.
-        </p>
-        <p className={styles.ayahReference}>Al Qur'an 17:14</p>
+        <Ayah
+          arabicText="ﮭ ﮮ ﮯ ﮰ ﮱ ﯓ ﯔ"
+          translation={
+            <>
+              Read your <strong>kitaab</strong>. You yourself are sufficient as your accountant today.
+            </>
+          }
+          chapter={17}
+          verse={14}
+          className={styles.ayahCardWhite}
+        />
       </Motion>
       <Motion
         className={styles.right}
         initial={{ opacity: 0, x: 40 }}
         whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true, amount: 0.8 }}
+        viewport={{ amount: 0.8 }}
         transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
       >
         <BiSolidQuoteAltLeft aria-hidden="true" className={styles.quoteIconLeft} />
