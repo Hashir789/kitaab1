@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
 import Link from "next/link";
+import type { Metadata } from "next";
 import styles from "./sitemap.module.css";
 
 export const metadata: Metadata = {
@@ -40,11 +40,6 @@ export default function Sitemap() {
     { label: "Features", href: "/features" },
     { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
-  ];
-
-  const resourcePages = [
-    { label: "FAQs", href: "/faqs" },
-    { label: "Support", href: "/support" },
   ];
 
   const legalPages = [
@@ -110,19 +105,6 @@ export default function Sitemap() {
           <h2 className={styles.sectionTitle}>Main Pages</h2>
           <ul className={styles.linkList}>
             {mainPages.map((page) => (
-              <li key={page.href}>
-                <Link href={page.href} className={styles.link}>
-                  {page.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Resources</h2>
-          <ul className={styles.linkList}>
-            {resourcePages.map((page) => (
               <li key={page.href}>
                 <Link href={page.href} className={styles.link}>
                   {page.label}
