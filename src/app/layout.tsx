@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import StoreProvider from "@/store/StoreProvider";
 import Navbar from "@/components/primary/navbar/Navbar";
+import Footer from "@/components/primary/footer/Footer";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://kitaab.me"),
@@ -89,6 +90,9 @@ export default function RootLayout({
             <Navbar />
           </header>
           <main className="container">{children}</main>
+          <footer>
+            <Footer />
+          </footer>
         </StoreProvider>
       </body>
     </html>
