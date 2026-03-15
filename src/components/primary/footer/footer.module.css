@@ -34,7 +34,7 @@
 .columnB,
 .columnC {
   width: 20%;
-  padding: 0 calc((20% - 100px) / 2);
+  padding: 0 calc((20% - 110px) / 2);
   border-right: 1px solid rgb(200, 200, 200);
 }
 
@@ -73,7 +73,7 @@
 }
 
 .contactLink:hover {
-  color: rgba(40, 40, 40);
+  color: rgba(60, 60, 60);
   text-decoration: underline;
 }
 
@@ -94,7 +94,7 @@
 }
 
 .socialLink:hover {
-  color: rgba(40, 40, 40);
+  color: rgba(60, 60, 60);
   transform: translateY(-2px);
 }
 
@@ -115,7 +115,7 @@
 }
 
 .navLink:hover {
-  color: rgba(40, 40, 40);
+  color: rgba(60, 60, 60);
   text-decoration: underline;
 }
 

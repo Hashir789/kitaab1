@@ -12,10 +12,10 @@ export default function Footer() {
     { label: 'Contact', link: '/contact' }
   ];
   const legal = [
-    { label: 'Sitemap', link: '/' },
-    { label: 'Privacy Policy', link: '/' },
-    { label: 'Terms of Service', link: '/' },
-    { label: 'Cookie Policy', link: '/' },
+    { label: 'Sitemap', link: '/sitemap' },
+    { label: 'Privacy Policy', link: '/privacy-policy' },
+    { label: 'Terms of Service', link: '/terms-of-service' },
+    { label: 'Cookie Policy', link: '/cookie-policy' },
   ]
   return (
     <div className={styles.container}>
@@ -43,7 +43,7 @@ export default function Footer() {
         <div className={styles.columnB}>
           <h3>Navigation</h3>
           <ul className={styles.navList}>
-            {navigations.map((item, _) => (<li>
+            {navigations.map((item, _) => (<li key={item.label}>
               <Link href={item.link} className={styles.navLink}>
                 {item.label}
               </Link>
@@ -53,7 +53,7 @@ export default function Footer() {
         <div className={styles.columnC}>
           <h3>Legal</h3>
           <ul className={styles.navList}>
-            {legal.map((item, _) => (<li>
+            {legal.map((item, _) => (<li key={item.label}>
               <Link href={item.link} className={styles.navLink}>
                 {item.label}
               </Link>

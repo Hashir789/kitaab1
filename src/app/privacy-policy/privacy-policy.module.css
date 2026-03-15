@@ -1,0 +1,92 @@
+.container {
+  padding: 68px;
+  margin: 0 auto;
+  max-width: 900px;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 700;
+  margin: 48px 0 16px 0;
+  color: rgba(90, 90, 90);
+}
+
+.lastUpdated {
+  font-size: 14px;
+  font-style: italic;
+  margin: 0 0 48px 0;
+  color: rgba(90, 90, 90);
+}
+
+.section {
+  margin-bottom: 40px;
+}
+
+.sectionTitle {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  color: rgba(90, 90, 90);
+}
+
+.section p {
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0 0 16px 0;
+  color: rgba(90, 90, 90);
+}
+
+.section ul {
+  padding-left: 24px;
+  margin: 0 0 16px 0;
+}
+
+.section li {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 8px;
+  color: rgba(90, 90, 90);
+}
+
+.contact {
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(90, 90, 90);
+}
+
+.contact a {
+  text-decoration: none;
+  color: rgba(90, 90, 90);
+  transition: color 0.2s ease;
+}
+
+.contact a:hover {
+  color: rgba(90, 90, 90);
+  text-decoration: underline;
+}
+
+@media (max-width: 1124px) {
+  .container {
+    padding: 68px;
+  }
+}
+
+@media (max-width: 710px) {
+  .container {
+    padding: 40px 20px;
+  }
+
+  .title {
+    font-size: 28px;
+    margin: 220px 0 16px 0;
+  }
+
+  .sectionTitle {
+    font-size: 20px;
+  }
+
+  .section p,
+  .section li {
+    font-size: 14px;
+  }
+}

@@ -73,7 +73,6 @@ export default function NavLinksClient({
           buttonHeight={buttonHeight}
         >
           {items.map((item, index) => {
-            const Icon = getIconByIndex(index);
             const isActive = index === activeIndex;
 
             return (
@@ -109,6 +108,7 @@ export default function NavLinksClient({
                   itemProp="url"
                   aria-label={item.label}
                   aria-current={isActive ? "page" : undefined}
+                  className={styles.href}
                 >
                   <Icon size={iconSize} />
                 </Link>
