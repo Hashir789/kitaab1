@@ -66,6 +66,18 @@
   background-color: rgb(225, 225, 225);
 }
 
+.buttonItem > *:disabled {
+  color: #f8f9fa;
+  background-color: rgba(245, 245, 245, 0.4);
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8' fill='none' stroke='%23606060' stroke-width='3.5'/%3E%3Cpath d='M6 6l8 8' stroke='%23606060' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E") 10 10, not-allowed;
+}
+
+.buttonItem > *:disabled:hover {
+  color: #f8f9fa;
+  background-color: rgba(245, 245, 245, 0.4);
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8' fill='none' stroke='%23606060' stroke-width='3.5'/%3E%3Cpath d='M6 6l8 8' stroke='%23606060' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E") 10 10, not-allowed;
+}
+
 .buttonItemActive > * {
   font-weight: 600;
   color: rgb(245, 245, 245);

@@ -6,16 +6,18 @@ import styles from "./waitlist.module.css";
 import { useState, useEffect } from "react";
 import { useAppSelector } from "@/store/hooks";
 import Toast from "../../secondary/toast/Toast";
+import Input from "../../secondary/input/Input";
 import Skeleton from "../../secondary/skeleton/Skeleton";
 
 export default function WaitList() {
   const [showToast, setShowToast] = useState(false);
+  const [showErrorToast, setShowErrorToast] = useState(false);
+  const [errorToastMessage, setErrorToastMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [count, setCount] = useState<number | null>(null);
   const [isLoadingCount, setIsLoadingCount] = useState(true);
   const isBelow880 = useAppSelector((state) => state.ui.isBelow880);
   const isBelow710 = useAppSelector((state) => state.ui.isBelow710);
-  const [helperMessage, setHelperMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCount = async () => {
@@ -74,7 +76,8 @@ export default function WaitList() {
             }
             setShowToast(true);
           } else {
-            setFieldError("email", data.error || "Something went wrong");
+            setErrorToastMessage(data.error || "Something went wrong");
+            setShowErrorToast(true);
             if (data.count !== undefined) {
               setCount(data.count);
             }
@@ -89,25 +92,17 @@ export default function WaitList() {
         }
         setShowToast(true);
       } catch (error) {
-        setFieldError("email", "Failed to submit. Please try again.");
+        setErrorToastMessage("Connectivity issue detected. Please check your internet connection and try again.");
+        setShowErrorToast(true);
       } finally {
         setIsSubmitting(false);
       }
     },
   });
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      
-      if (formik.values.email && formik.errors.email) {
-        setHelperMessage(formik.errors.email);
-      } else {
-        setHelperMessage(null);
-      }
-    }, 2000);
-
-    return () => clearTimeout(timeoutId);
-  }, [formik.values.email, formik.errors.email]);
+  const helperMessage = formik.values.email && formik.errors.email
+    ? formik.errors.email
+    : null;
 
   const isButtonDisabled = 
     isSubmitting || 
@@ -135,16 +130,13 @@ export default function WaitList() {
         className={styles.waitlist}
         aria-describedby="waitlist-helper"
       >
-        <input
-          type="email"
+        <Input
           name="email"
           id="waitlist-email"
           placeholder="your@email.com"
-          className={styles.input}
-          autoComplete="email"
-          inputMode="email"
-          aria-label="Email address to join the Islamic Deed Tracker waitlist"
+          ariaLabel="Email address to join the Islamic Deed Tracker waitlist"
           value={formik.values.email}
+          widthVariant="waitlist"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
         />
@@ -165,7 +157,7 @@ export default function WaitList() {
       {helperMessage ? (
         <p
           id="waitlist-helper"
-          className={styles.helper}
+          className={`${styles.helper} ${styles.helperError}`}
           aria-live="polite"
         >
           {helperMessage}
@@ -208,6 +200,13 @@ export default function WaitList() {
         title="You're on the waitlist."
         message="We'll notify you when the app is ready."
         onClose={() => setShowToast(false)}
+      />
+      <Toast
+        show={showErrorToast}
+        type="error"
+        title="Connectivity issue"
+        message={errorToastMessage}
+        onClose={() => setShowErrorToast(false)}
       />
     </div>
   );

@@ -17,13 +17,13 @@ export const metadata: Metadata = {
     "Islamic accountability",
   ],
   alternates: {
-    canonical: "https://kitaab.me/about",
+    canonical: "https://www.kitaab.me/about",
   },
   openGraph: {
     title: "About | Kitaab",
     description:
       "Learn about Kitaab - an Islamic deed tracking application inspired by the concept of Amaal Naama.",
-    url: "https://kitaab.me/about",
+    url: "https://www.kitaab.me/about",
     type: "website",
   },
   twitter: {

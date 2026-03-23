@@ -17,13 +17,13 @@ export const metadata: Metadata = {
     "Islamic productivity",
   ],
   alternates: {
-    canonical: "https://kitaab.me/features",
+    canonical: "https://www.kitaab.me/features",
   },
   openGraph: {
     title: "Features | Kitaab",
     description:
       "Discover the powerful features of Kitaab - an Islamic deed tracking app.",
-    url: "https://kitaab.me/features",
+    url: "https://www.kitaab.me/features",
     type: "website",
   },
   twitter: {

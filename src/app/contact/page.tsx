@@ -1,7 +1,6 @@
-import Link from "next/link";
 import type { Metadata } from "next";
 import styles from "./contact.module.css";
-import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
+import ContactForm from "@/app/sections/contact/ContactForm";
 
 export const metadata: Metadata = {
   title: "Contact Us",
@@ -17,13 +16,13 @@ export const metadata: Metadata = {
     "help center",
   ],
   alternates: {
-    canonical: "https://kitaab.me/contact",
+    canonical: "https://www.kitaab.me/contact",
   },
   openGraph: {
     title: "Contact Us | Kitaab",
     description:
       "Get in touch with Kitaab for support, questions, feedback, or partnership inquiries.",
-    url: "https://kitaab.me/contact",
+    url: "https://www.kitaab.me/contact",
     type: "website",
   },
   twitter: {
@@ -41,14 +40,45 @@ export const metadata: Metadata = {
 export default function Contact() {
   return (
     <div className={styles.container}>
-      <div className={styles.content}>
-        <p className={styles.message}>This page is coming soon.</p>
-        <p className={styles.description}>
-          We're preparing our contact form and support channels to better serve you. Check back soon!
-        </p>
-        <ButtonGroup buttonWidth={150} buttonHeight={40} activeIndex={-1}>
-          <Link href="/">Return to Home</Link>
-        </ButtonGroup>
+      <div className={styles.layout}>
+        <aside className={styles.infoCard}>
+          <header className={styles.cardHeader}>
+            <p className={styles.cardKicker}>Get in touch</p>
+            <h2 className={styles.cardTitle}>Talk to the Kitaab team</h2>
+            <p className={styles.cardBody}>
+              We’re here to support you on your journey with Kitaab, whether you have questions, need help, or want to share feedback.
+            </p>
+          </header>
+
+          <div className={styles.cardSection}>
+            <div className={styles.cardEmailItem}>
+              <div className={styles.cardIconWrap}>
+                <span className={styles.cardIcon}>@</span>
+              </div>
+              <div className={styles.cardEmailMeta}>
+                <p className={styles.cardLabel}>Email</p>
+                <div className={styles.cardValue}>
+                  <a href="mailto:support@kitaab.me">support@kitaab.me</a>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.cardDivider} />
+
+            <div className={styles.cardStats}>
+              <div className={styles.cardStat}>
+                <span className={styles.cardDotGreen} />
+                <span>Typical response time: within 24 hours</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+        <section className={styles.formPanel}>
+          <p className={styles.description}>
+            Share your questions, feedback, or partnership ideas and we’ll respond as soon as possible.
+          </p>
+          <ContactForm />
+        </section>
       </div>
     </div>
   );

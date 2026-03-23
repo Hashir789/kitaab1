@@ -64,6 +64,14 @@ export default function NavLinksClient({
     };
   }, [isBelow710]);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [pathname]);
+
+  const handleNavClick = () => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  };
+
   return (
     <div ref={containerRef} className={styles.navListContainer}>
       { !isBelow1124 ? (
@@ -77,10 +85,12 @@ export default function NavLinksClient({
 
             return (
               <Link 
+                scroll
                 key={item.href}
                 href={item.href}
                 itemProp="url"
                 aria-label={item.label}
+                onClick={handleNavClick}
                 aria-current={isActive ? "page" : undefined}
               >
                 <span itemProp="name">
@@ -103,12 +113,14 @@ export default function NavLinksClient({
             return (
               <Tooltip text={item.label} position="bottom">
                 <Link
+                  scroll
                   key={item.href}
                   href={item.href}
                   itemProp="url"
                   aria-label={item.label}
-                  aria-current={isActive ? "page" : undefined}
                   className={styles.href}
+                  onClick={handleNavClick}
+                  aria-current={isActive ? "page" : undefined}
                 >
                   <Icon size={iconSize} />
                 </Link>

@@ -6,7 +6,7 @@ import Navbar from "@/components/primary/navbar/Navbar";
 import Footer from "@/components/primary/footer/Footer";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://kitaab.me"),
+  metadataBase: new URL("https://www.kitaab.me"),
 
   title: {
     default: "Kitaab – Islamic Deed Tracker | Track Hasanaat & Sayyi'aat",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     "Kitaab is an Islamic self-accountability app that helps Muslims track daily Hasanaat (good deeds) and Sayyi'aat (bad deeds). Monitor progress, build consistency, and strengthen your spiritual growth.",
 
   alternates: {
-    canonical: "https://kitaab.me",
+    canonical: "https://www.kitaab.me",
   },
 
   keywords: [
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://kitaab.me",
+    url: "https://www.kitaab.me",
     siteName: "Kitaab",
     title: "Kitaab – Islamic Deed Tracker",
     description:

@@ -15,12 +15,12 @@ export const metadata: Metadata = {
     "page index",
   ],
   alternates: {
-    canonical: "https://kitaab.me/sitemap",
+    canonical: "https://www.kitaab.me/sitemap",
   },
   openGraph: {
     title: "Sitemap | Kitaab",
     description: "Browse all pages and sections of the Kitaab website.",
-    url: "https://kitaab.me/sitemap",
+    url: "https://www.kitaab.me/sitemap",
     type: "website",
   },
   twitter: {
@@ -58,11 +58,11 @@ export default function Sitemap() {
             "@type": "WebPage",
             name: "Sitemap",
             description: "Browse all pages and sections of the Kitaab website.",
-            url: "https://kitaab.me/sitemap",
+            url: "https://www.kitaab.me/sitemap",
             publisher: {
               "@type": "Organization",
               name: "Kitaab",
-              url: "https://kitaab.me",
+              url: "https://www.kitaab.me",
             },
             breadcrumb: {
               "@type": "BreadcrumbList",
@@ -71,13 +71,13 @@ export default function Sitemap() {
                   "@type": "ListItem",
                   position: 1,
                   name: "Home",
-                  item: "https://kitaab.me",
+                  item: "https://www.kitaab.me",
                 },
                 {
                   "@type": "ListItem",
                   position: 2,
                   name: "Sitemap",
-                  item: "https://kitaab.me/sitemap",
+                  item: "https://www.kitaab.me/sitemap",
                 },
               ],
             },

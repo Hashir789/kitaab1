@@ -16,13 +16,13 @@ export const metadata: Metadata = {
     "cookie settings",
   ],
   alternates: {
-    canonical: "https://kitaab.me/cookie-policy",
+    canonical: "https://www.kitaab.me/cookie-policy",
   },
   openGraph: {
     title: "Cookie Policy | Kitaab",
     description:
       "Learn about how Kitaab uses cookies to enhance your experience and how you can manage them.",
-    url: "https://kitaab.me/cookie-policy",
+    url: "https://www.kitaab.me/cookie-policy",
     type: "website",
   },
   twitter: {
@@ -46,12 +46,12 @@ export default function CookiePolicy() {
             name: "Cookie Policy",
             description:
               "Learn about how Kitaab uses cookies to enhance your experience and how you can manage them.",
-            url: "https://kitaab.me/cookie-policy",
+            url: "https://www.kitaab.me/cookie-policy",
             dateModified: lastUpdated,
             publisher: {
               "@type": "Organization",
               name: "Kitaab",
-              url: "https://kitaab.me",
+              url: "https://www.kitaab.me",
             },
             breadcrumb: {
               "@type": "BreadcrumbList",
@@ -60,13 +60,13 @@ export default function CookiePolicy() {
                   "@type": "ListItem",
                   position: 1,
                   name: "Home",
-                  item: "https://kitaab.me",
+                  item: "https://www.kitaab.me",
                 },
                 {
                   "@type": "ListItem",
                   position: 2,
                   name: "Cookie Policy",
-                  item: "https://kitaab.me/cookie-policy",
+                  item: "https://www.kitaab.me/cookie-policy",
                 },
               ],
             },

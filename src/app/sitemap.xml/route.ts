@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const baseUrl = "https://kitaab.me";
+  const baseUrl = "https://www.kitaab.me";
 
   const routes = [
     {

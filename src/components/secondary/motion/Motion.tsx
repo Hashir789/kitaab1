@@ -54,7 +54,6 @@ export default function Motion({
     );
   }
 
-  // Apply reverse logic even when variants are used
   const finalInitial = reverse && isBelow1124 && initial && typeof initial === "object" && "x" in initial
     ? { ...initial, x: 40 }
     : initial;

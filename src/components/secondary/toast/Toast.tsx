@@ -1,7 +1,8 @@
 "use client";
 
-import styles from "./Toast.module.css";
+import styles from "./toast.module.css";
 import { useState, useEffect, useRef, useId } from "react";
+import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
 
 type ToastType = "success" | "error";
 
@@ -79,9 +80,7 @@ export default function Toast({ show, type, title, message, onClose }: ToastProp
   return (
     <div
       id={toastId}
-      className={`${styles.toast} ${isFadingOut ? styles.toastFadeOut : ""} ${
-        type === "success" ? styles.toastSuccess : ""
-      }`}
+      className={`${styles.toast} ${isFadingOut ? styles.toastFadeOut : ""}`}
       role={type === "error" ? "alert" : "status"}
       aria-live={type === "error" ? "assertive" : "polite"}
       aria-atomic="true"
@@ -93,7 +92,14 @@ export default function Toast({ show, type, title, message, onClose }: ToastProp
       onMouseLeave={handleMouseLeave}
     >
       <div className={styles.toastContent}>
+        <div className={styles.toastHeader}>
+          {type === "success" ? (
+            <AiOutlineCheckCircle className={styles.successIcon} aria-hidden="true" />
+          ) : type === "error" ? (
+            <AiOutlineCloseCircle className={styles.errorIcon} aria-hidden="true" />
+          ) : null}
         <div id={titleId} className={styles.toastTitle}>{title}</div>
+        </div>
         <div id={messageId} className={styles.toastMessage}>{message}</div>
       </div>
     </div>

@@ -16,7 +16,7 @@ export async function GET() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-    const response = await fetch(`${googleScriptUrl}?action=count`, {
+    const response = await fetch(`${googleScriptUrl}?action=count&formType=waitlist`, {
       method: "GET",
       signal: controller.signal,
       cache: 'no-store',
@@ -84,12 +84,12 @@ export async function POST(request: NextRequest) {
       hour12: true,
     });
 
-    const response = await fetch(googleScriptUrl, {
+    const response = await fetch(`${googleScriptUrl}?formType=waitlist`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, date, time }),
+      body: JSON.stringify({ formType: "waitlist", email, date, time }),
     });
 
     if (!response.ok) {
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
         const countController = new AbortController();
         const countTimeoutId = setTimeout(() => countController.abort(), 5000);
         
-        const countResponse = await fetch(`${googleScriptUrl}?action=count`, {
+        const countResponse = await fetch(`${googleScriptUrl}?action=count&formType=waitlist`, {
           method: "GET",
           signal: countController.signal,
           cache: 'no-store',
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
       const countController = new AbortController();
       const countTimeoutId = setTimeout(() => countController.abort(), 5000);
       
-      const countResponse = await fetch(`${googleScriptUrl}?action=count`, {
+      const countResponse = await fetch(`${googleScriptUrl}?action=count&formType=waitlist`, {
         method: "GET",
         signal: countController.signal,
         cache: 'no-store',

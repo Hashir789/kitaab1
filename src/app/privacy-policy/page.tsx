@@ -16,13 +16,13 @@ export const metadata: Metadata = {
     "Kitaab privacy",
   ],
   alternates: {
-    canonical: "https://kitaab.me/privacy-policy",
+    canonical: "https://www.kitaab.me/privacy-policy",
   },
   openGraph: {
     title: "Privacy Policy | Kitaab",
     description:
       "Learn how Kitaab protects your privacy and handles your personal information.",
-    url: "https://kitaab.me/privacy-policy",
+    url: "https://www.kitaab.me/privacy-policy",
     type: "website",
   },
   twitter: {
@@ -46,12 +46,12 @@ export default function PrivacyPolicy() {
             name: "Privacy Policy",
             description:
               "Learn how Kitaab protects your privacy and handles your personal information.",
-            url: "https://kitaab.me/privacy-policy",
+            url: "https://www.kitaab.me/privacy-policy",
             dateModified: lastUpdated,
             publisher: {
               "@type": "Organization",
               name: "Kitaab",
-              url: "https://kitaab.me",
+              url: "https://www.kitaab.me",
             },
             breadcrumb: {
               "@type": "BreadcrumbList",
@@ -60,13 +60,13 @@ export default function PrivacyPolicy() {
                   "@type": "ListItem",
                   position: 1,
                   name: "Home",
-                  item: "https://kitaab.me",
+                  item: "https://www.kitaab.me",
                 },
                 {
                   "@type": "ListItem",
                   position: 2,
                   name: "Privacy Policy",
-                  item: "https://kitaab.me/privacy-policy",
+                  item: "https://www.kitaab.me/privacy-policy",
                 },
               ],
             },

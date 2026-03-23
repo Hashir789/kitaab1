@@ -16,13 +16,13 @@ export const metadata: Metadata = {
     "service agreement",
   ],
   alternates: {
-    canonical: "https://kitaab.me/terms-of-service",
+    canonical: "https://www.kitaab.me/terms-of-service",
   },
   openGraph: {
     title: "Terms of Service | Kitaab",
     description:
       "Read Kitaab's Terms of Service to understand the rules and guidelines for using our Islamic deed tracking application.",
-    url: "https://kitaab.me/terms-of-service",
+    url: "https://www.kitaab.me/terms-of-service",
     type: "website",
   },
   twitter: {
@@ -46,12 +46,12 @@ export default function TermsOfService() {
             name: "Terms of Service",
             description:
               "Read Kitaab's Terms of Service to understand the rules and guidelines for using our Islamic deed tracking application.",
-            url: "https://kitaab.me/terms-of-service",
+            url: "https://www.kitaab.me/terms-of-service",
             dateModified: lastUpdated,
             publisher: {
               "@type": "Organization",
               name: "Kitaab",
-              url: "https://kitaab.me",
+              url: "https://www.kitaab.me",
             },
             breadcrumb: {
               "@type": "BreadcrumbList",
@@ -60,13 +60,13 @@ export default function TermsOfService() {
                   "@type": "ListItem",
                   position: 1,
                   name: "Home",
-                  item: "https://kitaab.me",
+                  item: "https://www.kitaab.me",
                 },
                 {
                   "@type": "ListItem",
                   position: 2,
                   name: "Terms of Service",
-                  item: "https://kitaab.me/terms-of-service",
+                  item: "https://www.kitaab.me/terms-of-service",
                 },
               ],
             },

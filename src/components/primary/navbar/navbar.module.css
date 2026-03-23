@@ -21,7 +21,6 @@
   margin-bottom: 6px;
   align-items: center;
   text-decoration: none;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 @media (max-width: 710px) {

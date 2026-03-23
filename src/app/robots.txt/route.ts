@@ -5,7 +5,7 @@ export async function GET() {
 Allow: /
 
 # Sitemap
-Sitemap: https://kitaab.me/sitemap.xml
+Sitemap: https://www.kitaab.me/sitemap.xml
 
 # Disallow admin and API routes
 Disallow: /api/

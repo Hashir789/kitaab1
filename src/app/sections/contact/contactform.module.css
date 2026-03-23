@@ -1,0 +1,29 @@
+.form {
+  gap: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.nameEmailRow {
+  gap: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.fullWidthStack {
+  gap: 16px;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.actions {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 640px) {
+  .nameEmailRow {
+    grid-template-columns: 1fr;
+  }
+}
