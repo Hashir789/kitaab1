@@ -141,7 +141,7 @@ export default function TermsOfService() {
           <h2 className={styles.sectionTitle}>User Content</h2>
           <p>
             Our application allows you to track and store your personal deeds
-            (Hasanaat and Sayyi'aat). You retain ownership of any intellectual
+            (Hasanaat and Sayyiaat). You retain ownership of any intellectual
             property rights that you hold in the content you submit. By
             submitting content, you grant us a license to use, store, and
             process that content.

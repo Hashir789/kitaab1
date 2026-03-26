@@ -109,7 +109,7 @@ export default function PrivacyPolicy() {
           </p>
           <ul>
             <li>Account information (name, email address)</li>
-            <li>Deed tracking data (Hasanaat and Sayyi'aat entries)</li>
+            <li>Deed tracking data (Hasanaat and Sayyiaat entries)</li>
             <li>Usage data and preferences</li>
             <li>Device information</li>
           </ul>

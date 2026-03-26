@@ -6,7 +6,7 @@ import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
 export const metadata: Metadata = {
   title: "Page Not Found",
   description:
-    "The page you're looking for doesn't exist. Return to Kitaab home page to continue tracking your Hasanaat and Sayyi'aat.",
+    "The page you're looking for doesn't exist. Return to Kitaab home page to continue tracking your Hasanaat and Sayyiaat.",
   robots: {
     index: false,
     follow: true,

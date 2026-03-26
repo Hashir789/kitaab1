@@ -9,12 +9,12 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.kitaab.me"),
 
   title: {
-    default: "Kitaab – Islamic Deed Tracker | Track Hasanaat & Sayyi'aat",
+    default: "Kitaab – Islamic Deed Tracker | Track Hasanaat & Sayyiaat",
     template: "%s | Kitaab",
   },
 
   description:
-    "Kitaab is an Islamic self-accountability app that helps Muslims track daily Hasanaat (good deeds) and Sayyi'aat (bad deeds). Monitor progress, build consistency, and strengthen your spiritual growth.",
+    "Kitaab is an Islamic self-accountability app that helps Muslims track daily Hasanaat (good deeds) and Sayyiaat (bad deeds). Monitor progress, build consistency, and strengthen your spiritual growth.",
 
   alternates: {
     canonical: "https://www.kitaab.me",
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Kitaab – Islamic Deed Tracker",
     description:
-      "Track Hasanaat and Sayyi'aat daily and strengthen your spiritual journey.",
+      "Track Hasanaat and Sayyiaat daily and strengthen your spiritual journey.",
     images: ["/og-image.png"],
   },
 

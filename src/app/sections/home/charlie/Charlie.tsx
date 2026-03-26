@@ -32,7 +32,7 @@ export default function LandingBeta() {
           reverse={true}
         >
           <Dictionary
-            word="Sayyi'aat"
+            word="Sayyiaat"
             pronunciation="/say-yi-aat/"
             origin="Arabic"
             pluralOf="Sayyi'ah"
@@ -50,7 +50,7 @@ export default function LandingBeta() {
           <div className={styles.cardContent}>
             <blockquote className={styles.quote}>
               <BiSolidQuoteAltLeft aria-hidden="true" className={styles.quoteIconLeft} />
-              <p>With dedicated <i>Hasanaat</i> and <i>Sayyi'aat</i> sections, <strong>Kitaab</strong> doesn't limit you to tracking prayers only; you can record any kind of good or bad deeds.</p>
+              <p>With dedicated <i>Hasanaat</i> and <i>Sayyiaat</i> sections, <strong>Kitaab</strong> doesn't limit you to tracking prayers only; you can record any kind of good or bad deeds.</p>
               <BiSolidQuoteAltRight aria-hidden="true" className={styles.quoteIconRight} />
             </blockquote>
           </div>
