@@ -64,8 +64,8 @@ export default function Footer() {
           <h3>Contact</h3>
           <div className={styles.contactInfo}>
             <p className={styles.contactItem}>
-              <a href="mailto:support@kitaab.me" className={styles.contactLink}>
-                support@kitaab.me
+              <a href="mailto:support.kitaab@gmail.com" className={styles.contactLink}>
+                support.kitaab@gmail.com
               </a>
             </p>
             <p className={styles.contactItem}>

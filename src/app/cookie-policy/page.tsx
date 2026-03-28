@@ -202,7 +202,7 @@ export default function CookiePolicy() {
             Policy, please contact us at:
           </p>
           <p className={styles.contact}>
-            Email: <a href="mailto:support@kitaab.me">support@kitaab.me</a>
+            Email: <a href="mailto:support.kitaab@gmail.com">support.kitaab@gmail.com</a>
             <br />
             Phone: <a href="tel:+923338701145">+92 333 8701145</a>
           </p>

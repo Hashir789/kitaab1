@@ -58,7 +58,7 @@ export default function Contact() {
               <div className={styles.cardEmailMeta}>
                 <p className={styles.cardLabel}>Email</p>
                 <div className={styles.cardValue}>
-                  <a href="mailto:support@kitaab.me">support@kitaab.me</a>
+                  <a href="mailto:support.kitaab@gmail.com">support.kitaab@gmail.com</a>
                 </div>
               </div>
             </div>
