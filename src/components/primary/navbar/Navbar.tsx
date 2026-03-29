@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import WaitList from "./WaitList";
 import styles from "./navbar.module.css";
 import NavLinksClient from "./NavLinksClient";
+import Auth from "@/app/sections/home/auth/Auth";
 import Tooltip from "@/components/secondary/tooltip/Tooltip";
 import NavbarShadowController from "./NavbarShadowController";
 
@@ -41,7 +41,7 @@ export default function Navbar() {
         </Link>
       </Tooltip>
       <NavLinksClient items={navItems} />
-      <WaitList />
+      <Auth />
     </nav>
   );
 }

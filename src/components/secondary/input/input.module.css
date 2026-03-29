@@ -44,8 +44,8 @@
 
 .input {
   height: 35px;
+  width: 215px;
   outline: none;
-  width: 214.4px;
   flex: 0 0 auto;
   padding: 0 1rem;
   font-size: 16px;
@@ -116,12 +116,6 @@
   transition: background-color 5000s ease-in-out 0s;
 }
 
-@media (max-width: 880px) {
-  .waitlistWidth {
-    width: clamp(100px, calc(100vw - 665.6px), 214.4px);
-  }
-}
-
 @media (max-width: 710px) {
   .field {
     width: 100%;
@@ -132,10 +126,10 @@
     width: 100%;
   }
 
-  .input {
+  .input.waitlistWidth {
     min-width: 0;
     flex: 1 1 auto;
-    width: 100% !important;
+    width: calc(100vw - 222px) !important;
   }
 
   .waitlistWidth {

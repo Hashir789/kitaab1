@@ -42,7 +42,7 @@ export default function ContactForm() {
   const [errorToastMessage, setErrorToastMessage] = useState("Please check your input.");
 
   const validationSchema = Yup.object({
-    name: Yup.string().trim().min(2, "Name must be at least 2 characters").required("Name is required"),
+    name: Yup.string().trim().min(2, "Please enter at least 2 characters").required("Name is required"),
     email: Yup.string()
       .matches(
         /^[a-zA-Z0-9]([a-zA-Z0-9.]*[a-zA-Z0-9])?@([a-zA-Z0-9]+\.)+[a-zA-Z0-9]{2,}$/,
@@ -54,8 +54,8 @@ export default function ContactForm() {
       "Please enter a valid phone number",
       (value) => !value || /^[0-9+\-\s()]{7,20}$/.test(value)
     ),
-    subject: Yup.string().trim().min(3, "Subject must be at least 3 characters").required("Subject is required"),
-    message: Yup.string().trim().min(10, "Message must be at least 10 characters").required("Message is required"),
+    subject: Yup.string().trim().min(3, "Please enter at least 3 characters").required("Subject is required"),
+    message: Yup.string().trim().min(10, "Please enter at least 10 characters").required("Message is required"),
   });
 
   const formik = useFormik<ContactFormValues>({

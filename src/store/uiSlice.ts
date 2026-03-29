@@ -6,6 +6,7 @@ interface UiState {
   isBelow710: boolean;
   isBelow880: boolean;
   isBelow1124: boolean;
+  mode: "login" | "signup";
 }
 
 const initialState: UiState = {
@@ -14,6 +15,7 @@ const initialState: UiState = {
   isBelow710: false,
   isBelow880: false,
   isBelow1124: false,
+  mode: "login",
 };
 
 const uiSlice = createSlice({
@@ -28,8 +30,11 @@ const uiSlice = createSlice({
       state.isBelow880 = width < 880;
       state.isBelow1124 = width < 1124;
     },
+    setMode: (state, action: PayloadAction<"login" | "signup">) => {
+      state.mode = action.payload;
+    },
   },
 });
 
 export default uiSlice.reducer;
-export const { updateViewport } = uiSlice.actions;
+export const { updateViewport, setMode } = uiSlice.actions;

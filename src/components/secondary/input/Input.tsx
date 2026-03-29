@@ -11,7 +11,7 @@ type InputProps = {
   required?: boolean;
   helperText?: string;
   placeholder: string;
-  inputType?: "email" | "tel" | "text";
+  inputType?: "email" | "tel" | "text" | "password";
   value?: string;
   defaultValue?: string;
   ariaLabel: string;
@@ -42,7 +42,13 @@ export default function Input({
   iconState,
 }: InputProps) {
   const autoComplete: InputHTMLAttributes<HTMLInputElement>["autoComplete"] =
-    inputType === "email" ? "email" : inputType === "tel" ? "tel" : "off";
+    inputType === "email"
+      ? "email"
+      : inputType === "tel"
+      ? "tel"
+      : inputType === "password"
+      ? "current-password"
+      : "off";
   const inputMode: InputHTMLAttributes<HTMLInputElement>["inputMode"] =
     inputType === "email" ? "email" : inputType === "tel" ? "tel" : undefined;
 

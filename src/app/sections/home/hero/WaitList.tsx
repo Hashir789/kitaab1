@@ -5,9 +5,9 @@ import { useFormik } from "formik";
 import styles from "./waitlist.module.css";
 import { useState, useEffect } from "react";
 import { useAppSelector } from "@/store/hooks";
-import Toast from "../../secondary/toast/Toast";
-import Input from "../../secondary/input/Input";
-import Skeleton from "../../secondary/skeleton/Skeleton";
+import Toast from "@/components/secondary/toast/Toast";
+import Input from "@/components/secondary/input/Input";
+import Skeleton from "@/components/secondary/skeleton/Skeleton";
 
 export default function WaitList() {
   const [showToast, setShowToast] = useState(false);
@@ -145,13 +145,7 @@ export default function WaitList() {
           className={styles.button}
           disabled={isButtonDisabled}
         >
-          {isSubmitting
-            ? "Joining..."
-            : isBelow710
-            ? "Join the Waitlist"
-            : isBelow880
-            ? "Join"
-            : "Join the Waitlist"}
+          {isSubmitting ? "Joining..." : "Join the Waitlist"}
         </button>
       </form>
       {helperMessage ? (
@@ -167,29 +161,23 @@ export default function WaitList() {
           {isLoadingCount ? (
             <Skeleton
               variant="text"
-              width={!isBelow880 || isBelow710 ? 210 : 150}
+              width={245}
               height={20}
               style={{ margin: "4px 0px 0px 1rem" }}
             />
-          ) : count != null && count > 0 ? (
-            <p
-              id="waitlist-helper"
-              className={styles.helper}
-              aria-live="polite"
-            >
-              {isBelow710 || !isBelow880
-                ? `${count} people have joined the waitlist so far`
-                : `${count} people have joined`}
-            </p>
           ) : (
             <p
               id="waitlist-helper"
               className={styles.helper}
               aria-live="polite"
             >
-              {isBelow710 || !isBelow880
-                ? "A few people have joined the waitlist so far"
-                : "A few people have joined"}
+              {(() => {
+                const apiSuccess = count != null && count >= 0;
+                const text = apiSuccess
+                  ? `Be among the ${count} people getting new updates!`
+                  : `Be among the people getting new updates!`;
+                return text;
+              })()}
             </p>
           )}
         </>

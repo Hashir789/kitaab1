@@ -2,8 +2,7 @@ import "./globals.css";
 import Script from "next/script";
 import type { Metadata } from "next";
 import StoreProvider from "@/store/StoreProvider";
-import Navbar from "@/components/primary/navbar/Navbar";
-import Footer from "@/components/primary/footer/Footer";
+import ClientLayout from "./ClientLayout";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.kitaab.me"),
@@ -99,13 +98,7 @@ export default function RootLayout({
           `}
         </Script>
         <StoreProvider>
-          <header>
-            <Navbar />
-          </header>
-          <main className="container">{children}</main>
-          <footer>
-            <Footer />
-          </footer>
+          <ClientLayout>{children}</ClientLayout>
         </StoreProvider>
       </body>
     </html>

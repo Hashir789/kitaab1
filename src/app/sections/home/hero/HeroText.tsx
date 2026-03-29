@@ -1,7 +1,6 @@
-import Link from "next/link";
+import WaitList from "./WaitList";
 import styles from "./herotext.module.css";
 import Motion from "@/components/secondary/motion/Motion";
-import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
 
 export default function HeroText() {
   const containerVariants = {
@@ -76,14 +75,7 @@ export default function HeroText() {
             initial="hidden"
             animate="visible"
           >
-            <ButtonGroup
-              buttonWidth={150}
-              buttonHeight={35}
-              activeIndex={0}
-            >
-              <Link href="/features">Explore Kitaab</Link>
-              <Link href="/contact">Learn More</Link>
-            </ButtonGroup>
+            <WaitList />
           </Motion>
         </div>
       </div>

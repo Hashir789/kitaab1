@@ -1,0 +1,21 @@
+.container {
+  flex-shrink: 0;
+}
+
+.rightButtonGroup {
+  flex-shrink: 0;
+}
+
+@media (max-width: 710px) {
+  .container {
+    width: 100%;
+  }
+
+  .rightButtonGroup {
+    width: 100%;
+    display: flex;
+    min-width: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+}

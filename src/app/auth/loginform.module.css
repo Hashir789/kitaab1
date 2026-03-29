@@ -1,0 +1,64 @@
+.form {
+  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.fullWidthStack {
+  gap: 16px;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.actions {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: rgb(140, 140, 140);
+  font-size: 12px;
+  user-select: none;
+}
+
+.separatorLine {
+  height: 1px;
+  background: #e5e7eb;
+  flex: 1 1 auto;
+}
+
+.secondaryActions {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: rgb(100, 100, 100);
+}
+
+.helperLeft {
+  color: #e11d48;
+  font-size: 12px;
+  line-height: 1.1;
+  min-height: 16px;
+}
+
+.linkButton {
+  border: none;
+  color: rgb(140, 140, 140);
+  font-size: 12px;
+  padding-right: 10px;
+  cursor: pointer;
+  text-align: right;
+  margin-top: -10px;
+}
+
+.linkButton:hover {
+  text-decoration: underline;
+}
