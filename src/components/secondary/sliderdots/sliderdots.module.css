@@ -1,0 +1,39 @@
+.container {
+  position: relative;
+  height: var(--dot-size, 14px);
+  width: var(--container-width, 28px);
+}
+
+.activeDot {
+  top: 0;
+  position: absolute;
+  transition: left 0.5s ease;
+  left: var(--dot-left, 0px);
+  width: var(--dot-size, 14px);
+  height: var(--dot-size, 14px);
+  background-color: rgb(150, 150, 150);
+}
+
+.dotHole {
+  top: 0;
+  position: absolute;
+  width: var(--dot-size, 14px);
+  height: var(--dot-size, 14px);
+  background: var(--dot-hole-bg, #f8f9fa);
+  mask: radial-gradient(circle 5px at center, transparent 98%, black 100%);
+  -webkit-mask: radial-gradient(circle 5px at center, transparent 98%, black 100%);
+}
+
+.dotButton {
+  top: 50%;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  position: absolute;
+  border-radius: 50%;
+  background: transparent;
+  transform: translate(-50%, -50%);
+  border: 2px solid rgb(200, 200, 200);
+  width: calc(var(--dot-size, 14px) - 4px);
+  height: calc(var(--dot-size, 14px) - 4px);
+}

@@ -1,19 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface UiState {
-  viewportWidth: number;
-  viewportHeight: number;
   isBelow710: boolean;
   isBelow880: boolean;
   isBelow1124: boolean;
+  viewportWidth: number;
+  viewportHeight: number;
+  mode: "login" | "signup";
 }
 
 const initialState: UiState = {
-  viewportWidth: 1920,
-  viewportHeight: 1080,
+  mode: "login",
   isBelow710: false,
   isBelow880: false,
   isBelow1124: false,
+  viewportWidth: 1920,
+  viewportHeight: 1080,
 };
 
 const uiSlice = createSlice({
@@ -28,8 +30,11 @@ const uiSlice = createSlice({
       state.isBelow880 = width < 880;
       state.isBelow1124 = width < 1124;
     },
+    setMode: (state, action: PayloadAction<"login" | "signup">) => {
+      state.mode = action.payload;
+    },
   },
 });
 
 export default uiSlice.reducer;
-export const { updateViewport } = uiSlice.actions;
+export const { updateViewport, setMode } = uiSlice.actions;

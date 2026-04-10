@@ -1,61 +1,93 @@
 "use client";
 
 import styles from "./input.module.css";
-import type { ChangeEvent, FocusEvent, InputHTMLAttributes } from "react";
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
+import type { ChangeEvent, FocusEvent, InputHTMLAttributes, ReactNode } from "react";
 
 type InputProps = {
   id: string;
   name: string;
   label?: string;
+  value?: string;
+  ariaLabel: string;
   required?: boolean;
   helperText?: string;
   placeholder: string;
-  inputType?: "email" | "tel" | "text";
-  value?: string;
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
   defaultValue?: string;
-  ariaLabel: string;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
-  widthVariant?: "default" | "waitlist";
-  width?: string | number;
   showInfoIcon?: boolean;
+  width?: string | number;
+  onLeftIconClick?: () => void;
+  onRightIconClick?: () => void;
+  leftIconSize?: number | string;
+  rightIconSize?: number | string;
   iconState?: "error" | "success";
+  widthVariant?: "default" | "waitlist";
+  inputType?: "email" | "tel" | "text" | "password";
+  onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
 export default function Input({
   id,
   name,
   label,
-  required = false,
+  value,
+  width,
+  onBlur,
+  onChange,
+  ariaLabel,
+  iconState,
   helperText,
   placeholder,
-  inputType = "email",
-  value,
   defaultValue,
-  ariaLabel,
-  onChange,
-  onBlur,
-  widthVariant = "default",
-  width,
+  required = false,
+  inputType = "email",
   showInfoIcon = false,
-  iconState,
+  leftIcon,
+  rightIcon,
+  leftIconSize,
+  rightIconSize,
+  onLeftIconClick,
+  onRightIconClick,
+  widthVariant = "default",
 }: InputProps) {
+  const toSize = (size?: number | string): string | undefined => {
+    if (size === undefined) return undefined;
+    return typeof size === "number" ? `${size}px` : size;
+  };
+
   const autoComplete: InputHTMLAttributes<HTMLInputElement>["autoComplete"] =
-    inputType === "email" ? "email" : inputType === "tel" ? "tel" : "off";
+    inputType === "email"
+      ? "email"
+      : inputType === "tel"
+      ? "tel"
+      : inputType === "password"
+      ? "current-password"
+      : "off";
   const inputMode: InputHTMLAttributes<HTMLInputElement>["inputMode"] =
     inputType === "email" ? "email" : inputType === "tel" ? "tel" : undefined;
 
   const valueProps = value !== undefined ? { value, onChange } : { defaultValue };
   const widthStyle = width !== undefined ? { width } : undefined;
   const wrappedInputStyle = width !== undefined ? { width: "100%" } : undefined;
-  const shouldShowIcon = showInfoIcon || !!iconState;
+  const hasLeftAdornment = !!leftIcon;
+  const hasCustomRightIcon = !!rightIcon;
+  const hasValidationRightIcon = !!iconState || showInfoIcon;
+  const hasRightAdornment = hasCustomRightIcon || hasValidationRightIcon;
+  const hasTwoRightIcons = hasCustomRightIcon && hasValidationRightIcon;
   const resolvedIconState = iconState ?? (showInfoIcon ? "error" : undefined);
   const baseInputClassName =
     widthVariant === "waitlist" ? `${styles.input} ${styles.waitlistWidth}` : styles.input;
-  const inputWithIconClassName = shouldShowIcon
-    ? `${baseInputClassName} ${styles.inputWithRightIcon}`
-    : baseInputClassName;
+  const inputWithIconClassName = [
+    baseInputClassName,
+    hasLeftAdornment ? styles.inputWithLeftIcon : undefined,
+    hasRightAdornment ? styles.inputWithRightIcon : undefined,
+    hasTwoRightIcons ? styles.inputWithTwoRightIcons : undefined,
+  ]
+    .filter(Boolean)
+    .join(" ");
   const inputStateClassName =
     resolvedIconState === "error"
       ? `${inputWithIconClassName} ${styles.inputErrorState}`
@@ -64,6 +96,22 @@ export default function Input({
   if (!label && !helperText) {
     return (
       <div className={styles.inputWrapper} style={widthStyle}>
+        {leftIcon ? (
+          <button
+            type="button"
+            className={onLeftIconClick ? styles.leftIconButton : styles.leftIcon}
+            aria-label="left icon"
+            onClick={onLeftIconClick}
+            tabIndex={onLeftIconClick ? 0 : -1}
+            style={{
+              width: toSize(leftIconSize),
+              height: toSize(leftIconSize),
+              fontSize: toSize(leftIconSize),
+            }}
+          >
+            {leftIcon}
+          </button>
+        ) : null}
         <input
           type={inputType}
           name={name}
@@ -78,10 +126,26 @@ export default function Input({
           {...valueProps}
           onBlur={onBlur}
         />
+        {rightIcon ? (
+          <button
+            type="button"
+            className={onRightIconClick ? styles.rightIconButton : styles.rightIcon}
+            aria-label="right icon"
+            onClick={onRightIconClick}
+            tabIndex={onRightIconClick ? 0 : -1}
+            style={{
+              width: toSize(rightIconSize),
+              height: toSize(rightIconSize),
+              fontSize: toSize(rightIconSize),
+            }}
+          >
+            {rightIcon}
+          </button>
+        ) : null}
         {resolvedIconState === "error" ? (
-          <AiOutlineCloseCircle className={`${styles.rightIcon} ${styles.rightIconError}`} aria-hidden="true" />
+          <AiOutlineCloseCircle className={`${styles.rightIcon} ${styles.rightIconError} ${hasCustomRightIcon ? styles.rightIconShifted : ""}`} aria-hidden="true" />
         ) : resolvedIconState === "success" ? (
-          <AiOutlineCheckCircle className={`${styles.rightIcon} ${styles.rightIconSuccess}`} aria-hidden="true" />
+          <AiOutlineCheckCircle className={`${styles.rightIcon} ${styles.rightIconSuccess} ${hasCustomRightIcon ? styles.rightIconShifted : ""}`} aria-hidden="true" />
         ) : null}
       </div>
     );
@@ -111,6 +175,22 @@ export default function Input({
         ) : null}
       </div>
       <div className={styles.inputWrapper}>
+        {leftIcon ? (
+          <button
+            type="button"
+            className={onLeftIconClick ? styles.leftIconButton : styles.leftIcon}
+            aria-label="left icon"
+            onClick={onLeftIconClick}
+            tabIndex={onLeftIconClick ? 0 : -1}
+            style={{
+              width: toSize(leftIconSize),
+              height: toSize(leftIconSize),
+              fontSize: toSize(leftIconSize),
+            }}
+          >
+            {leftIcon}
+          </button>
+        ) : null}
         <input
           type={inputType}
           name={name}
@@ -125,10 +205,26 @@ export default function Input({
           {...valueProps}
           onBlur={onBlur}
         />
+        {rightIcon ? (
+          <button
+            type="button"
+            className={onRightIconClick ? styles.rightIconButton : styles.rightIcon}
+            aria-label="right icon"
+            onClick={onRightIconClick}
+            tabIndex={onRightIconClick ? 0 : -1}
+            style={{
+              width: toSize(rightIconSize),
+              height: toSize(rightIconSize),
+              fontSize: toSize(rightIconSize),
+            }}
+          >
+            {rightIcon}
+          </button>
+        ) : null}
         {resolvedIconState === "error" ? (
-          <AiOutlineCloseCircle className={`${styles.rightIcon} ${styles.rightIconError}`} aria-hidden="true" />
+          <AiOutlineCloseCircle className={`${styles.rightIcon} ${styles.rightIconError} ${hasCustomRightIcon ? styles.rightIconShifted : ""}`} aria-hidden="true" />
         ) : resolvedIconState === "success" ? (
-          <AiOutlineCheckCircle className={`${styles.rightIcon} ${styles.rightIconSuccess}`} aria-hidden="true" />
+          <AiOutlineCheckCircle className={`${styles.rightIcon} ${styles.rightIconSuccess} ${hasCustomRightIcon ? styles.rightIconShifted : ""}`} aria-hidden="true" />
         ) : null}
       </div>
     </div>

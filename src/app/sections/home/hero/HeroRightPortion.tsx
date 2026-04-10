@@ -6,6 +6,7 @@ import styles from "./herorightportion.module.css";
 import { useState, useEffect, useRef } from "react";
 import { IoCaretDownOutline } from "react-icons/io5";
 import LiesChart from "@/components/secondary/lieschart/LiesChart";
+import SliderDots from "@/components/secondary/sliderdots/SliderDots";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
 import PrayerChart, { PrayerFilter } from "@/components/secondary/prayerchart/PrayerChart";
 
@@ -149,16 +150,13 @@ export default function HeroRightPortion() {
           )}
         </div>
         <div className={styles.sliderIndicator}>
-          <div className={styles.sliderDotsContainer}>
-            <div
-              className={styles.sliderDot}
-              style={{ "--dot-left": slide ? "0px" : "14px" } as React.CSSProperties}
-            />
-            <div className={styles.dotHoleFirst}></div>
-            <button className={styles.dotBorderFirst} onClick={() => setSlide(true)}></button>
-            <div className={styles.dotHoleSecond}></div>
-            <button className={styles.dotBorderSecond} onClick={() => setSlide(false)}></button>
-          </div>
+          <SliderDots
+            count={2}
+            activeIndex={slide ? 0 : 1}
+            onChange={(idx) => setSlide(idx === 0)}
+            dotSize={14}
+            gap={0}
+          />
         </div>
         <div ref={rightButtonGroupRef} className={styles.rightButtonGroup}>
           <ButtonGroup
@@ -172,16 +170,13 @@ export default function HeroRightPortion() {
           </ButtonGroup>
         </div>
         <div className={styles.sliderIndicatorMob}>
-          <div className={styles.sliderDotsContainer}>
-            <div
-              className={styles.sliderDot}
-              style={{ "--dot-left": slide ? "0px" : "14px" } as React.CSSProperties}
-            />
-            <div className={styles.dotHoleFirst}></div>
-            <button className={styles.dotBorderFirst} onClick={() => setSlide(true)}></button>
-            <div className={styles.dotHoleSecond}></div>
-            <button className={styles.dotBorderSecond} onClick={() => setSlide(false)}></button>
-          </div>
+          <SliderDots
+            count={2}
+            activeIndex={slide ? 0 : 1}
+            onChange={(idx) => setSlide(idx === 0)}
+            dotSize={14}
+            gap={0}
+          />
         </div>
       </div>
     </section>

@@ -1,0 +1,31 @@
+.flipRoot {
+  width: 100%;
+  perspective: 1000px;
+}
+
+.flipInner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.7s ease;
+}
+
+.flipFaceFront,
+.flipFaceBack {
+  top: 0;
+  left: 0;
+  width: 100%;
+  position: absolute;
+  border-radius: 12px;
+  box-sizing: border-box;
+  backface-visibility: hidden;
+  box-shadow: 0 2px 4px #0000001a;
+  -webkit-backface-visibility: hidden;
+  background-color: rgb(240, 240, 240);
+  border: 1px solid rgb(230, 230, 230);
+}
+
+.flipFaceBack {
+  transform: rotateY(180deg);
+}
