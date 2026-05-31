@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/primary/navbar/Navbar";
 import Footer from "@/components/primary/footer/Footer";
+import SessionTracker from "@/components/primary/sessiontracker/SessionTracker";
 
 export default function ClientLayout({
   children,
@@ -14,6 +15,7 @@ export default function ClientLayout({
 
   return (
     <>
+      <SessionTracker />
       {!hideChrome && (
         <header>
           <Navbar />

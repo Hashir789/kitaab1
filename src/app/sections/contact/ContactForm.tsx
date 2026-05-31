@@ -5,9 +5,10 @@ import { useFormik } from "formik";
 import styles from "./contactform.module.css";
 import { useState, type FormEvent } from "react";
 import Input from "@/components/secondary/input/Input";
+import Toast from "@/components/secondary/toast/Toast";
+import { useSubmitVisitorMessage } from "@/hooks/visitors";
 import TextArea from "@/components/secondary/textarea/TextArea";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
-import Toast from "@/components/secondary/toast/Toast";
 
 type SubmitStatus = "idle" | "submitting" | "success" | "error";
 
@@ -39,7 +40,8 @@ export default function ContactForm() {
   const [status, setStatus] = useState<SubmitStatus>("idle");
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
-  const [errorToastMessage, setErrorToastMessage] = useState("Please check your input.");
+  const { mutate: submitVisitorMessage } = useSubmitVisitorMessage();
+  const [errorToastMessage, setErrorToastMessage] = useState("");
 
   const validationSchema = Yup.object({
     name: Yup.string().trim().min(2, "Please enter at least 2 characters").required("Name is required"),
@@ -69,39 +71,33 @@ export default function ContactForm() {
     validationSchema,
     validateOnChange: true,
     validateOnBlur: true,
-    onSubmit: async (values, { resetForm }) => {
+    onSubmit: (values, { resetForm }) => {
       if (status === "submitting") {
         return;
       }
       setStatus("submitting");
 
-      const formData = new FormData();
-      Object.entries(values).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
-
-      try {
-        const res = await fetch("/api/contact", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!res.ok) {
-          const data = (await res.json().catch(() => null)) as { error?: string } | null;
-          setStatus("error");
-          setErrorToastMessage(data?.error ?? "Failed to send message.");
-          setShowErrorToast(true);
-          return;
+      submitVisitorMessage(
+        {
+          name: values.name,
+          email: values.email,
+          phone: values.phone,
+          subject: values.subject,
+          message: values.message,
+        },
+        {
+          onSuccess: () => {
+            setStatus("success");
+            setShowSuccessToast(true);
+            resetForm();
+          },
+          onError: (error) => {
+            setStatus("error");
+            setErrorToastMessage(error.message);
+            setShowErrorToast(true);
+          }
         }
-
-        setStatus("success");
-        setShowSuccessToast(true);
-        resetForm();
-      } catch {
-        setStatus("error");
-        setErrorToastMessage("Failed to send message.");
-        setShowErrorToast(true);
-      }
+      );
     },
   });
 

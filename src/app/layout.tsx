@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import ClientLayout from "./ClientLayout";
 import StoreProvider from "@/store/StoreProvider";
+import QueryProvider from "@/store/QueryProvider";
 
 export async function generateMetadata(): Promise<Metadata> {
   const hdrs = await headers();
@@ -125,7 +126,9 @@ export default async function RootLayout({
           </>
         ) : null}
         <StoreProvider>
-          <ClientLayout>{children}</ClientLayout>
+          <QueryProvider>
+            <ClientLayout>{children}</ClientLayout>
+          </QueryProvider>
         </StoreProvider>
       </body>
     </html>

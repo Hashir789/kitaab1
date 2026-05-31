@@ -1,40 +1,18 @@
 "use client";
 
 import * as Yup from "yup";
+import { useState } from "react";
 import { useFormik } from "formik";
 import styles from "./waitlist.module.css";
-import { useState, useEffect } from "react";
-import { useAppSelector } from "@/store/hooks";
 import Toast from "@/components/secondary/toast/Toast";
 import Input from "@/components/secondary/input/Input";
-import Skeleton from "@/components/secondary/skeleton/Skeleton";
+import { useSubmitVisitorEmail } from "@/hooks/visitors";
 
 export default function WaitList() {
   const [showToast, setShowToast] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [errorToastMessage, setErrorToastMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [count, setCount] = useState<number | null>(null);
-  const [isLoadingCount, setIsLoadingCount] = useState(true);
-  
-  useEffect(() => {
-    const fetchCount = async () => {
-      try {
-        const response = await fetch("/api/waitlist");
-        if (response.ok) {
-          const data = await response.json();
-          if (data.count !== undefined) {
-            setCount(data.count);
-          }
-        }
-      } catch (error) {
-
-      } finally {
-        setIsLoadingCount(false);
-      }
-    };
-    fetchCount();
-  }, []);
+  const { mutate: submitVisitorEmail, isPending } = useSubmitVisitorEmail();
 
   const validationSchema = Yup.object({
     email: Yup.string()
@@ -52,66 +30,31 @@ export default function WaitList() {
     validationSchema,
     validateOnChange: true,
     validateOnBlur: true,
-    onSubmit: async (values, { setFieldError, resetForm }) => {
-      setIsSubmitting(true);
-      try {
-        const response = await fetch("/api/waitlist", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email: values.email }),
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          if (data.error === "This email is already registered") {
-            
+    onSubmit: (values, { resetForm }) => {
+      submitVisitorEmail(
+        { email: values.email },
+        {
+          onSuccess: () => {
             resetForm();
-            if (data.count !== undefined) {
-              setCount(data.count);
-            }
             setShowToast(true);
-          } else {
-            setErrorToastMessage(data.error || "Something went wrong");
+          },
+          onError: (error) => {
+            setErrorToastMessage(error.message);
             setShowErrorToast(true);
-            if (data.count !== undefined) {
-              setCount(data.count);
-            }
           }
-          setIsSubmitting(false);
-          return;
         }
-
-        resetForm();
-        if (data.count !== undefined) {
-          setCount(data.count);
-        }
-        setShowToast(true);
-      } catch (error) {
-        setErrorToastMessage("Connectivity issue detected. Please check your internet connection and try again.");
-        setShowErrorToast(true);
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
+      );
+    }
   });
 
-  const helperMessage = formik.values.email && formik.errors.email
-    ? formik.errors.email
-    : null;
+  const helperMessage = formik.values.email && formik.errors.email ? formik.errors.email : null;
 
-  const isButtonDisabled = 
-    isSubmitting || 
-    !formik.values.email || 
-    !!formik.errors.email ||
-    !formik.isValid;
+  const isButtonDisabled = isPending || !formik.values.email || !!formik.errors.email || !formik.isValid;
 
   return (
     <div
       className={styles.waitlistContainer}
-          aria-label="Join the Islamic Deed Tracker email waitlist"
+      aria-label="Join the Islamic Deed Tracker email waitlist"
       itemScope
       itemType="https://schema.org/SubscribeAction"
     >
@@ -143,7 +86,7 @@ export default function WaitList() {
           className={styles.button}
           disabled={isButtonDisabled}
         >
-          {isSubmitting ? "Joining..." : "Join the Waitlist"}
+          {isPending ? "Joining..." : "Join the Waitlist"}
         </button>
       </form>
       {helperMessage ? (
@@ -155,30 +98,13 @@ export default function WaitList() {
           {helperMessage}
         </p>
       ) : (
-        <>
-          {isLoadingCount ? (
-            <Skeleton
-              variant="text"
-              width={245}
-              height={20}
-              style={{ margin: "4px 0px 0px 1rem" }}
-            />
-          ) : (
-            <p
-              id="waitlist-helper"
-              className={styles.helper}
-              aria-live="polite"
-            >
-              {(() => {
-                const apiSuccess = count != null && count >= 0;
-                const text = apiSuccess
-                  ? `Be among the ${count} people getting new updates!`
-                  : `Be among the people getting new updates!`;
-                return text;
-              })()}
-            </p>
-          )}
-        </>
+        <p
+          id="waitlist-helper"
+          className={styles.helper}
+          aria-live="polite"
+        >
+          Be among the people getting new updates!
+        </p>
       )}
       <Toast
         type="success"
