@@ -18,7 +18,7 @@ export default function Auth() {
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [errorToastMessage, setErrorToastMessage] = useState("");
 
-  const handleLoginError = (message: string) => {
+  const handleAuthError = (message: string) => {
     setErrorToastMessage(message.split(":")[1]);
     setShowErrorToast(true);
   };
@@ -33,17 +33,17 @@ export default function Auth() {
         flipped={mode === "signup"}
         initialFlipped={mode === "signup"}
         front={
-          <LoginForm onError={handleLoginError} />
+          <LoginForm onError={handleAuthError} />
         }
         back={
-          <SignupForm />
+          <SignupForm onError={handleAuthError} />
           
         }
       />
       <Toast
         show={showErrorToast}
         type="error"
-        title="Login failed"
+        title="Authentication failed"
         message={errorToastMessage}
         onClose={() => setShowErrorToast(false)}
       />

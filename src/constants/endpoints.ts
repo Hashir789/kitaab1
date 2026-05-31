@@ -6,6 +6,10 @@ export const ENDPOINTS = {
   },
   AUTH: {
     LOGIN: "auth/login",
-    TWO_FACTOR: "auth/2fa"
+    SIGNUP: "auth/signup",
+    TWO_FACTOR: "auth/2fa",
+    OTP_VERIFY: "auth/otp-verify",
+    RESEND_LINK: "auth/resend-link",
+    EMAIL_VERIFY: "auth/email-verify"
   }
 } as const;

@@ -4,22 +4,53 @@ import * as Yup from "yup";
 import Image from "next/image";
 import { useFormik } from "formik";
 import styles from "./loginform.module.css";
-import { useEffect, useRef, useState } from "react";
+import { FiCopy, FiDownload } from "react-icons/fi";
 import { IoCaretDownOutline } from "react-icons/io5";
+import { useSignup, useOtpVerify, useEmailVerify, useResendLink, useUpdate2fa } from "@/hooks/auth";
+import { generateRecoveryKey } from "@/utils/recovery";
 import Input from "@/components/secondary/input/Input";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import DatePicker from "@/components/secondary/datepicker/DatePicker";
-import { FaUser, FaEnvelope, FaEye, FaEyeSlash } from "react-icons/fa";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
+import { FaUser, FaEnvelope, FaEye, FaEyeSlash, FaCheck } from "react-icons/fa";
 
-export default function SignupForm() {
-  const [submitting, setSubmitting] = useState(false);
+interface SignupFormProps {
+  onError?: (message: string) => void;
+}
+
+type Phase = "form" | "recovery_key" | "otp" | "two_factor" | "verified";
+
+export default function SignupForm({ onError }: SignupFormProps) {
   const [step, setStep] = useState<0 | 1 | 2>(0);
+  const [phase, setPhase] = useState<Phase>("form");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [recoveryKey, setRecoveryKey] = useState<string | null>(null);
+  const [keyCopied, setKeyCopied] = useState(false);
+  const [otpDigits, setOtpDigits] = useState<string[]>(["", "", "", ""]);
+  const otpInputRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const formRef = useRef<HTMLFormElement>(null);
   const signupButtonWrapperRef = useRef<HTMLDivElement>(null);
   const [signupButtonWidthPx, setSignupButtonWidthPx] = useState<number>(150);
   const genderShellRef = useRef<HTMLDivElement | null>(null);
   const [isGenderOpen, setIsGenderOpen] = useState(false);
+  const [lockedHeightPx, setLockedHeightPx] = useState<number | undefined>(undefined);
+  const { mutate: signupUser, isPending: submitting } = useSignup();
+  const { mutate: verifyOtp, isPending: verifyingOtp } = useOtpVerify();
+  const { fetch: runEmailVerify, isPending: emailChecking } = useEmailVerify();
+  const { mutate: resendVerificationLink, isPending: resendingLink } = useResendLink();
+  const { mutate: setTwoFactor, isPending: updating2fa } = useUpdate2fa();
+  const [emailVerifyState, setEmailVerifyState] = useState<"idle" | "available" | "exists" | "unverified">("idle");
+  const [verifiedEmail, setVerifiedEmail] = useState<string>("");
+  const [otpInitializing, setOtpInitializing] = useState(false);
+  const [resendSent, setResendSent] = useState(false);
+
+  useLayoutEffect(() => {
+    if (phase === "form" && formRef.current) {
+      const h = formRef.current.offsetHeight;
+      setLockedHeightPx((prev) => (prev === undefined || h > prev ? h : prev));
+    }
+  }, [phase, step]);
 
   useEffect(() => {
     const updateWidth = () => {
@@ -32,7 +63,7 @@ export default function SignupForm() {
     updateWidth();
     window.addEventListener("resize", updateWidth);
     return () => window.removeEventListener("resize", updateWidth);
-  }, []);
+  }, [phase]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -95,6 +126,15 @@ export default function SignupForm() {
     }),
   };
 
+  const dobToIso = (dob: string): string => {
+    const m = /^(\d{2})-(\d{2})-(\d{4})$/.exec(dob);
+    if (!m) return "";
+    const dd = Number(m[1]);
+    const mm = Number(m[2]);
+    const yyyy = Number(m[3]);
+    return new Date(Date.UTC(yyyy, mm - 1, dd)).toISOString();
+  };
+
   const formik = useFormik<{
     fullName: string;
     email: string;
@@ -109,6 +149,45 @@ export default function SignupForm() {
     validateOnBlur: true,
     onSubmit: async (values) => {
       if (step < 2) {
+        if (step === 0) {
+          try {
+            await schemas[0].validate(values, { abortEarly: false });
+          } catch {
+            return;
+          }
+
+          let state = verifiedEmail === values.email ? emailVerifyState : "idle";
+          if (state === "idle") {
+            try {
+              const result = await runEmailVerify(values.email);
+              if (formik.values.email !== values.email) return;
+              state =
+                result.verified === true
+                  ? "exists"
+                  : result.verified === false
+                    ? "unverified"
+                    : "available";
+              setEmailVerifyState(state);
+              setVerifiedEmail(values.email);
+            } catch {
+              state = "available";
+            }
+          }
+
+          if (state === "exists") return;
+          if (state === "unverified") {
+            setOtpInitializing(true);
+            resendVerificationLink(
+              { full_name: values.fullName, email: values.email },
+              { onSettled: () => setOtpInitializing(false) }
+            );
+            setPhase("otp");
+            return;
+          }
+          setStep(1);
+          return;
+        }
+
         if (step === 1 && !values.confirmPassword) {
           formik.setFieldTouched("confirmPassword", true, false);
           formik.setFieldError("confirmPassword", "Confirm your password");
@@ -124,22 +203,54 @@ export default function SignupForm() {
       }
 
       if (submitting) return;
-      setSubmitting(true);
-      try {
-        console.log("Submitting signup", { ...values });
-        await new Promise((r) => setTimeout(r, 600));
-      } finally {
-        setSubmitting(false);
-      }
+      if (!values.gender) return;
+
+      const key = generateRecoveryKey();
+      signupUser(
+        {
+          full_name: values.fullName,
+          email: values.email,
+          password: values.password,
+          gender: values.gender,
+          dob: dobToIso(values.dob),
+          recovery_key: key,
+        },
+        {
+          onSuccess: () => {
+            setRecoveryKey(key);
+            setPhase("recovery_key");
+          },
+          onError: (error) => onError?.(error.message),
+        }
+      );
     },
   });
+
+  const handleEmailBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+    try {
+      formik.handleBlur(e);
+      const email = formik.values.email;
+      if (!email) return;
+      await schemas[0].validateAt("email", { email });
+      if (email === verifiedEmail) return;
+      const result = await runEmailVerify(email);
+      if (formik.values.email !== email) return;
+      const next = result.verified === true ? "exists" : result.verified === false ? "unverified" : "available";
+      setEmailVerifyState(next);
+      setVerifiedEmail(email);
+    } catch {
+
+    }
+  };
+
+  const emailIsExisting = verifiedEmail === formik.values.email && emailVerifyState === "exists";
 
   const showFieldError = (field: keyof typeof formik.values): boolean =>
     !!formik.errors[field] &&
     (formik.submitCount > 0 || !!formik.touched[field] || !!(formik.values as any)[field]);
 
   const fullNameHelper = showFieldError("fullName") ? (formik.errors.fullName as string) : undefined;
-  const emailHelper = showFieldError("email") ? formik.errors.email : undefined;
+  const emailHelper = showFieldError("email") ? formik.errors.email : emailIsExisting ? "User with this email already exists" : undefined;
   const passwordHelper = showFieldError("password") ? (formik.errors.password as string) : undefined;
   const confirmHelper = showFieldError("confirmPassword") ? (formik.errors.confirmPassword as string) : undefined;
   const genderHelper = showFieldError("gender") ? (formik.errors.gender as string) : undefined;
@@ -148,13 +259,416 @@ export default function SignupForm() {
   const getIconState = (
     field: "fullName" | "email" | "password" | "confirmPassword" | "gender" | "dob"
   ): "error" | "success" | undefined => {
+    if (field === "email" && emailIsExisting) return "error";
     if (showFieldError(field)) return "error";
     if (!(formik.values as any)[field]) return undefined;
     return "success";
   };
 
+  const handleCopyRecoveryKey = async () => {
+    if (!recoveryKey) return;
+    try {
+      await navigator.clipboard.writeText(recoveryKey);
+      setKeyCopied(true);
+      window.setTimeout(() => setKeyCopied(false), 1500);
+    } catch {
+
+    }
+  };
+
+  const handleDownloadRecoveryKey = () => {
+    if (!recoveryKey) return;
+    const safeName =
+      formik.values.fullName
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "_")
+        .replace(/^_+|_+$/g, "") || "user";
+    const filename = `kitaab_recovery_key_${safeName}.txt`;
+    const blob = new Blob([recoveryKey], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleOtpChange = (index: number, value: string) => {
+    if (!/^\d?$/.test(value)) return;
+    setOtpDigits((prev) => {
+      const next = [...prev];
+      next[index] = value;
+      return next;
+    });
+    if (value && index < otpDigits.length - 1) {
+      otpInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && !otpDigits[index] && index > 0) {
+      otpInputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleOtpPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, otpDigits.length);
+    if (!pasted) return;
+    e.preventDefault();
+    const next = Array(otpDigits.length).fill("");
+    for (let i = 0; i < pasted.length; i++) next[i] = pasted[i];
+    setOtpDigits(next);
+    const focusIndex = Math.min(pasted.length, otpDigits.length - 1);
+    otpInputRefs.current[focusIndex]?.focus();
+  };
+
+  const handleVerifyOtp = () => {
+    if (verifyingOtp) return;
+    const otp = otpDigits.join("");
+    if (otp.length !== otpDigits.length) return;
+    verifyOtp(
+      { email: formik.values.email, otp },
+      {
+        onSuccess: () => setPhase("two_factor"),
+        onError: (error) => onError?.(error.message),
+      }
+    );
+  };
+
+  const handleEnable2fa = () => {
+    if (updating2fa) return;
+    setTwoFactor(
+      { two_factor_enabled: true },
+      {
+        onSuccess: () => setPhase("verified"),
+        onError: (error) => onError?.(error.message),
+      }
+    );
+  };
+
+  const handleSkip2fa = () => {
+    if (updating2fa) return;
+    setPhase("verified");
+  };
+
+  const handleResendLink = () => {
+    if (resendingLink) return;
+    setResendSent(false);
+    resendVerificationLink(
+      { full_name: formik.values.fullName, email: formik.values.email },
+      {
+        onSuccess: () => {
+          setResendSent(true);
+          window.setTimeout(() => setResendSent(false), 2000);
+        },
+        onError: (error) => onError?.(error.message),
+      }
+    );
+  };
+
+  if (phase === "recovery_key") {
+    return (
+      <div
+        className={styles.form}
+        style={{ minHeight: lockedHeightPx }}
+      >
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
+          <Image
+            priority
+            width={75}
+            height={75}
+            alt="Kitaab logo"
+            src="/kitaab-logo.png"
+          />
+        </div>
+        <div
+          style={{
+            flex: 1,
+            gap: 12,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center"
+          }}
+        >
+          <div style={{ textAlign: "center", fontSize: 18, fontWeight: 500, color: "rgb(80, 80, 80)" }}>
+            Account created
+          </div>
+          <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)", lineHeight: 1.4 }}>
+            Save this key. If you forget your password and don't have it, all your data will be permanently lost.
+          </div>
+          <div
+            style={{
+              gap: 8,
+              padding: 10,
+              display: "flex",
+              borderRadius: 8,
+              alignItems: "center",
+              background: "rgb(255, 255, 255)",
+              border: "1px solid rgb(230, 230, 230)",
+            }}
+          >
+            <code
+              style={{
+                flex: 1,
+                fontSize: 12,
+                wordBreak: "break-all",
+                color: "rgb(80, 80, 80)",
+                fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+              }}
+            >
+              {recoveryKey}
+            </code>
+            <button
+              type="button"
+              onClick={handleCopyRecoveryKey}
+              aria-label={keyCopied ? "Copied" : "Copy recovery key"}
+              style={{
+                border: "none",
+                cursor: "pointer",
+                padding: "6px 8px",
+                borderRadius: 6,
+                background: "transparent",
+                color: keyCopied ? "rgb(34, 139, 34)" : "rgb(120, 120, 120)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {keyCopied ? <FaCheck size={12} /> : <FiCopy size={12} />}
+            </button>
+            <button
+              type="button"
+              onClick={handleDownloadRecoveryKey}
+              aria-label="Download recovery key"
+              style={{
+                border: "none",
+                cursor: "pointer",
+                padding: "6px 8px",
+                borderRadius: 6,
+                background: "transparent",
+                color: "rgb(120, 120, 120)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <FiDownload size={12} />
+            </button>
+          </div>
+          <div style={{ textAlign: "center", fontSize: 11, color: "rgb(170, 60, 60)" }}>
+            This key will not be shown again.
+          </div>
+        </div>
+        <div ref={signupButtonWrapperRef} className={styles.actionsSignup}>
+          <ButtonGroup activeIndex={0} buttonWidth={signupButtonWidthPx}>
+            <button
+              type="button"
+              onClick={() => setPhase("otp")}
+            >
+              Next
+            </button>
+          </ButtonGroup>
+        </div>
+      </div>
+    );
+  }
+
+  if (phase === "otp") {
+    const otpComplete = otpDigits.every((d) => d !== "");
+    return (
+      <div
+        className={styles.form}
+        style={{ minHeight: lockedHeightPx }}
+      >
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
+          <Image
+            priority
+            width={75}
+            height={75}
+            alt="Kitaab logo"
+            src="/kitaab-logo.png"
+          />
+        </div>
+        {otpInitializing ? (
+          <div
+            style={{
+              flex: 1,
+              gap: 16,
+              display: "flex",
+              alignItems: "center",
+              flexDirection: "column",
+              justifyContent: "center"
+            }}
+          >
+            <div className={styles.spinner} aria-hidden="true" />
+            <div style={{ textAlign: "center", fontSize: 18, fontWeight: 500, color: "rgb(80, 80, 80)" }}>
+              We already have your record
+            </div>
+            <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)", lineHeight: 1.4 }}>
+              Redirecting you to verify your email...
+            </div>
+          </div>
+        ) : (
+          <>
+            <div
+              style={{
+                flex: 1,
+                gap: 16,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center"
+              }}
+            >
+              <div style={{ textAlign: "center", fontSize: 18, fontWeight: 500, color: "rgb(80, 80, 80)" }}>
+                Verify your email
+              </div>
+              <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)", lineHeight: 1.4 }}>
+                Enter the 4-digit code we sent to <strong style={{ color: "rgb(90, 90, 90)" }}>{formik.values.email}</strong>.
+              </div>
+              <div style={{ display: "flex", justifyContent: "center", gap: 10 }}>
+                {otpDigits.map((digit, index) => (
+                  <input
+                    key={index}
+                    ref={(el) => { otpInputRefs.current[index] = el; }}
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleOtpChange(index, e.target.value)}
+                    onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                    onPaste={handleOtpPaste}
+                    disabled={verifyingOtp}
+                    aria-label={`Digit ${index + 1}`}
+                    className={styles.otpInput}
+                  />
+                ))}
+              </div>
+              <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)" }}>
+                Didn&apos;t get the code?{" "}
+                <button
+                  type="button"
+                  className={styles.resendLink}
+                  onClick={handleResendLink}
+                  disabled={resendingLink || verifyingOtp}
+                  aria-busy={resendingLink}
+                >
+                  {resendingLink ? "Sending..." : resendSent ? "Sent" : "Resend link"}
+                </button>
+              </div>
+            </div>
+            <div ref={signupButtonWrapperRef} className={styles.actionsSignup}>
+              <ButtonGroup activeIndex={0} buttonWidth={signupButtonWidthPx}>
+                <button
+                  type="button"
+                  onClick={handleVerifyOtp}
+                  disabled={!otpComplete || verifyingOtp}
+                  aria-busy={verifyingOtp}
+                >
+                  {verifyingOtp ? "Verifying..." : "Verify"}
+                </button>
+              </ButtonGroup>
+            </div>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  if (phase === "two_factor") {
+    return (
+      <div
+        className={styles.form}
+        style={{ minHeight: lockedHeightPx }}
+      >
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
+          <Image
+            priority
+            width={75}
+            height={75}
+            alt="Kitaab logo"
+            src="/kitaab-logo.png"
+          />
+        </div>
+        <div
+          style={{
+            flex: 1,
+            gap: 16,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center"
+          }}
+        >
+          <div style={{ textAlign: "center", fontSize: 18, fontWeight: 500, color: "rgb(80, 80, 80)" }}>
+            Enable two-factor authentication
+          </div>
+          <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)", lineHeight: 1.4 }}>
+            Add an extra layer of security to your account by requiring a code at sign-in.
+          </div>
+        </div>
+        <div ref={signupButtonWrapperRef} className={styles.actionsSignup} style={{ marginTop: 19 }}>
+          <ButtonGroup activeIndex={1} buttonWidth={(signupButtonWidthPx / 2) - 12}>
+            <button
+              type="button"
+              onClick={handleSkip2fa}
+              disabled={updating2fa}
+            >
+              Skip
+            </button>
+            <button
+              type="button"
+              onClick={handleEnable2fa}
+              disabled={updating2fa}
+              aria-busy={updating2fa}
+            >
+              {updating2fa ? "Enabling..." : "Enable"}
+            </button>
+          </ButtonGroup>
+        </div>
+      </div>
+    );
+  }
+
+  if (phase === "verified") {
+    return (
+      <div
+        className={styles.form}
+        style={{ minHeight: lockedHeightPx }}
+      >
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
+          <Image
+            priority
+            width={75}
+            height={75}
+            alt="Kitaab logo"
+            src="/kitaab-logo.png"
+          />
+        </div>
+        <div
+          style={{
+            flex: 1,
+            gap: 16,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center"
+          }}
+        >
+          <div style={{ textAlign: "center", fontSize: 18, fontWeight: 500, color: "rgb(80, 80, 80)" }}>
+            Email verified
+          </div>
+          <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)" }}>
+            Your account is ready. You are now signed in.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <form className={styles.form} onSubmit={formik.handleSubmit} noValidate>
+    <form ref={formRef} className={styles.form} onSubmit={formik.handleSubmit} noValidate>
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
         <Image
           priority
@@ -194,7 +708,7 @@ export default function SignupForm() {
               ariaLabel="Email"
               placeholder="your@mail.com"
               helperText={emailHelper}
-              onBlur={formik.handleBlur}
+              onBlur={handleEmailBlur}
               value={formik.values.email}
               onChange={formik.handleChange}
               iconState={getIconState("email")}
@@ -318,10 +832,10 @@ export default function SignupForm() {
           </button>
           <button
             type="submit"
-            disabled={submitting}
-            aria-busy={submitting}
+            disabled={submitting || (step === 0 && (emailChecking || emailIsExisting))}
+            aria-busy={submitting || (step === 0 && emailChecking)}
           >
-            {submitting ? "Signing up..." : step < 2 ? "Next" : "Sign up"}
+            {submitting ? "Signing up..." : step === 0 && emailChecking ? "Checking..." : step < 2 ? "Next": "Sign up"}
           </button>
         </ButtonGroup>
       </div>
