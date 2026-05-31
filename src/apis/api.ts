@@ -3,6 +3,7 @@ import { localStorageKeys } from "@/constants/enums";
 import type { HttpMethod, RequestOptions } from "./interfaces";
 
 const PUBLIC_PATHS: string[] = [
+  ENDPOINTS.AUTH.LOGIN,
   ENDPOINTS.VISITORS.TRACK,
   ENDPOINTS.VISITORS.EMAIL,
   ENDPOINTS.VISITORS.MESSAGE
