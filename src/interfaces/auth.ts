@@ -8,6 +8,7 @@ export interface LoginRequest extends LoginPayload {
 }
 
 export interface LoginResponse {
+  full_name: string;
   access_token: string;
   two_factor_enabled: boolean;
 }
