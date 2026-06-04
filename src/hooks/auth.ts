@@ -3,8 +3,8 @@ import { QUERY_KEYS } from "@/constants/queryKeys";
 import { localStorageKeys } from "@/constants/enums";
 import { getOrCreateAnonymousId } from "@/utils/visitor";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { login, signup, otpVerify, emailVerify, update2fa, resendLink } from "@/apis/auth";
-import type { LoginPayload, LoginResponse, SignupPayload, SignupResponse, Update2faPayload, OtpVerifyPayload, Update2faResponse, OtpVerifyResponse, EmailVerifyResponse, ResendLinkPayload, ResendLinkResponse } from "@/interfaces/auth";
+import { login, signup, otpVerify, emailVerify, update2fa, resendLink, forgotPassword, resetPassword } from "@/apis/auth";
+import type { LoginPayload, LoginResponse, SignupPayload, SignupResponse, Update2faPayload, OtpVerifyPayload, Update2faResponse, OtpVerifyResponse, EmailVerifyResponse, ResendLinkPayload, ResendLinkResponse, ForgotPasswordPayload, ForgotPasswordResponse, ResetPasswordPayload, ResetPasswordResponse } from "@/interfaces/auth";
 
 export function useLogin() {
   return useMutation<LoginResponse, Error, LoginPayload>({
@@ -53,6 +53,23 @@ export function useOtpVerify() {
 export function useResendLink() {
   return useMutation<ResendLinkResponse, Error, ResendLinkPayload>({
     mutationFn: (payload) => resendLink(payload)
+  });
+}
+
+export function useForgotPassword() {
+  return useMutation<ForgotPasswordResponse, Error, ForgotPasswordPayload>({
+    mutationFn: (payload) => forgotPassword(payload)
+  });
+}
+
+export function useResetPassword() {
+  return useMutation<ResetPasswordResponse, Error, ResetPasswordPayload>({
+    mutationFn: (payload) => resetPassword(payload),
+    onSuccess: (data) => {
+      if (data?.access_token) {
+        window.localStorage.setItem(localStorageKeys.ACCESS_TOKEN_STORAGE_KEY, data.access_token);
+      }
+    }
   });
 }
 

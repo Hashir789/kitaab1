@@ -4,17 +4,19 @@ import * as Yup from "yup";
 import Image from "next/image";
 import { useFormik } from "formik";
 import styles from "./loginform.module.css";
+import AccountScreen from "./AccountScreen";
 import Input from "@/components/secondary/input/Input";
+import { setUserSession, getUserSession } from "@/utils/session";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { FaLock, FaEye, FaEyeSlash, FaEnvelope } from "react-icons/fa";
+import { FaLock, FaEye, FaEyeSlash, FaEnvelope, FaUser } from "react-icons/fa";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
-import { useLogin, useOtpVerify, useResendLink, useUpdate2fa } from "@/hooks/auth";
+import { useForgotPassword, useLogin, useOtpVerify, useResendLink, useUpdate2fa } from "@/hooks/auth";
 
 interface LoginFormProps {
   onError?: (message: string) => void;
 }
 
-type Step = "login" | "otp" | "ask_2fa" | "done";
+type Step = "login" | "otp" | "ask_2fa" | "done" | "forgot_password" | "forgot_password_sent";
 
 export default function LoginForm({ onError }: LoginFormProps) {
   const [step, setStep] = useState<Step>("login");
@@ -23,18 +25,22 @@ export default function LoginForm({ onError }: LoginFormProps) {
   const [otpInitializing, setOtpInitializing] = useState(false);
   const [resendSent, setResendSent] = useState(false);
   const [fullName, setFullName] = useState<string>("");
+  const [userFullName, setUserFullName] = useState<string>("");
   const otpInputRefs = useRef<Array<HTMLInputElement | null>>([]);
   const formRef = useRef<HTMLFormElement>(null);
   const loginButtonWrapperRef = useRef<HTMLDivElement>(null);
   const twoFaButtonWrapperRef = useRef<HTMLDivElement>(null);
   const otpButtonWrapperRef = useRef<HTMLDivElement>(null);
+  const forgotButtonWrapperRef = useRef<HTMLDivElement>(null);
   const { mutate: loginUser, isPending: submitting } = useLogin();
   const { mutate: update2fa, isPending: updating2fa } = useUpdate2fa();
   const { mutate: verifyOtp, isPending: verifyingOtp } = useOtpVerify();
   const { mutate: resendVerificationLink, isPending: resendingLink } = useResendLink();
+  const { mutate: sendForgotPassword, isPending: sendingForgotPassword } = useForgotPassword();
   const [loginButtonWidthPx, setLoginButtonWidthPx] = useState<number>(150);
   const [twoFaButtonWidthPx, setTwoFaButtonWidthPx] = useState<number>(120);
   const [otpButtonWidthPx, setOtpButtonWidthPx] = useState<number>(150);
+  const [forgotButtonWidthPx, setForgotButtonWidthPx] = useState<number>(150);
   const [lockedHeightPx, setLockedHeightPx] = useState<number | undefined>(undefined);
 
   useLayoutEffect(() => {
@@ -59,6 +65,11 @@ export default function LoginForm({ onError }: LoginFormProps) {
       if (otpEl) {
         const wrapperWidth = otpEl.offsetWidth;
         setOtpButtonWidthPx(Math.max(50, Math.floor(wrapperWidth - 12)));
+      }
+      const forgotEl = forgotButtonWrapperRef.current;
+      if (forgotEl) {
+        const wrapperWidth = forgotEl.offsetWidth;
+        setForgotButtonWidthPx(Math.max(50, Math.floor((wrapperWidth / 2) - 12)));
       }
     };
     updateWidth();
@@ -88,6 +99,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
       { email, password },
       {
         onSuccess: (data) => {
+          setUserFullName(data.full_name);
           if (data.two_factor_enabled) {
             setFullName(data.full_name);
             setOtpDigits(["", "", "", ""]);
@@ -122,6 +134,49 @@ export default function LoginForm({ onError }: LoginFormProps) {
     }
   });
 
+  const forgotValidationSchema = Yup.object({
+    full_name: Yup.string()
+      .trim()
+      .min(2, "Please enter at least 2 characters")
+      .required("Full name is required"),
+    email: Yup.string()
+      .matches(
+        /^[a-zA-Z0-9]([a-zA-Z0-9.]*[a-zA-Z0-9])?@([a-zA-Z0-9]+\.)+[a-zA-Z0-9]{2,}$/,
+        "Please enter a valid email address"
+      )
+      .required("Email is required"),
+  });
+
+  const forgotFormik = useFormik<{ full_name: string; email: string }>({
+    initialValues: { full_name: "", email: "" },
+    validationSchema: forgotValidationSchema,
+    validateOnChange: true,
+    validateOnBlur: true,
+    onSubmit: (values) => {
+      if (sendingForgotPassword) return;
+      sendForgotPassword(
+        { full_name: values.full_name.trim(), email: values.email },
+        {
+          onSuccess: () => setStep("forgot_password_sent"),
+          onError: (error) => onError?.(error.message),
+        }
+      );
+    },
+  });
+
+  const showForgotFieldError = (field: "full_name" | "email"): boolean =>
+    !!forgotFormik.errors[field] &&
+    (forgotFormik.submitCount > 0 || !!forgotFormik.touched[field] || !!forgotFormik.values[field]);
+
+  const forgotFullNameHelper = showForgotFieldError("full_name") ? forgotFormik.errors.full_name : undefined;
+  const forgotEmailHelper = showForgotFieldError("email") ? forgotFormik.errors.email : undefined;
+
+  const getForgotIconState = (field: "full_name" | "email"): "error" | "success" | undefined => {
+    if (showForgotFieldError(field)) return "error";
+    if (!forgotFormik.values[field]) return undefined;
+    return "success";
+  };
+
   const handleDemoLogin = () => {
     const email = process.env.NEXT_PUBLIC_DEMO_EMAIL ?? "";
     const password = process.env.NEXT_PUBLIC_DEMO_PASSWORD ?? "";
@@ -142,12 +197,21 @@ export default function LoginForm({ onError }: LoginFormProps) {
     return "success";
   };
 
+  const finishLogin = (twoFactorEnabled: boolean) => {
+    setUserSession({
+      full_name: userFullName,
+      email: formik.values.email,
+      two_factor_enabled: twoFactorEnabled,
+    });
+    setStep("done");
+  };
+
   const handleEnable2fa = () => {
     if (updating2fa) return;
     update2fa(
       { two_factor_enabled: true },
       {
-        onSuccess: () => setStep("done"),
+        onSuccess: () => finishLogin(true),
         onError: (error) => onError?.(error.message)
       }
     );
@@ -155,7 +219,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
 
   const handleSkip2fa = () => {
     if (updating2fa) return;
-    setStep("done");
+    finishLogin(false);
   };
 
   const handleOtpChange = (index: number, value: string) => {
@@ -194,7 +258,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
     verifyOtp(
       { email: formik.values.email, otp },
       {
-        onSuccess: () => setStep("done"),
+        onSuccess: () => finishLogin(true),
         onError: (error) => onError?.(error.message),
       }
     );
@@ -371,7 +435,98 @@ export default function LoginForm({ onError }: LoginFormProps) {
     );
   }
 
-  if (step === "done") {
+  if (step === "forgot_password") {
+    return (
+      <form
+        className={styles.form}
+        onSubmit={forgotFormik.handleSubmit}
+        style={{ minHeight: lockedHeightPx }}
+        noValidate
+      >
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
+          <Image
+            priority
+            width={75}
+            height={75}
+            alt="Kitaab logo"
+            src="/kitaab-logo.png"
+          />
+        </div>
+        <div
+          style={{
+            flex: 1,
+            gap: 16,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center"
+          }}
+        >
+          <div style={{ textAlign: "center", fontSize: 18, fontWeight: 500, color: "rgb(80, 80, 80)" }}>
+            Reset your password
+          </div>
+          <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)", lineHeight: 1.4 }}>
+            Enter your full name and email. We&apos;ll send a reset link to your inbox.
+          </div>
+          <div className={styles.fullWidthStack}>
+            <Input
+              required
+              width="100%"
+              name="full_name"
+              label="Full name"
+              inputType="text"
+              ariaLabel="Full name"
+              id="forgot-full-name"
+              placeholder="John Doe"
+              leftIconSize={14}
+              leftIcon={<FaUser />}
+              helperText={forgotFullNameHelper}
+              onBlur={forgotFormik.handleBlur}
+              value={forgotFormik.values.full_name}
+              onChange={forgotFormik.handleChange}
+              iconState={getForgotIconState("full_name")}
+            />
+            <Input
+              required
+              name="email"
+              width="100%"
+              label="Email"
+              inputType="email"
+              ariaLabel="Email"
+              id="forgot-email"
+              placeholder="your@mail.com"
+              leftIconSize={14}
+              leftIcon={<FaEnvelope />}
+              helperText={forgotEmailHelper}
+              onBlur={forgotFormik.handleBlur}
+              value={forgotFormik.values.email}
+              onChange={forgotFormik.handleChange}
+              iconState={getForgotIconState("email")}
+            />
+          </div>
+        </div>
+        <div ref={forgotButtonWrapperRef} className={styles.actionsLogin}>
+          <ButtonGroup activeIndex={1} buttonWidth={forgotButtonWidthPx}>
+            <button
+              type="button"
+              onClick={() => setStep("login")}
+              disabled={sendingForgotPassword}
+            >
+              Back
+            </button>
+            <button
+              type="submit"
+              disabled={sendingForgotPassword}
+              aria-busy={sendingForgotPassword}
+            >
+              {sendingForgotPassword ? "Sending..." : "Send link"}
+            </button>
+          </ButtonGroup>
+        </div>
+      </form>
+    );
+  }
+
+  if (step === "forgot_password_sent") {
     return (
       <div
         className={styles.form}
@@ -396,14 +551,20 @@ export default function LoginForm({ onError }: LoginFormProps) {
           }}
         >
           <div style={{ textAlign: "center", fontSize: 18, fontWeight: 500, color: "rgb(80, 80, 80)" }}>
-            You're all set
+            Check your email
           </div>
-          <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)" }}>
-            You are now signed in.
+          <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)", lineHeight: 1.4 }}>
+            A reset link has been sent to <strong style={{ color: "rgb(90, 90, 90)" }}>{forgotFormik.values.email}</strong>. You may close this tab.
           </div>
         </div>
       </div>
     );
+  }
+
+  if (step === "done") {
+    const user = getUserSession();
+    if (!user) return null;
+    return <AccountScreen user={user} minHeight={lockedHeightPx} />;
   }
 
   return (
@@ -459,7 +620,10 @@ export default function LoginForm({ onError }: LoginFormProps) {
       <button
         type="button"
         className={styles.linkButton}
-        onClick={() => {}}
+        onClick={() => {
+          forgotFormik.resetForm();
+          setStep("forgot_password");
+        }}
       >
         Forgot password?
       </button>

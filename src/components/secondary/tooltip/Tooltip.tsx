@@ -9,12 +9,14 @@ interface TooltipProps {
   children: ReactNode;
   text: string;
   position?: TooltipPosition;
+  className?: string;
 }
 
 export default function Tooltip({
   children,
   text,
   position = "bottom",
+  className = "",
 }: TooltipProps) {
   const positionClass = {
     top: styles.tooltipTop,
@@ -24,7 +26,7 @@ export default function Tooltip({
   }[position];
 
   return (
-    <div className={styles.tooltipContainer}>
+    <div className={`${styles.tooltipContainer} ${className}`.trim()}>
       {children}
       <span
         className={`${styles.tooltip} ${positionClass}`}

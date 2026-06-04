@@ -61,3 +61,28 @@ export interface ResendLinkPayload {
 export interface ResendLinkResponse {
   message?: string;
 }
+
+export interface ForgotPasswordPayload {
+  email: string;
+  full_name: string;
+}
+
+export interface ForgotPasswordResponse {
+  message?: string;
+}
+
+export interface ResetPasswordPayload {
+  token: string;
+  new_password: string;
+  recovery_key: string;
+}
+
+export interface ResetPasswordResponse {
+  dob?: string;
+  email?: string;
+  message?: string;
+  full_name?: string;
+  access_token?: string;
+  two_factor_enabled?: boolean;
+  gender?: "male" | "female" | "other";
+}

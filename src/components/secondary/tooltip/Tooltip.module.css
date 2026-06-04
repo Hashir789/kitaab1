@@ -11,8 +11,9 @@
   position: absolute;
   visibility: hidden;
   width: max-content;
-  white-space: nowrap;
+  white-space: normal;
   pointer-events: none;
+  overflow-wrap: anywhere;
   padding: 0.5rem 0.75rem;
   color: rgb(245, 245, 245);
   background: rgb(90, 90, 90);

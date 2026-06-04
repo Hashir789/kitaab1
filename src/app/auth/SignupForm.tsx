@@ -4,15 +4,18 @@ import * as Yup from "yup";
 import Image from "next/image";
 import { useFormik } from "formik";
 import styles from "./loginform.module.css";
-import { FiCopy, FiDownload } from "react-icons/fi";
+import AccountScreen from "./AccountScreen";
 import { IoCaretDownOutline } from "react-icons/io5";
-import { useSignup, useOtpVerify, useEmailVerify, useResendLink, useUpdate2fa } from "@/hooks/auth";
 import { generateRecoveryKey } from "@/utils/recovery";
 import Input from "@/components/secondary/input/Input";
+import { FiDownload, FiAlertCircle } from "react-icons/fi";
+import Tooltip from "@/components/secondary/tooltip/Tooltip";
+import { getUserSession, setUserSession } from "@/utils/session";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import DatePicker from "@/components/secondary/datepicker/DatePicker";
+import { FaUser, FaEnvelope, FaEye, FaEyeSlash } from "react-icons/fa";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
-import { FaUser, FaEnvelope, FaEye, FaEyeSlash, FaCheck } from "react-icons/fa";
+import { useSignup, useOtpVerify, useEmailVerify, useResendLink, useUpdate2fa } from "@/hooks/auth";
 
 interface SignupFormProps {
   onError?: (message: string) => void;
@@ -26,7 +29,7 @@ export default function SignupForm({ onError }: SignupFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [recoveryKey, setRecoveryKey] = useState<string | null>(null);
-  const [keyCopied, setKeyCopied] = useState(false);
+  const [keyDownloaded, setKeyDownloaded] = useState(false);
   const [otpDigits, setOtpDigits] = useState<string[]>(["", "", "", ""]);
   const otpInputRefs = useRef<Array<HTMLInputElement | null>>([]);
   const formRef = useRef<HTMLFormElement>(null);
@@ -265,17 +268,6 @@ export default function SignupForm({ onError }: SignupFormProps) {
     return "success";
   };
 
-  const handleCopyRecoveryKey = async () => {
-    if (!recoveryKey) return;
-    try {
-      await navigator.clipboard.writeText(recoveryKey);
-      setKeyCopied(true);
-      window.setTimeout(() => setKeyCopied(false), 1500);
-    } catch {
-
-    }
-  };
-
   const handleDownloadRecoveryKey = () => {
     if (!recoveryKey) return;
     const safeName =
@@ -294,6 +286,7 @@ export default function SignupForm({ onError }: SignupFormProps) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    setKeyDownloaded(true);
   };
 
   const handleOtpChange = (index: number, value: string) => {
@@ -343,15 +336,26 @@ export default function SignupForm({ onError }: SignupFormProps) {
     setTwoFactor(
       { two_factor_enabled: true },
       {
-        onSuccess: () => setPhase("verified"),
+        onSuccess: () => finishSignup(true),
         onError: (error) => onError?.(error.message),
       }
     );
   };
 
+  const finishSignup = (twoFactorEnabled: boolean) => {
+    setUserSession({
+      full_name: formik.values.fullName,
+      email: formik.values.email,
+      ...(formik.values.gender ? { gender: formik.values.gender } : {}),
+      ...(formik.values.dob ? { dob: formik.values.dob } : {}),
+      two_factor_enabled: twoFactorEnabled,
+    });
+    setPhase("verified");
+  };
+
   const handleSkip2fa = () => {
     if (updating2fa) return;
-    setPhase("verified");
+    finishSignup(false);
   };
 
   const handleResendLink = () => {
@@ -410,67 +414,81 @@ export default function SignupForm({ onError }: SignupFormProps) {
               border: "1px solid rgb(230, 230, 230)",
             }}
           >
-            <code
-              style={{
-                flex: 1,
-                fontSize: 12,
-                wordBreak: "break-all",
-                color: "rgb(80, 80, 80)",
-                fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
-              }}
+            <Tooltip
+              text={recoveryKey ?? ""}
+              position="top"
+              className={styles.recoveryKeyTooltip}
             >
-              {recoveryKey}
-            </code>
-            <button
-              type="button"
-              onClick={handleCopyRecoveryKey}
-              aria-label={keyCopied ? "Copied" : "Copy recovery key"}
-              style={{
-                border: "none",
-                cursor: "pointer",
-                padding: "6px 8px",
-                borderRadius: 6,
-                background: "transparent",
-                color: keyCopied ? "rgb(34, 139, 34)" : "rgb(120, 120, 120)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {keyCopied ? <FaCheck size={12} /> : <FiCopy size={12} />}
-            </button>
-            <button
-              type="button"
-              onClick={handleDownloadRecoveryKey}
-              aria-label="Download recovery key"
-              style={{
-                border: "none",
-                cursor: "pointer",
-                padding: "6px 8px",
-                borderRadius: 6,
-                background: "transparent",
-                color: "rgb(120, 120, 120)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <FiDownload size={12} />
-            </button>
+              <code
+                style={{
+                  fontSize: 12,
+                  display: "block",
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
+                  color: "rgb(80, 80, 80)",
+                  fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+                }}
+              >
+                {recoveryKey}
+              </code>
+            </Tooltip>
+            <Tooltip text="Download recovery key" position="top">
+              <button
+                type="button"
+                onClick={handleDownloadRecoveryKey}
+                aria-label="Download recovery key"
+                style={{
+                  border: "none",
+                  cursor: "pointer",
+                  padding: "6px 8px",
+                  borderRadius: 6,
+                  background: "transparent",
+                  color: "rgb(120, 120, 120)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <FiDownload size={12} />
+              </button>
+            </Tooltip>
           </div>
-          <div style={{ textAlign: "center", fontSize: 11, color: "rgb(170, 60, 60)" }}>
-            This key will not be shown again.
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <div
+              style={{
+                gap: 6,
+                fontSize: 12,
+                padding: "6px 10px",
+                borderRadius: 999,
+                display: "inline-flex",
+                alignItems: "center",
+                color: "rgb(170, 60, 60)",
+                background: "rgb(253, 237, 237)",
+                border: "1px solid rgb(240, 200, 200)",
+              }}
+            >
+              <FiAlertCircle size={12} />
+              This key will not be shown again
+            </div>
           </div>
         </div>
-        <div ref={signupButtonWrapperRef} className={styles.actionsSignup}>
-          <ButtonGroup activeIndex={0} buttonWidth={signupButtonWidthPx}>
-            <button
-              type="button"
-              onClick={() => setPhase("otp")}
-            >
-              Next
-            </button>
-          </ButtonGroup>
+        <div ref={signupButtonWrapperRef} className={styles.actionsLogin}>
+          {!keyDownloaded ? (
+            <Tooltip text="Download the recovery key file to continue" position="top">
+              <ButtonGroup activeIndex={0} buttonWidth={(signupButtonWidthPx / 2) - 12}>
+                <button type="button" disabled>
+                  Next
+                </button>
+              </ButtonGroup>
+            </Tooltip>
+          ) : (
+            <ButtonGroup activeIndex={0} buttonWidth={(signupButtonWidthPx / 2) - 12}>
+              <button type="button" onClick={() => setPhase("otp")}>
+                Next
+              </button>
+            </ButtonGroup>
+          )}
         </div>
       </div>
     );
@@ -633,38 +651,9 @@ export default function SignupForm({ onError }: SignupFormProps) {
   }
 
   if (phase === "verified") {
-    return (
-      <div
-        className={styles.form}
-        style={{ minHeight: lockedHeightPx }}
-      >
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
-          <Image
-            priority
-            width={75}
-            height={75}
-            alt="Kitaab logo"
-            src="/kitaab-logo.png"
-          />
-        </div>
-        <div
-          style={{
-            flex: 1,
-            gap: 16,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center"
-          }}
-        >
-          <div style={{ textAlign: "center", fontSize: 18, fontWeight: 500, color: "rgb(80, 80, 80)" }}>
-            Email verified
-          </div>
-          <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)" }}>
-            Your account is ready. You are now signed in.
-          </div>
-        </div>
-      </div>
-    );
+    const user = getUserSession();
+    if (!user) return null;
+    return <AccountScreen user={user} minHeight={lockedHeightPx} />;
   }
 
   return (

@@ -1,6 +1,6 @@
 import { api } from "@/apis/api";
 import { ENDPOINTS } from "@/constants/endpoints";
-import type { EmailVerifyResponse, LoginRequest, LoginResponse, OtpVerifyPayload, OtpVerifyResponse, ResendLinkPayload, ResendLinkResponse, SignupRequest, SignupResponse, Update2faPayload, Update2faResponse } from "@/interfaces/auth";
+import type { EmailVerifyResponse, ForgotPasswordPayload, ForgotPasswordResponse, LoginRequest, LoginResponse, OtpVerifyPayload, OtpVerifyResponse, ResendLinkPayload, ResendLinkResponse, ResetPasswordPayload, ResetPasswordResponse, SignupRequest, SignupResponse, Update2faPayload, Update2faResponse } from "@/interfaces/auth";
 
 export function login(payload: LoginRequest): Promise<LoginResponse> {
   return api.post<LoginResponse, LoginRequest>(ENDPOINTS.AUTH.LOGIN, payload);
@@ -26,4 +26,12 @@ export function update2fa(payload: Update2faPayload): Promise<Update2faResponse>
 
 export function resendLink(payload: ResendLinkPayload): Promise<ResendLinkResponse> {
   return api.post<ResendLinkResponse, ResendLinkPayload>(ENDPOINTS.AUTH.RESEND_LINK, payload);
+}
+
+export function forgotPassword(payload: ForgotPasswordPayload): Promise<ForgotPasswordResponse> {
+  return api.post<ForgotPasswordResponse, ForgotPasswordPayload>(ENDPOINTS.AUTH.FORGOT_PASSWORD, payload);
+}
+
+export function resetPassword(payload: ResetPasswordPayload): Promise<ResetPasswordResponse> {
+  return api.post<ResetPasswordResponse, ResetPasswordPayload>(ENDPOINTS.AUTH.RESET_PASSWORD, payload);
 }
