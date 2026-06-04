@@ -48,7 +48,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
       const loginEl = loginButtonWrapperRef.current;
       if (loginEl) {
         const wrapperWidth = loginEl.offsetWidth;
-        setLoginButtonWidthPx(Math.max(50, Math.floor(wrapperWidth * 0.5)));
+        setLoginButtonWidthPx(Math.max(50, Math.floor((wrapperWidth - 24) * 0.5)));
       }
       const twoFaEl = twoFaButtonWrapperRef.current;
       if (twoFaEl) {
@@ -82,41 +82,52 @@ export default function LoginForm({ onError }: LoginFormProps) {
       .required("Password is required"),
   });
 
+  const performLogin = (email: string, password: string) => {
+    if (submitting) return;
+    loginUser(
+      { email, password },
+      {
+        onSuccess: (data) => {
+          if (data.two_factor_enabled) {
+            setFullName(data.full_name);
+            setOtpDigits(["", "", "", ""]);
+            setResendSent(false);
+            setOtpInitializing(true);
+            setStep("otp");
+            resendVerificationLink(
+              { email, full_name: data.full_name },
+              {
+                onSettled: () => setOtpInitializing(false),
+                onError: (error) => onError?.(error.message),
+              }
+            );
+          } else {
+            setStep("ask_2fa");
+          }
+        },
+        onError: (error) => {
+          onError?.(error.message);
+        }
+      }
+    );
+  };
+
   const formik = useFormik<{ email: string; password: string }>({
     initialValues: { email: "", password: "" },
     validationSchema,
     validateOnChange: true,
     validateOnBlur: true,
     onSubmit: (values) => {
-      if (submitting) return;
-      loginUser(
-        { email: values.email, password: values.password },
-        {
-          onSuccess: (data) => {
-            if (data.two_factor_enabled) {
-              setFullName(data.full_name);
-              setOtpDigits(["", "", "", ""]);
-              setResendSent(false);
-              setOtpInitializing(true);
-              setStep("otp");
-              resendVerificationLink(
-                { email: values.email, full_name: data.full_name },
-                {
-                  onSettled: () => setOtpInitializing(false),
-                  onError: (error) => onError?.(error.message),
-                }
-              );
-            } else {
-              setStep("ask_2fa");
-            }
-          },
-          onError: (error) => {
-            onError?.(error.message);
-          }
-        }
-      );
+      performLogin(values.email, values.password);
     }
   });
+
+  const handleDemoLogin = () => {
+    const email = process.env.NEXT_PUBLIC_DEMO_EMAIL ?? "";
+    const password = process.env.NEXT_PUBLIC_DEMO_PASSWORD ?? "";
+    formik.setValues({ email, password });
+    performLogin(email, password);
+  };
 
   const showFieldError = (field: "email" | "password"): boolean =>
     !!formik.errors[field] &&
@@ -453,7 +464,14 @@ export default function LoginForm({ onError }: LoginFormProps) {
         Forgot password?
       </button>
       <div ref={loginButtonWrapperRef} className={styles.actionsLogin}>
-        <ButtonGroup activeIndex={0} buttonWidth={loginButtonWidthPx}>
+        <ButtonGroup activeIndex={1} buttonWidth={loginButtonWidthPx}>
+          <button
+            type="button"
+            onClick={handleDemoLogin}
+            disabled={submitting}
+          >
+            Demo Account
+          </button>
           <button
             type="submit"
             disabled={submitting}
