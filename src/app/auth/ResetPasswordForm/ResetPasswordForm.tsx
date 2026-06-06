@@ -5,15 +5,14 @@ import Image from "next/image";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import { useResetPassword } from "@/hooks/auth";
-import { setUserSession } from "@/utils/session";
 import { useState, type ChangeEvent } from "react";
 import styles from "./resetpasswordform.module.css";
-import type { UserSession } from "@/interfaces/user";
 import Input from "@/components/secondary/input/Input";
 import { FaKey, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import { getUserIdFromToken, setPendingPassword } from "@/utils/session";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
 import type { ResetPasswordFormProps } from "./resetpasswordform.interface";
-import { gender, iconState as IconState, resetPasswordField } from "@/constants/enums";
+import { iconState as IconState, resetPasswordField } from "@/constants/enums";
 import { authAria, authButtonLabel, authDescription, authHeading, authLabel, authPlaceholder, authValidation } from "@/constants/placeholders";
 
 export default function ResetPasswordForm({ token, onError }: ResetPasswordFormProps) {
@@ -55,16 +54,10 @@ export default function ResetPasswordForm({ token, onError }: ResetPasswordFormP
           new_password: values[resetPasswordField.NEW_PASSWORD],
         },
         {
-          onSuccess: (data) => {
-            const user: UserSession = {
-              dob: data?.dob ?? "01-01-1990",
-              gender: data?.gender ?? gender.MALE,
-              full_name: data?.full_name ?? "John Doe",
-              email: data?.email ?? "john.doe@example.com",
-              two_factor_enabled: data?.two_factor_enabled ?? false
-            };
-            setUserSession(user);
-            router.replace("/user/1");
+          onSuccess: () => {
+            setPendingPassword(values[resetPasswordField.NEW_PASSWORD]);
+            const userId = getUserIdFromToken();
+            if (userId) router.replace(`/user/${userId}`);
           },
           onError: (error) => onError?.(error.message)
         }

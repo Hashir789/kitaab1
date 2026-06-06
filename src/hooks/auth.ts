@@ -27,10 +27,6 @@ export function useSignup() {
         ...payload,
         anonymous_id: getOrCreateAnonymousId()
       }),
-    onSuccess: (data) => {
-      if (data?.access_token)
-        window.localStorage.setItem(localStorageKeys.ACCESS_TOKEN_STORAGE_KEY, data.access_token);
-    }
   });
 }
 

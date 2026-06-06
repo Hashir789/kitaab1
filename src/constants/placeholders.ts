@@ -142,4 +142,8 @@ export enum accountStatus {
   DISABLED = "Disabled"
 }
 
+export enum accountMessage {
+  FETCHING_DATA = "We are fetching data..."
+}
+
 export const authAriaDigit = (index: number): string => `Digit ${index + 1}`;

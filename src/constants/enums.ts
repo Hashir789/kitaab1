@@ -2,12 +2,14 @@ export enum localStorageKeys {
   CLICKS = "clicks",
   NAVIGATIONS = "navigations",
   ANONYMOUS_ID = "anonymous_id",
+  MASTER_KEY_STORAGE_KEY = "master_key",
   ACCESS_TOKEN_STORAGE_KEY = "access_token",
   USER_SESSION_STORAGE_KEY = "user_session"
 }
 
 export enum sessionStorageKeys {
-  VISITOR_TRACKED = "visitor_tracked"
+  VISITOR_TRACKED = "visitor_tracked",
+  PENDING_PASSWORD = "pending_password"
 }
 
 export enum step {

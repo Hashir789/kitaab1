@@ -1,27 +1,71 @@
 "use client";
 
+import { useMe } from "@/hooks/user";
+import styles from "./userpage.module.css";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { mapMeToUserSession } from "@/utils/user";
 import type { UserSession } from "@/interfaces/user";
-import { getUserSession, isAuthenticated } from "@/utils/session";
+import { useParams, useRouter } from "next/navigation";
+import { accountMessage } from "@/constants/placeholders";
 import AccountScreen from "@/app/user/AccountScreen/AccountScreen";
+import { clearPendingPassword, getPendingPassword, getUserIdFromToken, isAuthenticated } from "@/utils/session";
 
 export default function UserPage() {
   const router = useRouter();
+  const params = useParams<{ id: string }>();
   const [user, setUser] = useState<UserSession | null>(null);
   const [ready, setReady] = useState(false);
+  const tokenUserId = getUserIdFromToken();
+  const canFetch = isAuthenticated() && tokenUserId === params.id;
+  const { data, isLoading, isError } = useMe(canFetch);
 
   useEffect(() => {
-    const session = getUserSession();
-    if (!isAuthenticated() || !session) {
+    if (!isAuthenticated()) {
       router.replace("/auth");
       return;
     }
-    setUser(session);
-    setReady(true);
-  }, [router]);
 
-  if (!ready || !user) return null;
+    if (tokenUserId && tokenUserId !== params.id) {
+      router.replace(`/user/${tokenUserId}`);
+    }
+  }, [params.id, router, tokenUserId]);
+
+  useEffect(() => {
+    if (!canFetch || !data) return;
+
+    let cancelled = false;
+    const password = getPendingPassword();
+
+    mapMeToUserSession(data, password)
+      .then((mappedUser) => {
+        if (cancelled) return;
+        setUser(mappedUser);
+        setReady(true);
+        clearPendingPassword();
+      })
+      .catch(() => {
+        if (!cancelled) router.replace("/auth");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [canFetch, data, router]);
+
+  useEffect(() => {
+    if (isError) router.replace("/auth");
+  }, [isError, router]);
+
+  if (!canFetch || isLoading || !ready || !user) {
+    return (
+      <div className={styles.loaderWrapper}>
+        <span className={styles.spinner} aria-hidden="true" />
+        <p className={styles.loaderText} role="status">
+          {accountMessage.FETCHING_DATA}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div

@@ -2,14 +2,15 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { isAuthenticated } from "@/utils/session";
+import { getUserIdFromToken, isAuthenticated } from "@/utils/session";
 
 export default function HomeGate({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
     if (isAuthenticated()) {
-      router.replace("/user/1");
+      const userId = getUserIdFromToken();
+      if (userId) router.replace(`/user/${userId}`);
     }
   }, [router]);
 

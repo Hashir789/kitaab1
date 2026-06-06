@@ -5,11 +5,11 @@ import Image from "next/image";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import styles from "./loginform.module.css";
-import { setUserSession } from "@/utils/session";
 import Input from "@/components/secondary/input/Input";
 import type { LoginFormProps } from "./loginform.interface";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
+import { getUserIdFromToken, setPendingPassword } from "@/utils/session";
 import { FaLock, FaEye, FaEyeSlash, FaEnvelope, FaUser } from "react-icons/fa";
 import { useForgotPassword, useLogin, useOtpVerify, useResendLink, useUpdate2fa } from "@/hooks/auth";
 import { step as LoginStep, loginField, iconState as IconState, forgotPasswordField } from "@/constants/enums";
@@ -22,8 +22,6 @@ export default function LoginForm({ onError }: LoginFormProps) {
   const [otpDigits, setOtpDigits] = useState<string[]>(["", "", "", ""]);
   const [otpInitializing, setOtpInitializing] = useState(false);
   const [resendSent, setResendSent] = useState(false);
-  const [fullName, setFullName] = useState<string>("");
-  const [userFullName, setUserFullName] = useState<string>("");
   const otpInputRefs = useRef<Array<HTMLInputElement | null>>([]);
   const formRef = useRef<HTMLFormElement>(null);
   const loginButtonWrapperRef = useRef<HTMLDivElement>(null);
@@ -97,15 +95,14 @@ export default function LoginForm({ onError }: LoginFormProps) {
       { email, password },
       {
         onSuccess: (data) => {
-          setUserFullName(data.full_name);
+          setPendingPassword(password);
           if (data.two_factor_enabled) {
-            setFullName(data.full_name);
             setOtpDigits(["", "", "", ""]);
             setResendSent(false);
             setOtpInitializing(true);
             setStep(LoginStep.OTP);
             resendVerificationLink(
-              { email, full_name: data.full_name },
+              { email, full_name: "" },
               {
                 onSettled: () => setOtpInitializing(false),
                 onError: (error) => onError?.(error.message),
@@ -202,13 +199,10 @@ export default function LoginForm({ onError }: LoginFormProps) {
     return IconState.SUCCESS;
   };
 
-  const finishLogin = (twoFactorEnabled: boolean) => {
-    setUserSession({
-      full_name: userFullName,
-      email: formik.values[loginField.EMAIL],
-      two_factor_enabled: twoFactorEnabled,
-    });
-    router.replace("/user/1");
+  const finishLogin = () => {
+    setPendingPassword(formik.values[loginField.PASSWORD]);
+    const userId = getUserIdFromToken();
+    if (userId) router.replace(`/user/${userId}`);
   };
 
   const handleEnable2fa = () => {
@@ -216,7 +210,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
     update2fa(
       { two_factor_enabled: true },
       {
-        onSuccess: () => finishLogin(true),
+        onSuccess: () => finishLogin(),
         onError: (error) => onError?.(error.message)
       }
     );
@@ -224,7 +218,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
 
   const handleSkip2fa = () => {
     if (updating2fa) return;
-    finishLogin(false);
+    finishLogin();
   };
 
   const handleOtpChange = (index: number, value: string) => {
@@ -263,7 +257,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
     verifyOtp(
       { email: formik.values[loginField.EMAIL], otp },
       {
-        onSuccess: () => finishLogin(true),
+        onSuccess: () => finishLogin(),
         onError: (error) => onError?.(error.message),
       }
     );
@@ -273,7 +267,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
     if (resendingLink) return;
     setResendSent(false);
     resendVerificationLink(
-      { email: formik.values[loginField.EMAIL], full_name: fullName },
+      { email: formik.values[loginField.EMAIL], full_name: "" },
       {
         onSuccess: () => {
           setResendSent(true);

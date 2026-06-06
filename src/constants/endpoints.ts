@@ -13,5 +13,8 @@ export const ENDPOINTS = {
     EMAIL_VERIFY: "auth/email-verify",
     RESET_PASSWORD: "auth/reset-password",
     FORGOT_PASSWORD: "auth/forgot-password"
+  },
+  USERS: {
+    ME: "users/me"
   }
 } as const;

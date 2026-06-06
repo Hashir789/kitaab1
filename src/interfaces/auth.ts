@@ -10,7 +10,6 @@ export interface LoginRequest extends LoginPayload {
 }
 
 export interface LoginResponse {
-  full_name: string;
   access_token: string;
   two_factor_enabled: boolean;
 }
@@ -36,10 +35,7 @@ export interface SignupRequest extends SignupPayload {
   anonymous_id: string;
 }
 
-export interface SignupResponse {
-  access_token: string;
-  two_factor_enabled: boolean;
-}
+export type SignupResponse = void;
 
 export interface OtpVerifyPayload {
   email: string;

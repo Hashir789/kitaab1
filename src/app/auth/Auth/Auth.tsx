@@ -5,13 +5,13 @@ import styles from "./auth.module.css";
 import { useEffect, useState } from "react";
 import { useAppSelector } from "@/store/hooks";
 import LoginForm from "../LoginForm/LoginForm";
-import { isAuthenticated } from "@/utils/session";
 import SignupForm from "../SignupForm/SignupForm";
 import Toast from "@/components/secondary/toast/Toast";
 import { authMode, toastType } from "@/constants/enums";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authLink, authToast } from "@/constants/placeholders";
 import FlipCard from "@/components/secondary/flipper/FlipCard";
+import { getUserIdFromToken, isAuthenticated } from "@/utils/session";
 import ResetPasswordForm from "../ResetPasswordForm/ResetPasswordForm";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
 
@@ -33,7 +33,8 @@ export default function Auth() {
     setMounted(true);
     if (!isReset && isAuthenticated()) {
       setLoggedIn(true);
-      router.replace("/user/1");
+      const userId = getUserIdFromToken();
+      if (userId) router.replace(`/user/${userId}`);
     }
   }, [isReset, router]);
 

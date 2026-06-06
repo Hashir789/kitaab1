@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import styles from "./signupform.module.css";
-import { setUserSession } from "@/utils/session";
 import { IoCaretDownOutline } from "react-icons/io5";
 import { generateRecoveryKey } from "@/utils/recovery";
 import Input from "@/components/secondary/input/Input";
@@ -15,6 +14,7 @@ import type { SignupFormProps } from "./signupform.interface";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import DatePicker from "@/components/secondary/datepicker/DatePicker";
 import { FaUser, FaEnvelope, FaEye, FaEyeSlash } from "react-icons/fa";
+import { getUserIdFromToken, setPendingPassword } from "@/utils/session";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
 import { useSignup, useOtpVerify, useEmailVerify, useResendLink, useUpdate2fa } from "@/hooks/auth";
 import { phase as Phase, gender, signupField, iconState as IconState, emailVerifyState as EmailVerifyState, signupFormStep as SignupFormStep } from "@/constants/enums";
@@ -350,26 +350,21 @@ export default function SignupForm({ onError }: SignupFormProps) {
     setTwoFactor(
       { two_factor_enabled: true },
       {
-        onSuccess: () => finishSignup(true),
+        onSuccess: () => finishSignup(),
         onError: (error) => onError?.(error.message),
       }
     );
   };
 
-  const finishSignup = (twoFactorEnabled: boolean) => {
-    setUserSession({
-      full_name: formik.values[signupField.FULL_NAME],
-      email: formik.values[signupField.EMAIL],
-      ...(formik.values[signupField.GENDER] ? { gender: formik.values[signupField.GENDER] } : {}),
-      ...(formik.values[signupField.DOB] ? { dob: formik.values[signupField.DOB] } : {}),
-      two_factor_enabled: twoFactorEnabled,
-    });
-    router.replace("/user/1");
+  const finishSignup = () => {
+    setPendingPassword(formik.values[signupField.PASSWORD]);
+    const userId = getUserIdFromToken();
+    if (userId) router.replace(`/user/${userId}`);
   };
 
   const handleSkip2fa = () => {
     if (updating2fa) return;
-    finishSignup(false);
+    finishSignup();
   };
 
   const handleResendLink = () => {
