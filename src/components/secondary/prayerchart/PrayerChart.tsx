@@ -2,21 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useAppSelector } from "@/store/hooks";
-
-type PrayerStatus = "prayed on time" | "prayed late" | "prayed in time" | "never prayed";
-type PrayerType = "Fajar" | "Zuhr" | "Asr" | "Maghrib" | "Isha";
-
-export type PrayerFilter = "All" | "Fajr" | "Zuhr" | "Asr" | "Maghrib" | "Isha";
-
-interface PrayerData {
-  name: string;
-  y: number;
-  z: number;
-}
-
-type PrayerChartProps = {
-  filter: PrayerFilter;
-};
+import { PrayerChartProps, PrayerFilter, PrayerStatus, PrayerData, PrayerType } from "./prayerchart.interface";
 
 function mapFilterToPrayerType(filter: PrayerFilter): PrayerType | null {
   if (filter === "All") return null;

@@ -1,0 +1,33 @@
+.accountInfo {
+  gap: 10px;
+  display: flex;
+  padding: 12px 14px;
+  border-radius: 8px;
+  flex-direction: column;
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(230, 230, 230);
+}
+
+.accountRow {
+  gap: 8px;
+  display: flex;
+  font-size: 13px;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.accountLabel {
+  color: rgb(140, 140, 140);
+}
+
+.accountValue {
+  text-align: right;
+  word-break: break-word;
+  color: rgb(80, 80, 80);
+}
+
+.actionsLogin {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}

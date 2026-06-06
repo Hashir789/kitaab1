@@ -11,7 +11,7 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const hideChrome = pathname === "/auth";
+  const hideChrome = pathname === "/auth" || pathname.startsWith("/user");
 
   return (
     <>

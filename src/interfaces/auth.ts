@@ -1,3 +1,5 @@
+import type { gender } from "@/constants/enums";
+
 export interface LoginPayload {
   email: string;
   password: string;
@@ -24,10 +26,10 @@ export interface Update2faResponse {
 export interface SignupPayload {
   dob: string;
   email: string;
+  gender: gender;
   password: string;
   full_name: string;
   recovery_key: string;
-  gender: "male" | "female" | "other";
 }
 
 export interface SignupRequest extends SignupPayload {
@@ -80,9 +82,9 @@ export interface ResetPasswordPayload {
 export interface ResetPasswordResponse {
   dob?: string;
   email?: string;
+  gender?: gender;
   message?: string;
   full_name?: string;
   access_token?: string;
   two_factor_enabled?: boolean;
-  gender?: "male" | "female" | "other";
 }

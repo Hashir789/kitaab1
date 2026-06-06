@@ -1,16 +1,8 @@
 "use client";
 
-import { motion, HTMLMotionProps, ForwardRefComponent } from "framer-motion";
-import { ReactNode } from "react";
 import { useAppSelector } from "@/store/hooks";
-
-type MotionElementType = "div" | "h1" | "h2" | "p" | "section";
-
-interface MotionElementProps extends Omit<HTMLMotionProps<MotionElementType>, "as"> {
-  as?: MotionElementType;
-  children?: ReactNode;
-  reverse?: boolean;
-}
+import { MotionElementProps, MotionElementType } from "./motion.interface";
+import { motion, HTMLMotionProps, ForwardRefComponent } from "framer-motion";
 
 export default function Motion({
   as = "div",

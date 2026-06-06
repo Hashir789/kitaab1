@@ -3,14 +3,7 @@
 import { useEffect, useRef } from "react";
 import styles from "./lieschart.module.css";
 import { useAppSelector } from "@/store/hooks";
-
-interface LiesData {
-  month: string;
-  days: Array<{
-    day: number;
-    lies: number;
-  }>;
-}
+import { LiesData } from "./lieschart.interface";
 
 const HEIGHT_DIVISOR_DESKTOP = 1.8;
 const HEIGHT_DIVISOR_MOBILE = 1.5;
@@ -100,7 +93,8 @@ export default function LiesChart() {
       });
 
       const yAxisMax = Math.max(...monthlyLiesData.days.map((day) => day.lies)) + 2;
-      const container = chartContainerRef.current!;
+      const container = chartContainerRef.current;
+      if (!container) return;
       const chartHeight = calculateChartHeight(container.offsetWidth, isBelow710Ref.current);
 
       setupCustomAnimations(Highcharts);

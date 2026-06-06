@@ -3,29 +3,27 @@
 import * as Yup from "yup";
 import Image from "next/image";
 import { useFormik } from "formik";
-import styles from "./loginform.module.css";
-import AccountScreen from "./AccountScreen";
+import { useRouter } from "next/navigation";
+import styles from "./signupform.module.css";
+import { setUserSession } from "@/utils/session";
 import { IoCaretDownOutline } from "react-icons/io5";
 import { generateRecoveryKey } from "@/utils/recovery";
 import Input from "@/components/secondary/input/Input";
 import { FiDownload, FiAlertCircle } from "react-icons/fi";
 import Tooltip from "@/components/secondary/tooltip/Tooltip";
-import { getUserSession, setUserSession } from "@/utils/session";
+import type { SignupFormProps } from "./signupform.interface";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import DatePicker from "@/components/secondary/datepicker/DatePicker";
 import { FaUser, FaEnvelope, FaEye, FaEyeSlash } from "react-icons/fa";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
 import { useSignup, useOtpVerify, useEmailVerify, useResendLink, useUpdate2fa } from "@/hooks/auth";
-
-interface SignupFormProps {
-  onError?: (message: string) => void;
-}
-
-type Phase = "form" | "recovery_key" | "otp" | "two_factor" | "verified";
+import { phase as Phase, gender, signupField, iconState as IconState, emailVerifyState as EmailVerifyState, signupFormStep as SignupFormStep } from "@/constants/enums";
+import { authAria, authAriaDigit, authButtonLabel, authDescription, authHeading, authLabel, authMisc, authPlaceholder, authValidation } from "@/constants/placeholders";
 
 export default function SignupForm({ onError }: SignupFormProps) {
-  const [step, setStep] = useState<0 | 1 | 2>(0);
-  const [phase, setPhase] = useState<Phase>("form");
+  const router = useRouter();
+  const [step, setStep] = useState<SignupFormStep>(SignupFormStep.DETAILS);
+  const [phase, setPhase] = useState<Phase>(Phase.FORM);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [recoveryKey, setRecoveryKey] = useState<string | null>(null);
@@ -43,13 +41,13 @@ export default function SignupForm({ onError }: SignupFormProps) {
   const { fetch: runEmailVerify, isPending: emailChecking } = useEmailVerify();
   const { mutate: resendVerificationLink, isPending: resendingLink } = useResendLink();
   const { mutate: setTwoFactor, isPending: updating2fa } = useUpdate2fa();
-  const [emailVerifyState, setEmailVerifyState] = useState<"idle" | "available" | "exists" | "unverified">("idle");
+  const [emailVerifyState, setEmailVerifyState] = useState<EmailVerifyState>(EmailVerifyState.IDLE);
   const [verifiedEmail, setVerifiedEmail] = useState<string>("");
   const [otpInitializing, setOtpInitializing] = useState(false);
   const [resendSent, setResendSent] = useState(false);
 
   useLayoutEffect(() => {
-    if (phase === "form" && formRef.current) {
+    if (phase === Phase.FORM && formRef.current) {
       const h = formRef.current.offsetHeight;
       setLockedHeightPx((prev) => (prev === undefined || h > prev ? h : prev));
     }
@@ -79,40 +77,42 @@ export default function SignupForm({ onError }: SignupFormProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isGenderOpen]);
 
-  const schemas: Record<0 | 1 | 2, Yup.ObjectSchema<any>> = {
-    0: Yup.object({
-      fullName: Yup.string()
-        .min(3, "Please enter at least 3 characters")
-        .max(60, "Please enter at most 60 characters")
-        .matches(/^[a-zA-Z][a-zA-Z\s.'-]*$/, "Please enter a valid full name")
-        .required("Full name is required"),
-      email: Yup.string()
+  const schemas: Record<SignupFormStep, Yup.ObjectSchema<any>> = {
+    [SignupFormStep.DETAILS]: Yup.object({
+      [signupField.FULL_NAME]: Yup.string()
+        .min(3, authValidation.FULL_NAME_MIN_3)
+        .max(60, authValidation.FULL_NAME_MAX_60)
+        .matches(/^[a-zA-Z][a-zA-Z\s.'-]*$/, authValidation.FULL_NAME_INVALID)
+        .required(authValidation.FULL_NAME_REQUIRED),
+      [signupField.EMAIL]: Yup.string()
         .matches(
           /^[a-zA-Z0-9]([a-zA-Z0-9.]*[a-zA-Z0-9])?@([a-zA-Z0-9]+\.)+[a-zA-Z0-9]{2,}$/,
-          "Please enter a valid email address"
+          authValidation.EMAIL_INVALID
         )
-        .required("Email is required"),
+        .required(authValidation.EMAIL_REQUIRED),
     }),
-    1: Yup.object({
-      password: Yup.string()
-        .min(8, "Please enter at least 8 characters")
-        .matches(/[a-z]/, "Please enter at least a lowercase")
-        .matches(/[A-Z]/, "Please enter at least an uppercase")
-        .matches(/[0-9]/, "Please enter at least a number")
-        .matches(/[^A-Za-z0-9]/, "Please enter a special character")
-        .required("Password is required"),
-      confirmPassword: Yup.string()
-        .test("match-if-filled", "Passwords must match", function (value) {
+    [SignupFormStep.PASSWORD]: Yup.object({
+      [signupField.PASSWORD]: Yup.string()
+        .min(8, authValidation.PASSWORD_MIN_8)
+        .matches(/[a-z]/, authValidation.PASSWORD_LOWERCASE)
+        .matches(/[A-Z]/, authValidation.PASSWORD_UPPERCASE)
+        .matches(/[0-9]/, authValidation.PASSWORD_NUMBER)
+        .matches(/[^A-Za-z0-9]/, authValidation.PASSWORD_SPECIAL)
+        .required(authValidation.PASSWORD_REQUIRED),
+      [signupField.CONFIRM_PASSWORD]: Yup.string()
+        .test("match-if-filled", authValidation.PASSWORDS_MUST_MATCH, function (value) {
           if (!value) return true;
-          return value === this.parent.password;
+          return value === this.parent[signupField.PASSWORD];
         }),
     }),
-    2: Yup.object({
-      gender: Yup.string().oneOf(["male", "female", "other"], "Select a gender").required("Gender is required"),
-      dob: Yup.string()
-        .required("Date of birth is required")
-        .matches(/^\d{2}-\d{2}-\d{4}$/, "Use DD-MM-YYYY")
-        .test("not-future", "Date of birth cannot be in the future", (val) => {
+    [SignupFormStep.PROFILE]: Yup.object({
+      [signupField.GENDER]: Yup.string()
+        .oneOf(Object.values(gender), authValidation.GENDER_SELECT)
+        .required(authValidation.GENDER_REQUIRED),
+      [signupField.DOB]: Yup.string()
+        .required(authValidation.DOB_REQUIRED)
+        .matches(/^\d{2}-\d{2}-\d{4}$/, authValidation.DOB_FORMAT)
+        .test("not-future", authValidation.DOB_NOT_FUTURE, (val) => {
           if (!val) return true;
           const m = /^(\d{2})-(\d{2})-(\d{4})$/.exec(val);
           if (!m) return false;
@@ -139,66 +139,68 @@ export default function SignupForm({ onError }: SignupFormProps) {
   };
 
   const formik = useFormik<{
-    fullName: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-    gender: "" | "male" | "female" | "other";
-    dob: string;
+    [signupField.FULL_NAME]: string;
+    [signupField.EMAIL]: string;
+    [signupField.PASSWORD]: string;
+    [signupField.CONFIRM_PASSWORD]: string;
+    [signupField.GENDER]: "" | gender;
+    [signupField.DOB]: string;
   }>({
-    initialValues: { fullName: "", email: "", password: "", confirmPassword: "", gender: "", dob: "" },
+    initialValues: {
+      [signupField.FULL_NAME]: "",
+      [signupField.EMAIL]: "",
+      [signupField.PASSWORD]: "",
+      [signupField.CONFIRM_PASSWORD]: "",
+      [signupField.GENDER]: "",
+      [signupField.DOB]: "",
+    },
     validationSchema: schemas[step],
     validateOnChange: true,
     validateOnBlur: true,
     onSubmit: async (values) => {
-      if (step < 2) {
-        if (step === 0) {
+      if (step < SignupFormStep.PROFILE) {
+        if (step === SignupFormStep.DETAILS) {
           try {
-            await schemas[0].validate(values, { abortEarly: false });
+            await schemas[SignupFormStep.DETAILS].validate(values, { abortEarly: false });
           } catch {
             return;
           }
 
-          let state = verifiedEmail === values.email ? emailVerifyState : "idle";
-          if (state === "idle") {
+          let state = verifiedEmail === values[signupField.EMAIL] ? emailVerifyState : EmailVerifyState.IDLE;
+          if (state === EmailVerifyState.IDLE) {
             try {
-              const result = await runEmailVerify(values.email);
-              if (formik.values.email !== values.email) return;
-              state =
-                result.verified === true
-                  ? "exists"
-                  : result.verified === false
-                    ? "unverified"
-                    : "available";
+              const result = await runEmailVerify(values[signupField.EMAIL]);
+              if (formik.values[signupField.EMAIL] !== values[signupField.EMAIL]) return;
+              state = result.verified === true ? EmailVerifyState.EXISTS: result.verified === false ? EmailVerifyState.UNVERIFIED: EmailVerifyState.AVAILABLE;
               setEmailVerifyState(state);
-              setVerifiedEmail(values.email);
+              setVerifiedEmail(values[signupField.EMAIL]);
             } catch {
-              state = "available";
+              state = EmailVerifyState.AVAILABLE;
             }
           }
 
-          if (state === "exists") return;
-          if (state === "unverified") {
+          if (state === EmailVerifyState.EXISTS) return;
+          if (state === EmailVerifyState.UNVERIFIED) {
             setOtpInitializing(true);
             resendVerificationLink(
-              { full_name: values.fullName, email: values.email },
+              { full_name: values[signupField.FULL_NAME], email: values[signupField.EMAIL] },
               { onSettled: () => setOtpInitializing(false) }
             );
-            setPhase("otp");
+            setPhase(Phase.OTP);
             return;
           }
-          setStep(1);
+          setStep(SignupFormStep.PASSWORD);
           return;
         }
 
-        if (step === 1 && !values.confirmPassword) {
-          formik.setFieldTouched("confirmPassword", true, false);
-          formik.setFieldError("confirmPassword", "Confirm your password");
+        if (step === SignupFormStep.PASSWORD && !values[signupField.CONFIRM_PASSWORD]) {
+          formik.setFieldTouched(signupField.CONFIRM_PASSWORD, true, false);
+          formik.setFieldError(signupField.CONFIRM_PASSWORD, authValidation.CONFIRM_PASSWORD);
           return;
         }
         try {
           await schemas[step].validate(values, { abortEarly: false });
-          setStep((s) => ((s + 1) as 0 | 1 | 2));
+          setStep((s) => (s + 1) as SignupFormStep);
         } catch {
 
         }
@@ -206,22 +208,22 @@ export default function SignupForm({ onError }: SignupFormProps) {
       }
 
       if (submitting) return;
-      if (!values.gender) return;
+      if (!values[signupField.GENDER]) return;
 
       const key = generateRecoveryKey();
       signupUser(
         {
-          full_name: values.fullName,
-          email: values.email,
-          password: values.password,
-          gender: values.gender,
-          dob: dobToIso(values.dob),
+          full_name: values[signupField.FULL_NAME],
+          email: values[signupField.EMAIL],
+          password: values[signupField.PASSWORD],
+          gender: values[signupField.GENDER],
+          dob: dobToIso(values[signupField.DOB]),
           recovery_key: key,
         },
         {
           onSuccess: () => {
             setRecoveryKey(key);
-            setPhase("recovery_key");
+            setPhase(Phase.RECOVERY_KEY);
           },
           onError: (error) => onError?.(error.message),
         }
@@ -232,13 +234,13 @@ export default function SignupForm({ onError }: SignupFormProps) {
   const handleEmailBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
     try {
       formik.handleBlur(e);
-      const email = formik.values.email;
+      const email = formik.values[signupField.EMAIL];
       if (!email) return;
-      await schemas[0].validateAt("email", { email });
+      await schemas[SignupFormStep.DETAILS].validateAt(signupField.EMAIL, { [signupField.EMAIL]: email });
       if (email === verifiedEmail) return;
       const result = await runEmailVerify(email);
-      if (formik.values.email !== email) return;
-      const next = result.verified === true ? "exists" : result.verified === false ? "unverified" : "available";
+      if (formik.values[signupField.EMAIL] !== email) return;
+      const next = result.verified === true ? EmailVerifyState.EXISTS: result.verified === false ? EmailVerifyState.UNVERIFIED: EmailVerifyState.AVAILABLE;
       setEmailVerifyState(next);
       setVerifiedEmail(email);
     } catch {
@@ -246,32 +248,44 @@ export default function SignupForm({ onError }: SignupFormProps) {
     }
   };
 
-  const emailIsExisting = verifiedEmail === formik.values.email && emailVerifyState === "exists";
+  const emailIsExisting = verifiedEmail === formik.values[signupField.EMAIL] && emailVerifyState === EmailVerifyState.EXISTS;
 
-  const showFieldError = (field: keyof typeof formik.values): boolean =>
+  const showFieldError = (field: signupField): boolean =>
     !!formik.errors[field] &&
-    (formik.submitCount > 0 || !!formik.touched[field] || !!(formik.values as any)[field]);
+    (formik.submitCount > 0 || !!formik.touched[field] || !!formik.values[field]);
 
-  const fullNameHelper = showFieldError("fullName") ? (formik.errors.fullName as string) : undefined;
-  const emailHelper = showFieldError("email") ? formik.errors.email : emailIsExisting ? "User with this email already exists" : undefined;
-  const passwordHelper = showFieldError("password") ? (formik.errors.password as string) : undefined;
-  const confirmHelper = showFieldError("confirmPassword") ? (formik.errors.confirmPassword as string) : undefined;
-  const genderHelper = showFieldError("gender") ? (formik.errors.gender as string) : undefined;
-  const dobHelper = showFieldError("dob") ? (formik.errors.dob as string) : undefined;
+  const fullNameHelper = showFieldError(signupField.FULL_NAME)
+    ? (formik.errors[signupField.FULL_NAME] as string)
+    : undefined;
+  const emailHelper = showFieldError(signupField.EMAIL)
+    ? formik.errors[signupField.EMAIL]
+    : emailIsExisting
+      ? authValidation.EMAIL_EXISTS
+      : undefined;
+  const passwordHelper = showFieldError(signupField.PASSWORD)
+    ? (formik.errors[signupField.PASSWORD] as string)
+    : undefined;
+  const confirmHelper = showFieldError(signupField.CONFIRM_PASSWORD)
+    ? (formik.errors[signupField.CONFIRM_PASSWORD] as string)
+    : undefined;
+  const genderHelper = showFieldError(signupField.GENDER)
+    ? (formik.errors[signupField.GENDER] as string)
+    : undefined;
+  const dobHelper = showFieldError(signupField.DOB)
+    ? (formik.errors[signupField.DOB] as string)
+    : undefined;
 
-  const getIconState = (
-    field: "fullName" | "email" | "password" | "confirmPassword" | "gender" | "dob"
-  ): "error" | "success" | undefined => {
-    if (field === "email" && emailIsExisting) return "error";
-    if (showFieldError(field)) return "error";
-    if (!(formik.values as any)[field]) return undefined;
-    return "success";
+  const getIconState = (field: signupField): IconState | undefined => {
+    if (field === signupField.EMAIL && emailIsExisting) return IconState.ERROR;
+    if (showFieldError(field)) return IconState.ERROR;
+    if (!formik.values[field]) return undefined;
+    return IconState.SUCCESS;
   };
 
   const handleDownloadRecoveryKey = () => {
     if (!recoveryKey) return;
     const safeName =
-      formik.values.fullName
+      formik.values[signupField.FULL_NAME]
         .trim()
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "_")
@@ -323,9 +337,9 @@ export default function SignupForm({ onError }: SignupFormProps) {
     const otp = otpDigits.join("");
     if (otp.length !== otpDigits.length) return;
     verifyOtp(
-      { email: formik.values.email, otp },
+      { email: formik.values[signupField.EMAIL], otp },
       {
-        onSuccess: () => setPhase("two_factor"),
+        onSuccess: () => setPhase(Phase.TWO_FACTOR),
         onError: (error) => onError?.(error.message),
       }
     );
@@ -344,13 +358,13 @@ export default function SignupForm({ onError }: SignupFormProps) {
 
   const finishSignup = (twoFactorEnabled: boolean) => {
     setUserSession({
-      full_name: formik.values.fullName,
-      email: formik.values.email,
-      ...(formik.values.gender ? { gender: formik.values.gender } : {}),
-      ...(formik.values.dob ? { dob: formik.values.dob } : {}),
+      full_name: formik.values[signupField.FULL_NAME],
+      email: formik.values[signupField.EMAIL],
+      ...(formik.values[signupField.GENDER] ? { gender: formik.values[signupField.GENDER] } : {}),
+      ...(formik.values[signupField.DOB] ? { dob: formik.values[signupField.DOB] } : {}),
       two_factor_enabled: twoFactorEnabled,
     });
-    setPhase("verified");
+    router.replace("/user/1");
   };
 
   const handleSkip2fa = () => {
@@ -362,7 +376,7 @@ export default function SignupForm({ onError }: SignupFormProps) {
     if (resendingLink) return;
     setResendSent(false);
     resendVerificationLink(
-      { full_name: formik.values.fullName, email: formik.values.email },
+      { full_name: formik.values[signupField.FULL_NAME], email: formik.values[signupField.EMAIL] },
       {
         onSuccess: () => {
           setResendSent(true);
@@ -373,7 +387,7 @@ export default function SignupForm({ onError }: SignupFormProps) {
     );
   };
 
-  if (phase === "recovery_key") {
+  if (phase === Phase.RECOVERY_KEY) {
     return (
       <div
         className={styles.form}
@@ -384,8 +398,8 @@ export default function SignupForm({ onError }: SignupFormProps) {
             priority
             width={75}
             height={75}
-            alt="Kitaab logo"
             src="/kitaab-logo.png"
+            alt={authAria.KITAAB_LOGO}
           />
         </div>
         <div
@@ -398,10 +412,10 @@ export default function SignupForm({ onError }: SignupFormProps) {
           }}
         >
           <div style={{ textAlign: "center", fontSize: 18, fontWeight: 500, color: "rgb(80, 80, 80)" }}>
-            Account created
+            {authHeading.ACCOUNT_CREATED}
           </div>
           <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)", lineHeight: 1.4 }}>
-            Save this key. If you forget your password and don't have it, all your data will be permanently lost.
+            {authDescription.RECOVERY_KEY_SAVE}
           </div>
           <div
             style={{
@@ -433,11 +447,11 @@ export default function SignupForm({ onError }: SignupFormProps) {
                 {recoveryKey}
               </code>
             </Tooltip>
-            <Tooltip text="Download recovery key" position="top">
+            <Tooltip text={authAria.DOWNLOAD_RECOVERY_KEY} position="top">
               <button
                 type="button"
                 onClick={handleDownloadRecoveryKey}
-                aria-label="Download recovery key"
+                aria-label={authAria.DOWNLOAD_RECOVERY_KEY}
                 style={{
                   border: "none",
                   cursor: "pointer",
@@ -469,23 +483,23 @@ export default function SignupForm({ onError }: SignupFormProps) {
               }}
             >
               <FiAlertCircle size={12} />
-              This key will not be shown again
+              {authDescription.RECOVERY_KEY_NOT_SHOWN_AGAIN}
             </div>
           </div>
         </div>
         <div ref={signupButtonWrapperRef} className={styles.actionsLogin}>
           {!keyDownloaded ? (
-            <Tooltip text="Download the recovery key file to continue" position="top">
+            <Tooltip text={authDescription.DOWNLOAD_RECOVERY_KEY_TO_CONTINUE} position="top">
               <ButtonGroup activeIndex={0} buttonWidth={(signupButtonWidthPx / 2) - 12}>
                 <button type="button" disabled>
-                  Next
+                  {authButtonLabel.NEXT}
                 </button>
               </ButtonGroup>
             </Tooltip>
           ) : (
             <ButtonGroup activeIndex={0} buttonWidth={(signupButtonWidthPx / 2) - 12}>
-              <button type="button" onClick={() => setPhase("otp")}>
-                Next
+              <button type="button" onClick={() => setPhase(Phase.OTP)}>
+                {authButtonLabel.NEXT}
               </button>
             </ButtonGroup>
           )}
@@ -494,7 +508,7 @@ export default function SignupForm({ onError }: SignupFormProps) {
     );
   }
 
-  if (phase === "otp") {
+  if (phase === Phase.OTP) {
     const otpComplete = otpDigits.every((d) => d !== "");
     return (
       <div
@@ -506,8 +520,8 @@ export default function SignupForm({ onError }: SignupFormProps) {
             priority
             width={75}
             height={75}
-            alt="Kitaab logo"
             src="/kitaab-logo.png"
+            alt={authAria.KITAAB_LOGO}
           />
         </div>
         {otpInitializing ? (
@@ -523,10 +537,10 @@ export default function SignupForm({ onError }: SignupFormProps) {
           >
             <div className={styles.spinner} aria-hidden="true" />
             <div style={{ textAlign: "center", fontSize: 18, fontWeight: 500, color: "rgb(80, 80, 80)" }}>
-              We already have your record
+              {authHeading.RECORD_EXISTS}
             </div>
             <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)", lineHeight: 1.4 }}>
-              Redirecting you to verify your email...
+              {authDescription.OTP_REDIRECTING}
             </div>
           </div>
         ) : (
@@ -541,10 +555,10 @@ export default function SignupForm({ onError }: SignupFormProps) {
               }}
             >
               <div style={{ textAlign: "center", fontSize: 18, fontWeight: 500, color: "rgb(80, 80, 80)" }}>
-                Verify your email
+                {authHeading.VERIFY_YOUR_EMAIL}
               </div>
               <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)", lineHeight: 1.4 }}>
-                Enter the 4-digit code we sent to <strong style={{ color: "rgb(90, 90, 90)" }}>{formik.values.email}</strong>.
+                {authDescription.OTP_CODE_PREFIX}<strong style={{ color: "rgb(90, 90, 90)" }}>{formik.values[signupField.EMAIL]}</strong>{authDescription.OTP_CODE_SUFFIX}
               </div>
               <div style={{ display: "flex", justifyContent: "center", gap: 10 }}>
                 {otpDigits.map((digit, index) => (
@@ -560,13 +574,13 @@ export default function SignupForm({ onError }: SignupFormProps) {
                     onKeyDown={(e) => handleOtpKeyDown(index, e)}
                     onPaste={handleOtpPaste}
                     disabled={verifyingOtp}
-                    aria-label={`Digit ${index + 1}`}
+                    aria-label={authAriaDigit(index)}
                     className={styles.otpInput}
                   />
                 ))}
               </div>
               <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)" }}>
-                Didn&apos;t get the code?{" "}
+                {authDescription.RESEND_CODE_PROMPT}{" "}
                 <button
                   type="button"
                   className={styles.resendLink}
@@ -574,7 +588,7 @@ export default function SignupForm({ onError }: SignupFormProps) {
                   disabled={resendingLink || verifyingOtp}
                   aria-busy={resendingLink}
                 >
-                  {resendingLink ? "Sending..." : resendSent ? "Sent" : "Resend link"}
+                  {resendingLink ? authButtonLabel.SENDING : resendSent ? authButtonLabel.SENT : authButtonLabel.RESEND_LINK}
                 </button>
               </div>
             </div>
@@ -586,7 +600,7 @@ export default function SignupForm({ onError }: SignupFormProps) {
                   disabled={!otpComplete || verifyingOtp}
                   aria-busy={verifyingOtp}
                 >
-                  {verifyingOtp ? "Verifying..." : "Verify"}
+                  {verifyingOtp ? authButtonLabel.VERIFYING : authButtonLabel.VERIFY}
                 </button>
               </ButtonGroup>
             </div>
@@ -596,7 +610,7 @@ export default function SignupForm({ onError }: SignupFormProps) {
     );
   }
 
-  if (phase === "two_factor") {
+  if (phase === Phase.TWO_FACTOR) {
     return (
       <div
         className={styles.form}
@@ -607,8 +621,8 @@ export default function SignupForm({ onError }: SignupFormProps) {
             priority
             width={75}
             height={75}
-            alt="Kitaab logo"
             src="/kitaab-logo.png"
+            alt={authAria.KITAAB_LOGO}
           />
         </div>
         <div
@@ -621,10 +635,10 @@ export default function SignupForm({ onError }: SignupFormProps) {
           }}
         >
           <div style={{ textAlign: "center", fontSize: 18, fontWeight: 500, color: "rgb(80, 80, 80)" }}>
-            Enable two-factor authentication
+            {authHeading.ENABLE_TWO_FACTOR}
           </div>
           <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)", lineHeight: 1.4 }}>
-            Add an extra layer of security to your account by requiring a code at sign-in.
+            {authDescription.SIGNUP_TWO_FACTOR}
           </div>
         </div>
         <div ref={signupButtonWrapperRef} className={styles.actionsSignup} style={{ marginTop: 19 }}>
@@ -634,7 +648,7 @@ export default function SignupForm({ onError }: SignupFormProps) {
               onClick={handleSkip2fa}
               disabled={updating2fa}
             >
-              Skip
+              {authButtonLabel.SKIP}
             </button>
             <button
               type="button"
@@ -642,18 +656,12 @@ export default function SignupForm({ onError }: SignupFormProps) {
               disabled={updating2fa}
               aria-busy={updating2fa}
             >
-              {updating2fa ? "Enabling..." : "Enable"}
+              {updating2fa ? authButtonLabel.ENABLING : authButtonLabel.ENABLE}
             </button>
           </ButtonGroup>
         </div>
       </div>
     );
-  }
-
-  if (phase === "verified") {
-    const user = getUserSession();
-    if (!user) return null;
-    return <AccountScreen user={user} minHeight={lockedHeightPx} />;
   }
 
   return (
@@ -663,66 +671,66 @@ export default function SignupForm({ onError }: SignupFormProps) {
           priority
           width={75}
           height={75}
-          alt="Kitaab logo"
           src="/kitaab-logo.png"
+          alt={authAria.KITAAB_LOGO}
         />
       </div>
       <div className={styles.fullWidthStack}>
-        {step === 0 ? (
+        {step === SignupFormStep.DETAILS ? (
           <>
             <Input
               required
               width="100%"
-              name="fullName"
+              name={signupField.FULL_NAME}
               inputType="text"
-              label="Full name"
+              label={authLabel.FULL_NAME}
               id="signup-full-name"
-              ariaLabel="Full name"
-              placeholder="John Doe"
+              ariaLabel={authAria.FULL_NAME}
+              placeholder={authPlaceholder.FULL_NAME}
               onBlur={formik.handleBlur}
               helperText={fullNameHelper}
               onChange={formik.handleChange}
-              value={formik.values.fullName}
-              iconState={getIconState("fullName")}
+              value={formik.values[signupField.FULL_NAME]}
+              iconState={getIconState(signupField.FULL_NAME)}
               leftIcon={<FaUser />}
               leftIconSize={14}
             />
             <Input
               required
               width="100%"
-              name="email"
-              label="Email"
+              name={signupField.EMAIL}
+              label={authLabel.EMAIL}
               id="signup-email"
               inputType="email"
-              ariaLabel="Email"
-              placeholder="your@mail.com"
+              ariaLabel={authAria.EMAIL}
+              placeholder={authPlaceholder.EMAIL}
               helperText={emailHelper}
               onBlur={handleEmailBlur}
-              value={formik.values.email}
+              value={formik.values[signupField.EMAIL]}
               onChange={formik.handleChange}
-              iconState={getIconState("email")}
+              iconState={getIconState(signupField.EMAIL)}
               leftIconSize={14}
               leftIcon={<FaEnvelope />}
             />
           </>
         ) : null}
 
-        {step === 1 ? (
+        {step === SignupFormStep.PASSWORD ? (
           <>
             <Input
               required
               width="100%"
-              name="password"
-              label="Password"
+              name={signupField.PASSWORD}
+              label={authLabel.PASSWORD}
               id="signup-password"
-              ariaLabel="Password"
-              placeholder="Pass@123"
+              ariaLabel={authAria.PASSWORD}
+              placeholder={authPlaceholder.PASSWORD}
               rightIconSize={16}
               onBlur={formik.handleBlur}
               helperText={passwordHelper}
-              value={formik.values.password}
+              value={formik.values[signupField.PASSWORD]}
               onChange={formik.handleChange}
-              iconState={getIconState("password")}
+              iconState={getIconState(signupField.PASSWORD)}
               inputType={showPassword ? "text" : "password"}
               onRightIconClick={() => setShowPassword((s) => !s)}
               rightIcon={showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -730,16 +738,16 @@ export default function SignupForm({ onError }: SignupFormProps) {
             <Input
               required
               width="100%"
-              name="confirmPassword"
-              placeholder="Pass@123"
-              label="Confirm Password"
+              name={signupField.CONFIRM_PASSWORD}
+              placeholder={authPlaceholder.PASSWORD}
+              label={authLabel.CONFIRM_PASSWORD}
               id="signup-confirm-password"
-              ariaLabel="Confirm password"
+              ariaLabel={authAria.CONFIRM_PASSWORD}
               helperText={confirmHelper}
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
-              value={formik.values.confirmPassword}
-              iconState={getIconState("confirmPassword")}
+              value={formik.values[signupField.CONFIRM_PASSWORD]}
+              iconState={getIconState(signupField.CONFIRM_PASSWORD)}
               inputType={showConfirmPassword ? "text" : "password"}
               onRightIconClick={() => setShowConfirmPassword((s) => !s)}
               rightIcon={showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
@@ -748,24 +756,24 @@ export default function SignupForm({ onError }: SignupFormProps) {
           </>
         ) : null}
 
-        {step === 2 ? (
+        {step === SignupFormStep.PROFILE ? (
           <>
             <DatePicker
               required
               id="signup-dob"
-              label="Date of Birth"
-              placeholder="DD-MM-YYYY"
-              ariaLabel="Date of birth"
+              label={authLabel.DATE_OF_BIRTH}
+              placeholder={authPlaceholder.DATE_OF_BIRTH}
+              ariaLabel={authAria.DATE_OF_BIRTH}
               maxDate={new Date()}
               helperText={dobHelper}
-              value={formik.values.dob}
-              isError={getIconState("dob") === "error"}
-              onChange={(v) => formik.setFieldValue("dob", v)}
+              value={formik.values[signupField.DOB]}
+              isError={getIconState(signupField.DOB) === IconState.ERROR}
+              onChange={(v) => formik.setFieldValue(signupField.DOB, v)}
             />
             <div style={{ position: "relative" }} ref={genderShellRef}>
               <div className={styles.topRow}>
                 <label className={styles.label}>
-                  Gender
+                  {authLabel.GENDER}
                   <span className={styles.requiredMark}>*</span>
                 </label>
                 {genderHelper ? (
@@ -779,10 +787,10 @@ export default function SignupForm({ onError }: SignupFormProps) {
                 onClick={() => setIsGenderOpen((o) => !o)}
                 className={`${styles.input} ${genderHelper ? styles.inputErrorState : ""}`}
               >
-                <span style={{ color: formik.values.gender ? "rgb(90, 90, 90)" : "rgb(180, 180, 180)" }}>
-                  {formik.values.gender
-                    ? formik.values.gender.charAt(0).toUpperCase() + formik.values.gender.slice(1)
-                    : "Select gender"}
+                <span style={{ color: formik.values[signupField.GENDER] ? "rgb(90, 90, 90)" : "rgb(180, 180, 180)" }}>
+                  {formik.values[signupField.GENDER]
+                    ? formik.values[signupField.GENDER].charAt(0).toUpperCase() + formik.values[signupField.GENDER].slice(1)
+                    : authPlaceholder.SELECT_GENDER}
                 </span>
                 <IoCaretDownOutline
                   size={12}
@@ -790,14 +798,14 @@ export default function SignupForm({ onError }: SignupFormProps) {
                 />
               </button>
               {isGenderOpen ? (
-                <div className={styles.selectDropdown} role="listbox" aria-label="Select gender">
-                  {["male", "female", "other"].map((g) => (
+                <div className={styles.selectDropdown} role="listbox" aria-label={authAria.SELECT_GENDER}>
+                  {Object.values(gender).map((g) => (
                     <button
                       key={g}
                       type="button"
                       className={styles.selectDropdownItem}
                       onClick={() => {
-                        formik.setFieldValue("gender", g);
+                        formik.setFieldValue(signupField.GENDER, g);
                         setIsGenderOpen(false);
                       }}
                     >
@@ -814,33 +822,41 @@ export default function SignupForm({ onError }: SignupFormProps) {
         <ButtonGroup activeIndex={1} buttonWidth={(signupButtonWidthPx / 2) - 12}>
           <button
             type="button"
-            onClick={() => setStep((s) => (s > 0 ? ((s - 1) as 0 | 1 | 2) : s))}
-            disabled={step === 0}
+            onClick={() =>
+              setStep((s) => (s > SignupFormStep.DETAILS ? ((s - 1) as SignupFormStep) : s))
+            }
+            disabled={step === SignupFormStep.DETAILS}
           >
-            Back
+            {authButtonLabel.BACK}
           </button>
           <button
             type="submit"
-            disabled={submitting || (step === 0 && (emailChecking || emailIsExisting))}
-            aria-busy={submitting || (step === 0 && emailChecking)}
+            aria-busy={submitting || (step === SignupFormStep.DETAILS && emailChecking)}
+            disabled={submitting || (step === SignupFormStep.DETAILS && (emailChecking || emailIsExisting))}
           >
-            {submitting ? "Signing up..." : step === 0 && emailChecking ? "Checking..." : step < 2 ? "Next": "Sign up"}
+            {submitting
+              ? authButtonLabel.SIGNING_UP
+              : step === SignupFormStep.DETAILS && emailChecking
+                ? authButtonLabel.CHECKING
+                : step < SignupFormStep.PROFILE
+                  ? authButtonLabel.NEXT
+                  : authButtonLabel.SIGN_UP}
           </button>
         </ButtonGroup>
       </div>
       <div className={styles.separator}>
         <div className={styles.separatorLine} />
-        <span>OR</span>
+        <span>{authMisc.OR}</span>
         <div className={styles.separatorLine} />
       </div>
       <div className={styles.secondaryActions}>
-        <span>Already have an account?</span>
+        <span>{authMisc.HAS_ACCOUNT}</span>
         <ButtonGroup buttonWidth={100}>
           <button
             type="button"
             data-flip
           >
-            Login
+            {authButtonLabel.LOGIN}
           </button>
         </ButtonGroup>
       </div>

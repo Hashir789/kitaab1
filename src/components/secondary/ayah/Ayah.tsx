@@ -1,14 +1,5 @@
-import { ReactNode } from "react";
 import styles from "./ayah.module.css";
-
-interface AyahProps {
-  verse: number;
-  font?: string;
-  chapter: number;
-  arabicText: string;
-  className?: string;
-  translation: string | ReactNode;
-}
+import { AyahProps } from "./ayah.interface";
 
 export default function Ayah({
   verse,

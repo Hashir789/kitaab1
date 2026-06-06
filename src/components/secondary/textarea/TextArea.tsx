@@ -1,44 +1,28 @@
 "use client";
 
-import styles from "./textarea.module.css";
+import type { FormEvent } from "react";
 import { useEffect, useRef } from "react";
-import type { ChangeEvent, FocusEvent, FormEvent } from "react";
+import styles from "./textarea.module.css";
+import type { TextAreaProps } from "./textarea.interface";
+import { iconState as IconState } from "@/constants/enums";
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
-
-type TextAreaProps = {
-  id: string;
-  name: string;
-  label?: string;
-  required?: boolean;
-  helperText?: string;
-  placeholder: string;
-  value?: string;
-  defaultValue?: string;
-  ariaLabel: string;
-  onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
-  onBlur?: (e: FocusEvent<HTMLTextAreaElement>) => void;
-  width?: string | number;
-  showInfoIcon?: boolean;
-  iconState?: "error" | "success";
-  rows?: number;
-};
 
 export default function TextArea({
   id,
   name,
   label,
-  required = false,
+  value,
+  width,
+  onBlur,
+  onChange,
+  rows = 5,
+  ariaLabel,
+  iconState,
   helperText,
   placeholder,
-  value,
   defaultValue,
-  ariaLabel,
-  onChange,
-  onBlur,
-  width,
-  showInfoIcon = false,
-  iconState,
-  rows = 5,
+  required = false,
+  showInfoIcon = false
 }: TextAreaProps) {
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -61,14 +45,11 @@ export default function TextArea({
   const widthStyle = width !== undefined ? { width } : undefined;
   const wrappedInputStyle = width !== undefined ? { width: "100%" } : undefined;
 
-  const resolvedIconState = iconState ?? (showInfoIcon ? "error" : undefined);
+  const resolvedIconState = iconState ?? (showInfoIcon ? IconState.ERROR : undefined);
   const textareaWithIconClassName = showInfoIcon
     ? `${styles.textarea} ${styles.textareaWithRightIcon}`
     : styles.textarea;
-  const textareaStateClassName =
-    resolvedIconState === "error"
-      ? `${textareaWithIconClassName} ${styles.textareaErrorState}`
-      : textareaWithIconClassName;
+  const textareaStateClassName = resolvedIconState === IconState.ERROR ? `${textareaWithIconClassName} ${styles.textareaErrorState}`: textareaWithIconClassName;
 
   if (!label && !helperText) {
     return (
@@ -87,12 +68,12 @@ export default function TextArea({
           onInput={handleAutoResize}
           onBlur={onBlur}
         />
-        {resolvedIconState === "error" ? (
+        {resolvedIconState === IconState.ERROR ? (
           <AiOutlineCloseCircle
             className={`${styles.rightIconTextarea} ${styles.rightIconError}`}
             aria-hidden="true"
           />
-        ) : resolvedIconState === "success" ? (
+        ) : resolvedIconState === IconState.SUCCESS ? (
           <AiOutlineCheckCircle
             className={`${styles.rightIconTextarea} ${styles.rightIconSuccess}`}
             aria-hidden="true"
@@ -114,12 +95,7 @@ export default function TextArea({
           <span aria-hidden="true" />
         )}
         {helperText ? (
-          <span
-            className={
-              resolvedIconState === "error"
-                ? `${styles.helperText} ${styles.helperTextError}`
-                : styles.helperText
-            }
+          <span className={resolvedIconState === IconState.ERROR ? `${styles.helperText} ${styles.helperTextError}`: styles.helperText}
           >
             {helperText}
           </span>
@@ -141,12 +117,12 @@ export default function TextArea({
           onInput={handleAutoResize}
           onBlur={onBlur}
         />
-        {resolvedIconState === "error" ? (
+        {resolvedIconState === IconState.ERROR ? (
           <AiOutlineCloseCircle
             className={`${styles.rightIconTextarea} ${styles.rightIconError}`}
             aria-hidden="true"
           />
-        ) : resolvedIconState === "success" ? (
+        ) : resolvedIconState === IconState.SUCCESS ? (
           <AiOutlineCheckCircle
             className={`${styles.rightIconTextarea} ${styles.rightIconSuccess}`}
             aria-hidden="true"

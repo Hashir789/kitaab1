@@ -31,34 +31,6 @@
   display: block;
 }
 
-.accountInfo {
-  gap: 10px;
-  display: flex;
-  padding: 12px 14px;
-  border-radius: 8px;
-  flex-direction: column;
-  background: rgb(255, 255, 255);
-  border: 1px solid rgb(230, 230, 230);
-}
-
-.accountRow {
-  gap: 8px;
-  display: flex;
-  font-size: 13px;
-  align-items: baseline;
-  justify-content: space-between;
-}
-
-.accountLabel {
-  color: rgb(140, 140, 140);
-}
-
-.accountValue {
-  text-align: right;
-  word-break: break-word;
-  color: rgb(80, 80, 80);
-}
-
 .separator {
   gap: 12px;
   display: flex;
@@ -82,28 +54,6 @@
   align-items: center;
   justify-content: center;
   color: rgb(100, 100, 100);
-}
-
-.helperLeft {
-  font-size: 12px;
-  line-height: 1.1;
-  min-height: 16px;
-  color: #e11d48;
-}
-
-.linkButton {
-  border: none;
-  cursor: pointer;
-  font-size: 12px;
-  text-align: right;
-  margin-top: -10px;
-  padding-right: 10px;
-  color: rgb(140, 140, 140);
-  background: rgb(245, 245, 245);
-}
-
-.linkButton:hover {
-  text-decoration: underline;
 }
 
 .label {
@@ -147,45 +97,6 @@
 }
 
 .input::placeholder {
-  color: rgb(180, 180, 180);
-}
-
-.select {
-  width: 100%;
-  height: 35px;
-  padding: 0 10px;
-  margin-top: 6px;
-  font-size: 16px;
-  appearance: none;
-  border-radius: 5px;
-  -moz-appearance: none;
-  background-image: none;
-  -webkit-appearance: none;
-  color: rgb(90, 90, 90);
-  background: rgb(255, 255, 255);
-  border: 1px solid rgb(230, 230, 230);
-}
-
-.select:hover {
-  border-color: rgb(100, 100, 100);
-  background-color: rgb(248, 248, 248);
-}
-
-.select:focus {
-  outline: none;
-  border-color: rgb(150, 150, 150);
-  background-color: rgb(248, 248, 248);
-}
-
-.select:required:invalid {
-  color: rgb(180, 180, 180);
-}
-
-.select option {
-  color: rgb(90, 90, 90);
-}
-
-.select option[disabled][value=""] {
   color: rgb(180, 180, 180);
 }
 

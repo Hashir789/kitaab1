@@ -1,16 +1,7 @@
 "use client";
 
-import { ReactNode } from "react";
 import styles from "./Tooltip.module.css";
-
-type TooltipPosition = "top" | "bottom" | "left" | "right";
-
-interface TooltipProps {
-  children: ReactNode;
-  text: string;
-  position?: TooltipPosition;
-  className?: string;
-}
+import { TooltipProps } from "./tooltip.interface";
 
 export default function Tooltip({
   children,

@@ -2,16 +2,7 @@
 
 import { useMemo } from "react";
 import styles from "./sliderdots.module.css";
-
-type SliderDotsProps = {
-  gap?: number;
-  count: number;
-  dotSize?: number;
-  ariaLabel?: string;
-  activeIndex: number;
-  holeBackground?: string;
-  onChange?: (index: number) => void;
-};
+import { SliderDotsProps } from "./sliderdots.interface";
 
 export default function SliderDots({
   count,

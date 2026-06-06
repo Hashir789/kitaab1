@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { useState } from "react";
 import { useFormik } from "formik";
 import styles from "./waitlist.module.css";
+import { toastType } from "@/constants/enums";
 import Toast from "@/components/secondary/toast/Toast";
 import Input from "@/components/secondary/input/Input";
 import { useSubmitVisitorEmail } from "@/hooks/visitors";
@@ -107,15 +108,15 @@ export default function WaitList() {
         </p>
       )}
       <Toast
-        type="success"
         show={showToast}
+        type={toastType.SUCCESS}
         title="You're on the waitlist."
         onClose={() => setShowToast(false)}
         message="We'll notify you when the app is ready."
       />
       <Toast
-        type="error"
         show={showErrorToast}
+        type={toastType.ERROR}
         title="Connectivity issue"
         message={errorToastMessage}
         onClose={() => setShowErrorToast(false)}

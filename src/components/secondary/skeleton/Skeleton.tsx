@@ -1,17 +1,6 @@
 import React from 'react';
 import styles from './skeleton.module.css';
-
-type SkeletonVariant = 'text' | 'avatar' | 'card' | 'circle' | 'rect' | 'button';
-
-interface SkeletonProps {
-  className?: string;
-  width?: number | string;
-  height?: number | string;
-  variant?: SkeletonVariant;
-  style?: React.CSSProperties;
-  borderRadius?: number | string;
-  animationSpeed?: 'slow' | 'normal' | 'fast';
-}
+import { SkeletonProps } from './skeleton.interface';
 
 const Skeleton: React.FC<SkeletonProps> = ({
   variant = 'text',

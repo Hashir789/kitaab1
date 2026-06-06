@@ -1,0 +1,135 @@
+.form {
+  gap: 16px;
+  display: flex;
+  padding: 20px;
+  border-radius: 12px;
+  flex-direction: column;
+  background: rgb(245, 245, 245);
+}
+
+.fullWidthStack {
+  gap: 16px;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.actionsLogin {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.separator {
+  gap: 12px;
+  display: flex;
+  font-size: 12px;
+  user-select: none;
+  align-items: center;
+  color: rgb(140, 140, 140);
+}
+
+.separatorLine {
+  height: 1px;
+  flex: 1 1 auto;
+  background: #e5e7eb;
+}
+
+.secondaryActions {
+  gap: 8px;
+  width: 100%;
+  display: flex;
+  font-size: 14px;
+  align-items: center;
+  justify-content: center;
+  color: rgb(100, 100, 100);
+}
+
+.linkButton {
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  text-align: right;
+  margin-top: -10px;
+  padding-right: 10px;
+  color: rgb(140, 140, 140);
+  background: rgb(245, 245, 245);
+}
+
+.linkButton:hover {
+  text-decoration: underline;
+}
+
+.otpInput {
+  width: 48px;
+  height: 56px;
+  outline: none;
+  font-size: 22px;
+  font-weight: 500;
+  text-align: center;
+  border-radius: 8px;
+  color: rgb(80, 80, 80);
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(230, 230, 230);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  transition: border-color 0.4s ease, background-color 0.4s ease, box-shadow 0.2s ease;
+}
+
+.otpInput:hover {
+  border-color: rgb(100, 100, 100);
+  background-color: rgb(248, 248, 248);
+}
+
+.otpInput:focus {
+  outline: none;
+  border-color: rgb(150, 150, 150);
+  background-color: rgb(248, 248, 248);
+}
+
+.otpInput:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 1px rgb(100, 100, 100);
+}
+
+.otpInput:disabled {
+  cursor: not-allowed;
+  background-color: rgb(245, 245, 245);
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid rgb(225, 225, 225);
+  border-top-color: rgb(120, 120, 120);
+  animation: spinnerRotate 0.8s linear infinite;
+}
+
+.resendLink {
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  background: transparent;
+  color: rgb(90, 90, 90);
+}
+
+.resendLink:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.resendLink:disabled {
+  color: rgb(170, 170, 170);
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8' fill='none' stroke='%23606060' stroke-width='3.5'/%3E%3Cpath d='M6 6l8 8' stroke='%23606060' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E") 10 10, not-allowed;
+}
+
+.resendLink:disabled:hover {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8' fill='none' stroke='%23606060' stroke-width='3.5'/%3E%3Cpath d='M6 6l8 8' stroke='%23606060' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E") 10 10, not-allowed;
+}
+
+@keyframes spinnerRotate {
+  to {
+    transform: rotate(360deg);
+  }
+}

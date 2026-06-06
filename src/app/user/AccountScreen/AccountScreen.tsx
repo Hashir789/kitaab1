@@ -1,15 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import { logout } from "@/utils/session";
-import styles from "./loginform.module.css";
+import styles from "./accountscreen.module.css";
 import type { UserSession } from "@/interfaces/user";
+import type { AccountScreenProps } from "./accountscreen.interface";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
-
-interface AccountScreenProps {
-  user: UserSession;
-  minHeight?: number;
-}
+import { accountButtonLabel, accountLabel, accountStatus } from "@/constants/placeholders";
 
 function formatGender(gender: UserSession["gender"]): string | undefined {
   if (!gender) return undefined;
@@ -18,7 +14,7 @@ function formatGender(gender: UserSession["gender"]): string | undefined {
 
 function formatTwoFactor(enabled: boolean | undefined): string | undefined {
   if (enabled === undefined) return undefined;
-  return enabled ? "Enabled" : "Disabled";
+  return enabled ? accountStatus.ENABLED : accountStatus.DISABLED;
 }
 
 export default function AccountScreen({ user, minHeight }: AccountScreenProps) {
@@ -28,24 +24,22 @@ export default function AccountScreen({ user, minHeight }: AccountScreenProps) {
   ];
 
   const gender = formatGender(user.gender);
-  if (gender) rows.push({ label: "Gender", value: gender });
+  if (gender) rows.push({ label: accountLabel.GENDER, value: gender });
 
-  if (user.dob) rows.push({ label: "Date of birth", value: user.dob });
+  if (user.dob) rows.push({ label: accountLabel.DATE_OF_BIRTH, value: user.dob });
 
   const twoFactor = formatTwoFactor(user.two_factor_enabled);
-  if (twoFactor) rows.push({ label: "Two-factor auth", value: twoFactor });
+  if (twoFactor) rows.push({ label: accountLabel.TWO_FACTOR_AUTH, value: twoFactor });
 
   return (
-    <div className={styles.form} style={minHeight !== undefined ? { minHeight } : undefined}>
-      <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
-        <Image
-          priority
-          width={75}
-          height={75}
-          alt="Kitaab logo"
-          src="/kitaab-logo.png"
-        />
-      </div>
+    <div
+      style={{
+        gap: 16,
+        display: "flex",
+        flexDirection: "column",
+        ...(minHeight !== undefined ? { minHeight } : {}),
+      }}
+    >
       <div
         style={{
           flex: 1,
@@ -55,9 +49,6 @@ export default function AccountScreen({ user, minHeight }: AccountScreenProps) {
           justifyContent: "center",
         }}
       >
-        <div style={{ textAlign: "center", fontSize: 18, fontWeight: 500, color: "rgb(80, 80, 80)" }}>
-          Your account
-        </div>
         <div className={styles.accountInfo}>
           {rows.map((row) => (
             <div key={row.label} className={styles.accountRow}>
@@ -70,7 +61,7 @@ export default function AccountScreen({ user, minHeight }: AccountScreenProps) {
       <div className={styles.actionsLogin}>
         <ButtonGroup activeIndex={0} buttonWidth={150}>
           <button type="button" onClick={logout}>
-            Log out
+            {accountButtonLabel.LOG_OUT}
           </button>
         </ButtonGroup>
       </div>

@@ -1,33 +1,10 @@
 "use client";
 
 import styles from "./input.module.css";
+import { InputProps } from "./input.inteface";
+import type { InputHTMLAttributes } from "react";
+import { iconState as IconState } from "@/constants/enums";
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
-import type { ChangeEvent, FocusEvent, InputHTMLAttributes, ReactNode } from "react";
-
-type InputProps = {
-  id: string;
-  name: string;
-  label?: string;
-  value?: string;
-  ariaLabel: string;
-  required?: boolean;
-  helperText?: string;
-  placeholder: string;
-  leftIcon?: ReactNode;
-  rightIcon?: ReactNode;
-  defaultValue?: string;
-  showInfoIcon?: boolean;
-  width?: string | number;
-  onLeftIconClick?: () => void;
-  onRightIconClick?: () => void;
-  leftIconSize?: number | string;
-  rightIconSize?: number | string;
-  iconState?: "error" | "success";
-  widthVariant?: "default" | "waitlist";
-  inputType?: "email" | "tel" | "text" | "password";
-  onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-};
 
 export default function Input({
   id,
@@ -77,7 +54,7 @@ export default function Input({
   const hasValidationRightIcon = !!iconState || showInfoIcon;
   const hasRightAdornment = hasCustomRightIcon || hasValidationRightIcon;
   const hasTwoRightIcons = hasCustomRightIcon && hasValidationRightIcon;
-  const resolvedIconState = iconState ?? (showInfoIcon ? "error" : undefined);
+  const resolvedIconState = iconState ?? (showInfoIcon ? IconState.ERROR : undefined);
   const baseInputClassName =
     widthVariant === "waitlist" ? `${styles.input} ${styles.waitlistWidth}` : styles.input;
   const inputWithIconClassName = [
@@ -88,10 +65,7 @@ export default function Input({
   ]
     .filter(Boolean)
     .join(" ");
-  const inputStateClassName =
-    resolvedIconState === "error"
-      ? `${inputWithIconClassName} ${styles.inputErrorState}`
-      : inputWithIconClassName;
+  const inputStateClassName = resolvedIconState === IconState.ERROR ? `${inputWithIconClassName} ${styles.inputErrorState}`: inputWithIconClassName;
 
   if (!label && !helperText) {
     return (
@@ -142,9 +116,9 @@ export default function Input({
             {rightIcon}
           </button>
         ) : null}
-        {resolvedIconState === "error" ? (
+        {resolvedIconState === IconState.ERROR ? (
           <AiOutlineCloseCircle className={`${styles.rightIcon} ${styles.rightIconError} ${hasCustomRightIcon ? styles.rightIconShifted : ""}`} aria-hidden="true" />
-        ) : resolvedIconState === "success" ? (
+        ) : resolvedIconState === IconState.SUCCESS ? (
           <AiOutlineCheckCircle className={`${styles.rightIcon} ${styles.rightIconSuccess} ${hasCustomRightIcon ? styles.rightIconShifted : ""}`} aria-hidden="true" />
         ) : null}
       </div>
@@ -164,11 +138,7 @@ export default function Input({
         )}
         {helperText ? (
           <span
-            className={
-              resolvedIconState === "error"
-                ? `${styles.helperText} ${styles.helperTextError}`
-                : styles.helperText
-            }
+            className={ resolvedIconState === IconState.ERROR ? `${styles.helperText} ${styles.helperTextError}`: styles.helperText }
           >
             {helperText}
           </span>
@@ -221,9 +191,9 @@ export default function Input({
             {rightIcon}
           </button>
         ) : null}
-        {resolvedIconState === "error" ? (
+        {resolvedIconState === IconState.ERROR ? (
           <AiOutlineCloseCircle className={`${styles.rightIcon} ${styles.rightIconError} ${hasCustomRightIcon ? styles.rightIconShifted : ""}`} aria-hidden="true" />
-        ) : resolvedIconState === "success" ? (
+        ) : resolvedIconState === IconState.SUCCESS ? (
           <AiOutlineCheckCircle className={`${styles.rightIcon} ${styles.rightIconSuccess} ${hasCustomRightIcon ? styles.rightIconShifted : ""}`} aria-hidden="true" />
         ) : null}
       </div>

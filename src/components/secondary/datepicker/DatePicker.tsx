@@ -2,24 +2,12 @@
 
 import styles from "./datepicker.module.css";
 import { FaRegCalendarAlt } from "react-icons/fa";
+import { DatePickerProps } from "./datepicker.interface";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { BiChevronLeft, BiChevronRight, BiChevronsLeft, BiChevronsRight } from "react-icons/bi";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
-
-type DatePickerProps = {
-  id: string;
-  label: string;
-  value: string;
-  maxDate?: Date;
-  isError?: boolean;
-  ariaLabel?: string;
-  required?: boolean;
-  helperText?: string;
-  placeholder?: string;
-  onChange: (value: string) => void;
-};
 
 function pad2(n: number) {
   return String(n).padStart(2, "0");

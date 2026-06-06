@@ -1,5 +1,4 @@
-import { localStorageKeys } from "@/constants/enums";
-import type { DeviceType } from "@/interfaces/visitors";
+import { deviceType, localStorageKeys } from "@/constants/enums";
 
 export function getOrCreateAnonymousId(): string {
   let id = window.localStorage.getItem(localStorageKeys.ANONYMOUS_ID);
@@ -14,17 +13,17 @@ export function getOrCreateAnonymousId(): string {
   return id;
 }
 
-export function getDeviceType(): DeviceType {
+export function getDeviceType(): deviceType {
   const ua = window.navigator.userAgent;
   const isIpadOs = /Macintosh/.test(ua) && window.navigator.maxTouchPoints > 1;
 
   if (isIpadOs || /iPad|Tablet|PlayBook|Silk/i.test(ua) || (/Android/i.test(ua) && !/Mobi/i.test(ua))) {
-    return "tablet";
+    return deviceType.TABLET;
   }
   if (/Mobi|Android|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
-    return "mobile";
+    return deviceType.MOBILE;
   }
-  return "desktop";
+  return deviceType.DESKTOP;
 }
 
 export function getTimezone(): string {

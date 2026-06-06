@@ -11,7 +11,7 @@ export const ENDPOINTS = {
     OTP_VERIFY: "auth/otp-verify",
     RESEND_LINK: "auth/resend-link",
     EMAIL_VERIFY: "auth/email-verify",
-    FORGOT_PASSWORD: "auth/forgot-password",
-    RESET_PASSWORD: "auth/reset-password"
+    RESET_PASSWORD: "auth/reset-password",
+    FORGOT_PASSWORD: "auth/forgot-password"
   }
 } as const;

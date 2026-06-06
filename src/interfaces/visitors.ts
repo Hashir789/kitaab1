@@ -1,11 +1,11 @@
-export type DeviceType = "desktop" | "mobile" | "tablet";
+import type { deviceType } from "@/constants/enums";
 
 export interface TrackVisitorPayload {
   clicks?: number;
   timezone: string;
   navigations?: number;
   anonymous_id: string;
-  device_type: DeviceType;
+  device_type: deviceType;
 }
 
 export interface SubmitVisitorEmailPayload {

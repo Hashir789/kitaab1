@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import Auth from "./Auth";
+import Auth from "./Auth/Auth";
 
 export default function AuthPage() {
   return (

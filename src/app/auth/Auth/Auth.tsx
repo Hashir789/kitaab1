@@ -1,21 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import LoginForm from "./LoginForm";
-import SignupForm from "./SignupForm";
 import styles from "./auth.module.css";
 import { useEffect, useState } from "react";
-import AccountScreen from "./AccountScreen";
 import { useAppSelector } from "@/store/hooks";
-import { getUserSession } from "@/utils/session";
-import { useSearchParams } from "next/navigation";
-import ResetPasswordForm from "./ResetPasswordForm";
-import type { UserSession } from "@/interfaces/user";
+import LoginForm from "../LoginForm/LoginForm";
+import { isAuthenticated } from "@/utils/session";
+import SignupForm from "../SignupForm/SignupForm";
 import Toast from "@/components/secondary/toast/Toast";
+import { authMode, toastType } from "@/constants/enums";
+import { useRouter, useSearchParams } from "next/navigation";
+import { authLink, authToast } from "@/constants/placeholders";
 import FlipCard from "@/components/secondary/flipper/FlipCard";
+import ResetPasswordForm from "../ResetPasswordForm/ResetPasswordForm";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
 
 export default function Auth() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const resetToken = searchParams.get("token") ?? "";
   const isReset = Boolean(resetToken);
@@ -24,16 +25,17 @@ export default function Auth() {
   const viewportWidth = useAppSelector((state) => state.ui.viewportWidth);
   const computedButtonWidth = Math.max(100, viewportWidth - 52);
   const [mounted, setMounted] = useState(false);
-  const [sessionUser, setSessionUser] = useState<UserSession | null>(null);
+  const [loggedIn, setLoggedIn] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [errorToastMessage, setErrorToastMessage] = useState("");
 
   useEffect(() => {
     setMounted(true);
-    if (!isReset) {
-      setSessionUser(getUserSession());
+    if (!isReset && isAuthenticated()) {
+      setLoggedIn(true);
+      router.replace("/user/1");
     }
-  }, [isReset]);
+  }, [isReset, router]);
 
   const returnButtonWidth = mounted && isBelow710 ? computedButtonWidth : 150;
 
@@ -47,19 +49,17 @@ export default function Auth() {
     <div className={styles.container}>
       <div className={styles.return}>
         <ButtonGroup buttonWidth={returnButtonWidth}>
-          <Link href="/">Return to Home</Link>
+          <Link href="/">{authLink.RETURN_HOME}</Link>
         </ButtonGroup>
       </div>
       <FlipCard
         width={380}
-        flipped={isReset ? false : mode === "signup"}
-        initialFlipped={isReset ? false : mode === "signup"}
+        flipped={isReset ? false : mode === authMode.SIGNUP}
+        initialFlipped={isReset ? false : mode === authMode.SIGNUP}
         front={
           isReset ? (
             <ResetPasswordForm token={resetToken} onError={handleAuthError} />
-          ) : mounted && sessionUser ? (
-            <AccountScreen user={sessionUser} />
-          ) : (
+          ) : mounted && loggedIn ? null : (
             <LoginForm onError={handleAuthError} />
           )
         }
@@ -69,10 +69,10 @@ export default function Auth() {
       />
       <Toast
         show={showErrorToast}
-        type="error"
-        title={isReset ? "Password reset failed" : "Authentication failed"}
+        type={toastType.ERROR}
         message={errorToastMessage}
         onClose={() => setShowErrorToast(false)}
+        title={isReset ? authToast.RESET_FAILED : authToast.AUTH_FAILED}
       />
     </div>
   );

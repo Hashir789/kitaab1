@@ -29,4 +29,3 @@ export default function NavbarShadowController() {
 
   return null;
 }
-

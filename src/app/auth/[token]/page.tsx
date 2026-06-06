@@ -1,8 +1,5 @@
 import { redirect } from "next/navigation";
-
-interface ResetPasswordRedirectPageProps {
-  params: Promise<{ token: string }>;
-}
+import { ResetPasswordRedirectPageProps } from "./page.interface"
 
 export default async function ResetPasswordRedirectPage({
   params,

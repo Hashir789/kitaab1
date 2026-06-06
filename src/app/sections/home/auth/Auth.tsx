@@ -3,6 +3,7 @@
 import styles from "./auth.module.css";
 import { setMode } from "@/store/uiSlice";
 import { useRouter } from "next/navigation";
+import { authMode } from "@/constants/enums";
 import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
@@ -42,13 +43,13 @@ export default function Auth() {
           activeIndex={1}
         >
           <button onClick={() => { 
-            dispatch(setMode("login"));
+            dispatch(setMode(authMode.LOGIN));
             router.push("/auth"); 
           }}>
             Login
           </button>
           <button onClick={() => { 
-            dispatch(setMode("signup"));
+            dispatch(setMode(authMode.SIGNUP));
             router.push("/auth"); 
           }}>
             Signup

@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useTrackVisitor } from "@/hooks/visitors";
 import type { TrackVisitorPayload } from "@/interfaces/visitors";
-import { localStorageKeys, sessionStorageKeys } from "@/constants/enums";
+import { localStorageKeys, sessionStorageKeys, sessionStorageValues } from "@/constants/enums";
 import { getDeviceType, getOrCreateAnonymousId, getTimezone, readTrackedCounts, resetTrackedCounts } from "@/utils/visitor";
 
 function incrementCounter(key: localStorageKeys): void {
@@ -27,9 +27,9 @@ export default function SessionTracker() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (sentRef.current) return;
-    if (window.sessionStorage.getItem(sessionStorageKeys.VISITOR_TRACKED) === "1") return;
+    if (window.sessionStorage.getItem(sessionStorageKeys.VISITOR_TRACKED) === sessionStorageValues.TRACKED) return;
     sentRef.current = true;
-    window.sessionStorage.setItem(sessionStorageKeys.VISITOR_TRACKED, "1");
+    window.sessionStorage.setItem(sessionStorageKeys.VISITOR_TRACKED, sessionStorageValues.TRACKED);
 
     const { clicks, navigations } = readTrackedCounts();
     resetTrackedCounts();

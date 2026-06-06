@@ -3,23 +3,21 @@
 import * as Yup from "yup";
 import Image from "next/image";
 import { useFormik } from "formik";
+import { useRouter } from "next/navigation";
 import styles from "./loginform.module.css";
-import AccountScreen from "./AccountScreen";
+import { setUserSession } from "@/utils/session";
 import Input from "@/components/secondary/input/Input";
-import { setUserSession, getUserSession } from "@/utils/session";
+import type { LoginFormProps } from "./loginform.interface";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { FaLock, FaEye, FaEyeSlash, FaEnvelope, FaUser } from "react-icons/fa";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
+import { FaLock, FaEye, FaEyeSlash, FaEnvelope, FaUser } from "react-icons/fa";
 import { useForgotPassword, useLogin, useOtpVerify, useResendLink, useUpdate2fa } from "@/hooks/auth";
-
-interface LoginFormProps {
-  onError?: (message: string) => void;
-}
-
-type Step = "login" | "otp" | "ask_2fa" | "done" | "forgot_password" | "forgot_password_sent";
+import { step as LoginStep, loginField, iconState as IconState, forgotPasswordField } from "@/constants/enums";
+import { authAria, authAriaDigit, authButtonLabel, authDescription, authHeading, authLabel, authLink, authMisc, authPlaceholder, authValidation } from "@/constants/placeholders";
 
 export default function LoginForm({ onError }: LoginFormProps) {
-  const [step, setStep] = useState<Step>("login");
+  const router = useRouter();
+  const [step, setStep] = useState<LoginStep>(LoginStep.LOGIN);
   const [showPassword, setShowPassword] = useState(false);
   const [otpDigits, setOtpDigits] = useState<string[]>(["", "", "", ""]);
   const [otpInitializing, setOtpInitializing] = useState(false);
@@ -44,7 +42,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
   const [lockedHeightPx, setLockedHeightPx] = useState<number | undefined>(undefined);
 
   useLayoutEffect(() => {
-    if (step === "login" && formRef.current) {
+    if (step === LoginStep.LOGIN && formRef.current) {
       setLockedHeightPx(formRef.current.offsetHeight);
     }
   }, [step]);
@@ -78,19 +76,19 @@ export default function LoginForm({ onError }: LoginFormProps) {
   }, [step]);
 
   const validationSchema = Yup.object({
-    email: Yup.string()
+    [loginField.EMAIL]: Yup.string()
       .matches(
         /^[a-zA-Z0-9]([a-zA-Z0-9.]*[a-zA-Z0-9])?@([a-zA-Z0-9]+\.)+[a-zA-Z0-9]{2,}$/,
-        "Please enter a valid email address"
+        authValidation.EMAIL_INVALID
       )
-      .required("Email is required"),
-    password: Yup.string()
-      .min(8, "Please enter at least 8 characters")
-      .matches(/[a-z]/, "Please enter at least a lowercase")
-      .matches(/[A-Z]/, "Please enter at least an uppercase")
-      .matches(/[0-9]/, "Please enter at least a number")
-      .matches(/[^A-Za-z0-9]/, "Please enter a special character")
-      .required("Password is required"),
+      .required(authValidation.EMAIL_REQUIRED),
+    [loginField.PASSWORD]: Yup.string()
+      .min(8, authValidation.PASSWORD_MIN_8)
+      .matches(/[a-z]/, authValidation.PASSWORD_LOWERCASE)
+      .matches(/[A-Z]/, authValidation.PASSWORD_UPPERCASE)
+      .matches(/[0-9]/, authValidation.PASSWORD_NUMBER)
+      .matches(/[^A-Za-z0-9]/, authValidation.PASSWORD_SPECIAL)
+      .required(authValidation.PASSWORD_REQUIRED),
   });
 
   const performLogin = (email: string, password: string) => {
@@ -105,7 +103,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
             setOtpDigits(["", "", "", ""]);
             setResendSent(false);
             setOtpInitializing(true);
-            setStep("otp");
+            setStep(LoginStep.OTP);
             resendVerificationLink(
               { email, full_name: data.full_name },
               {
@@ -114,7 +112,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
               }
             );
           } else {
-            setStep("ask_2fa");
+            setStep(LoginStep.ASK_2FA);
           }
         },
         onError: (error) => {
@@ -124,86 +122,93 @@ export default function LoginForm({ onError }: LoginFormProps) {
     );
   };
 
-  const formik = useFormik<{ email: string; password: string }>({
-    initialValues: { email: "", password: "" },
+  const formik = useFormik<Record<loginField, string>>({
+    initialValues: { [loginField.EMAIL]: "", [loginField.PASSWORD]: "" },
     validationSchema,
     validateOnChange: true,
     validateOnBlur: true,
     onSubmit: (values) => {
-      performLogin(values.email, values.password);
+      performLogin(values[loginField.EMAIL], values[loginField.PASSWORD]);
     }
   });
 
   const forgotValidationSchema = Yup.object({
-    full_name: Yup.string()
+    [forgotPasswordField.FULL_NAME]: Yup.string()
       .trim()
-      .min(2, "Please enter at least 2 characters")
-      .required("Full name is required"),
-    email: Yup.string()
+      .min(2, authValidation.FULL_NAME_MIN_2)
+      .required(authValidation.FULL_NAME_REQUIRED),
+    [forgotPasswordField.EMAIL]: Yup.string()
       .matches(
         /^[a-zA-Z0-9]([a-zA-Z0-9.]*[a-zA-Z0-9])?@([a-zA-Z0-9]+\.)+[a-zA-Z0-9]{2,}$/,
-        "Please enter a valid email address"
+        authValidation.EMAIL_INVALID
       )
-      .required("Email is required"),
+      .required(authValidation.EMAIL_REQUIRED),
   });
 
-  const forgotFormik = useFormik<{ full_name: string; email: string }>({
-    initialValues: { full_name: "", email: "" },
+  const forgotFormik = useFormik<Record<forgotPasswordField, string>>({
+    initialValues: { [forgotPasswordField.FULL_NAME]: "", [forgotPasswordField.EMAIL]: "" },
     validationSchema: forgotValidationSchema,
     validateOnChange: true,
     validateOnBlur: true,
     onSubmit: (values) => {
       if (sendingForgotPassword) return;
       sendForgotPassword(
-        { full_name: values.full_name.trim(), email: values.email },
         {
-          onSuccess: () => setStep("forgot_password_sent"),
+          full_name: values[forgotPasswordField.FULL_NAME].trim(),
+          email: values[forgotPasswordField.EMAIL],
+        },
+        {
+          onSuccess: () => setStep(LoginStep.FORGOT_PASSWORD_SENT),
           onError: (error) => onError?.(error.message),
         }
       );
     },
   });
 
-  const showForgotFieldError = (field: "full_name" | "email"): boolean =>
+  const showForgotFieldError = (field: forgotPasswordField): boolean =>
     !!forgotFormik.errors[field] &&
     (forgotFormik.submitCount > 0 || !!forgotFormik.touched[field] || !!forgotFormik.values[field]);
 
-  const forgotFullNameHelper = showForgotFieldError("full_name") ? forgotFormik.errors.full_name : undefined;
-  const forgotEmailHelper = showForgotFieldError("email") ? forgotFormik.errors.email : undefined;
+  const forgotFullNameHelper = showForgotFieldError(forgotPasswordField.FULL_NAME)
+    ? forgotFormik.errors[forgotPasswordField.FULL_NAME]
+    : undefined;
+  const forgotEmailHelper = showForgotFieldError(forgotPasswordField.EMAIL)
+    ? forgotFormik.errors[forgotPasswordField.EMAIL]
+    : undefined;
 
-  const getForgotIconState = (field: "full_name" | "email"): "error" | "success" | undefined => {
-    if (showForgotFieldError(field)) return "error";
+  const getForgotIconState = (field: forgotPasswordField): IconState | undefined => {
+    if (showForgotFieldError(field)) return IconState.ERROR;
     if (!forgotFormik.values[field]) return undefined;
-    return "success";
+    return IconState.SUCCESS;
   };
 
   const handleDemoLogin = () => {
     const email = process.env.NEXT_PUBLIC_DEMO_EMAIL ?? "";
     const password = process.env.NEXT_PUBLIC_DEMO_PASSWORD ?? "";
-    formik.setValues({ email, password });
+    formik.setValues({ [loginField.EMAIL]: email, [loginField.PASSWORD]: password });
     performLogin(email, password);
   };
 
-  const showFieldError = (field: "email" | "password"): boolean =>
+  const showFieldError = (field: loginField): boolean =>
     !!formik.errors[field] &&
     (formik.submitCount > 0 || !!formik.touched[field] || !!formik.values[field]);
 
-  const emailHelper = showFieldError("email") ? formik.errors.email : undefined;
-  const passwordHelper = showFieldError("password") ? formik.errors.password : undefined;
+  const emailHelper = showFieldError(loginField.EMAIL) ? formik.errors[loginField.EMAIL] : undefined;
+  const passwordHelper = showFieldError(loginField.PASSWORD) ? formik.errors[loginField.PASSWORD] : undefined;
 
-  const getIconState = (field: "email" | "password"): "error" | "success" | undefined => {
-    if (showFieldError(field)) return "error";
+  const getIconState = (field: loginField): IconState | undefined => {
+    if (showFieldError(field)) return IconState.ERROR;
     if (!formik.values[field]) return undefined;
-    return "success";
+    return IconState.SUCCESS;
   };
 
   const finishLogin = (twoFactorEnabled: boolean) => {
     setUserSession({
       full_name: userFullName,
-      email: formik.values.email,
+      email: formik.values[loginField.EMAIL],
       two_factor_enabled: twoFactorEnabled,
     });
-    setStep("done");
+    router.replace("/user/1");
   };
 
   const handleEnable2fa = () => {
@@ -256,7 +261,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
     const otp = otpDigits.join("");
     if (otp.length !== otpDigits.length) return;
     verifyOtp(
-      { email: formik.values.email, otp },
+      { email: formik.values[loginField.EMAIL], otp },
       {
         onSuccess: () => finishLogin(true),
         onError: (error) => onError?.(error.message),
@@ -268,7 +273,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
     if (resendingLink) return;
     setResendSent(false);
     resendVerificationLink(
-      { email: formik.values.email, full_name: fullName },
+      { email: formik.values[loginField.EMAIL], full_name: fullName },
       {
         onSuccess: () => {
           setResendSent(true);
@@ -279,7 +284,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
     );
   };
 
-  if (step === "otp") {
+  if (step === LoginStep.OTP) {
     const otpComplete = otpDigits.every((d) => d !== "");
     return (
       <div
@@ -291,8 +296,8 @@ export default function LoginForm({ onError }: LoginFormProps) {
             priority
             width={75}
             height={75}
-            alt="Kitaab logo"
             src="/kitaab-logo.png"
+            alt={authAria.KITAAB_LOGO}
           />
         </div>
         {otpInitializing ? (
@@ -308,10 +313,10 @@ export default function LoginForm({ onError }: LoginFormProps) {
           >
             <div className={styles.spinner} aria-hidden="true" />
             <div style={{ textAlign: "center", fontSize: 18, fontWeight: 500, color: "rgb(80, 80, 80)" }}>
-              Sending verification code
+              {authHeading.SENDING_VERIFICATION_CODE}
             </div>
             <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)", lineHeight: 1.4 }}>
-              Hang on while we email your code...
+              {authDescription.OTP_SENDING}
             </div>
           </div>
         ) : (
@@ -326,32 +331,32 @@ export default function LoginForm({ onError }: LoginFormProps) {
               }}
             >
               <div style={{ textAlign: "center", fontSize: 18, fontWeight: 500, color: "rgb(80, 80, 80)" }}>
-                Verify it&apos;s you
+                {authHeading.VERIFY_ITS_YOU}
               </div>
               <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)", lineHeight: 1.4 }}>
-                Enter the 4-digit code we sent to <strong style={{ color: "rgb(90, 90, 90)" }}>{formik.values.email}</strong>.
+                {authDescription.OTP_CODE_PREFIX}<strong style={{ color: "rgb(90, 90, 90)" }}>{formik.values[loginField.EMAIL]}</strong>{authDescription.OTP_CODE_SUFFIX}
               </div>
               <div style={{ display: "flex", justifyContent: "center", gap: 10 }}>
                 {otpDigits.map((digit, index) => (
                   <input
                     key={index}
-                    ref={(el) => { otpInputRefs.current[index] = el; }}
                     type="text"
-                    inputMode="numeric"
-                    autoComplete="one-time-code"
                     maxLength={1}
                     value={digit}
-                    onChange={(e) => handleOtpChange(index, e.target.value)}
-                    onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                    onPaste={handleOtpPaste}
+                    inputMode="numeric"
                     disabled={verifyingOtp}
-                    aria-label={`Digit ${index + 1}`}
+                    onPaste={handleOtpPaste}
                     className={styles.otpInput}
+                    autoComplete="one-time-code"
+                    aria-label={authAriaDigit(index)}
+                    onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                    ref={(el) => { otpInputRefs.current[index] = el; }}
+                    onChange={(e) => handleOtpChange(index, e.target.value)}
                   />
                 ))}
               </div>
               <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)" }}>
-                Didn&apos;t get the code?{" "}
+                {authDescription.RESEND_CODE_PROMPT}{" "}
                 <button
                   type="button"
                   className={styles.resendLink}
@@ -359,7 +364,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
                   disabled={resendingLink || verifyingOtp}
                   aria-busy={resendingLink}
                 >
-                  {resendingLink ? "Sending..." : resendSent ? "Sent" : "Resend link"}
+                  {resendingLink ? authButtonLabel.SENDING : resendSent ? authButtonLabel.SENT : authButtonLabel.RESEND_LINK}
                 </button>
               </div>
             </div>
@@ -371,7 +376,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
                   disabled={!otpComplete || verifyingOtp}
                   aria-busy={verifyingOtp}
                 >
-                  {verifyingOtp ? "Verifying..." : "Verify"}
+                  {verifyingOtp ? authButtonLabel.VERIFYING : authButtonLabel.VERIFY}
                 </button>
               </ButtonGroup>
             </div>
@@ -381,7 +386,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
     );
   }
 
-  if (step === "ask_2fa") {
+  if (step === LoginStep.ASK_2FA) {
     return (
       <div
         className={styles.form}
@@ -392,7 +397,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
             priority
             width={75}
             height={75}
-            alt="Kitaab logo"
+            alt={authAria.KITAAB_LOGO}
             src="/kitaab-logo.png"
           />
         </div>
@@ -406,10 +411,10 @@ export default function LoginForm({ onError }: LoginFormProps) {
           }}
         >
           <div style={{ textAlign: "center", fontSize: 18, fontWeight: 500, color: "rgb(80, 80, 80)" }}>
-            Enable two-factor authentication?
+            {authHeading.ENABLE_TWO_FACTOR_QUESTION}
           </div>
           <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)", lineHeight: 1.4 }}>
-            Add an extra layer of security to your account. You'll be asked for a code sent to your email each time you login.
+            {authDescription.LOGIN_TWO_FACTOR}
           </div>
         </div>
         <div ref={twoFaButtonWrapperRef} style={{ width: "100%", display: "flex", justifyContent: "center" }}>
@@ -419,7 +424,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
               onClick={handleSkip2fa}
               disabled={updating2fa}
             >
-              Not now
+              {authButtonLabel.NOT_NOW}
             </button>
             <button
               type="button"
@@ -427,7 +432,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
               disabled={updating2fa}
               aria-busy={updating2fa}
             >
-              {updating2fa ? "Enabling..." : "Enable"}
+              {updating2fa ? authButtonLabel.ENABLING : authButtonLabel.ENABLE}
             </button>
           </ButtonGroup>
         </div>
@@ -435,7 +440,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
     );
   }
 
-  if (step === "forgot_password") {
+  if (step === LoginStep.FORGOT_PASSWORD) {
     return (
       <form
         className={styles.form}
@@ -448,7 +453,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
             priority
             width={75}
             height={75}
-            alt="Kitaab logo"
+            alt={authAria.KITAAB_LOGO}
             src="/kitaab-logo.png"
           />
         </div>
@@ -462,45 +467,45 @@ export default function LoginForm({ onError }: LoginFormProps) {
           }}
         >
           <div style={{ textAlign: "center", fontSize: 18, fontWeight: 500, color: "rgb(80, 80, 80)" }}>
-            Reset your password
+            {authHeading.RESET_PASSWORD}
           </div>
           <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)", lineHeight: 1.4 }}>
-            Enter your full name and email. We&apos;ll send a reset link to your inbox.
+            {authDescription.FORGOT_PASSWORD}
           </div>
           <div className={styles.fullWidthStack}>
             <Input
               required
               width="100%"
-              name="full_name"
-              label="Full name"
               inputType="text"
-              ariaLabel="Full name"
               id="forgot-full-name"
-              placeholder="John Doe"
               leftIconSize={14}
               leftIcon={<FaUser />}
-              helperText={forgotFullNameHelper}
+              label={authLabel.FULL_NAME}
+              ariaLabel={authAria.FULL_NAME}
               onBlur={forgotFormik.handleBlur}
-              value={forgotFormik.values.full_name}
+              helperText={forgotFullNameHelper}
+              name={forgotPasswordField.FULL_NAME}
               onChange={forgotFormik.handleChange}
-              iconState={getForgotIconState("full_name")}
+              placeholder={authPlaceholder.FULL_NAME}
+              value={forgotFormik.values[forgotPasswordField.FULL_NAME]}
+              iconState={getForgotIconState(forgotPasswordField.FULL_NAME)}
             />
             <Input
               required
-              name="email"
               width="100%"
-              label="Email"
               inputType="email"
-              ariaLabel="Email"
               id="forgot-email"
-              placeholder="your@mail.com"
               leftIconSize={14}
+              label={authLabel.EMAIL}
               leftIcon={<FaEnvelope />}
+              ariaLabel={authAria.EMAIL}
               helperText={forgotEmailHelper}
               onBlur={forgotFormik.handleBlur}
-              value={forgotFormik.values.email}
+              name={forgotPasswordField.EMAIL}
+              placeholder={authPlaceholder.EMAIL}
               onChange={forgotFormik.handleChange}
-              iconState={getForgotIconState("email")}
+              value={forgotFormik.values[forgotPasswordField.EMAIL]}
+              iconState={getForgotIconState(forgotPasswordField.EMAIL)}
             />
           </div>
         </div>
@@ -508,17 +513,17 @@ export default function LoginForm({ onError }: LoginFormProps) {
           <ButtonGroup activeIndex={1} buttonWidth={forgotButtonWidthPx}>
             <button
               type="button"
-              onClick={() => setStep("login")}
+              onClick={() => setStep(LoginStep.LOGIN)}
               disabled={sendingForgotPassword}
             >
-              Back
+              {authButtonLabel.BACK}
             </button>
             <button
               type="submit"
               disabled={sendingForgotPassword}
               aria-busy={sendingForgotPassword}
             >
-              {sendingForgotPassword ? "Sending..." : "Send link"}
+              {sendingForgotPassword ? authButtonLabel.SENDING : authButtonLabel.SEND_LINK}
             </button>
           </ButtonGroup>
         </div>
@@ -526,7 +531,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
     );
   }
 
-  if (step === "forgot_password_sent") {
+  if (step === LoginStep.FORGOT_PASSWORD_SENT) {
     return (
       <div
         className={styles.form}
@@ -537,8 +542,8 @@ export default function LoginForm({ onError }: LoginFormProps) {
             priority
             width={75}
             height={75}
-            alt="Kitaab logo"
             src="/kitaab-logo.png"
+            alt={authAria.KITAAB_LOGO}
           />
         </div>
         <div
@@ -551,20 +556,14 @@ export default function LoginForm({ onError }: LoginFormProps) {
           }}
         >
           <div style={{ textAlign: "center", fontSize: 18, fontWeight: 500, color: "rgb(80, 80, 80)" }}>
-            Check your email
+            {authHeading.CHECK_EMAIL}
           </div>
           <div style={{ textAlign: "center", fontSize: 13, color: "rgb(140, 140, 140)", lineHeight: 1.4 }}>
-            A reset link has been sent to <strong style={{ color: "rgb(90, 90, 90)" }}>{forgotFormik.values.email}</strong>. You may close this tab.
+            {authDescription.FORGOT_LINK_SENT_PREFIX}<strong style={{ color: "rgb(90, 90, 90)" }}>{forgotFormik.values[forgotPasswordField.EMAIL]}</strong>{authDescription.FORGOT_LINK_SENT_SUFFIX}
           </div>
         </div>
       </div>
     );
-  }
-
-  if (step === "done") {
-    const user = getUserSession();
-    if (!user) return null;
-    return <AccountScreen user={user} minHeight={lockedHeightPx} />;
   }
 
   return (
@@ -574,45 +573,45 @@ export default function LoginForm({ onError }: LoginFormProps) {
           priority
           width={75}
           height={75}
-          alt="Kitaab logo"
           src="/kitaab-logo.png"
+          alt={authAria.KITAAB_LOGO}
         />
       </div>
       <div className={styles.fullWidthStack}>
         <Input
           required
-          name="email"
           width="100%"
-          label="Email"
           id="login-email"
           inputType="email"
-          ariaLabel="Email"
-          placeholder="your@mail.com"
-          helperText={emailHelper}
-          onBlur={formik.handleBlur}
-          value={formik.values.email}
-          onChange={formik.handleChange}
-          iconState={getIconState("email")}
           leftIconSize={14}
+          name={loginField.EMAIL}
+          label={authLabel.EMAIL}
+          helperText={emailHelper}
           leftIcon={<FaEnvelope />}
+          ariaLabel={authAria.EMAIL}
+          onBlur={formik.handleBlur}
+          onChange={formik.handleChange}
+          placeholder={authPlaceholder.EMAIL}
+          value={formik.values[loginField.EMAIL]}
+          iconState={getIconState(loginField.EMAIL)}
         />
         <Input
           required
           width="100%"
-          name="password"
-          label="Password"
           id="login-password"
-          ariaLabel="Password"
-          placeholder="Pass@123"
-          inputType={showPassword ? "text" : "password"}
-          onBlur={formik.handleBlur}
-          helperText={passwordHelper}
-          value={formik.values.password}
-          onChange={formik.handleChange}
-          iconState={getIconState("password")}
           leftIconSize={14}
           rightIconSize={16}
           leftIcon={<FaLock />}
+          label={authLabel.PASSWORD}
+          name={loginField.PASSWORD}
+          onBlur={formik.handleBlur}
+          helperText={passwordHelper}
+          ariaLabel={authAria.PASSWORD}
+          onChange={formik.handleChange}
+          placeholder={authPlaceholder.PASSWORD}
+          value={formik.values[loginField.PASSWORD]}
+          iconState={getIconState(loginField.PASSWORD)}
+          inputType={showPassword ? "text" : "password"}
           onRightIconClick={() => setShowPassword((s) => !s)}
           rightIcon={showPassword ? <FaEyeSlash /> : <FaEye />}
         />
@@ -622,10 +621,10 @@ export default function LoginForm({ onError }: LoginFormProps) {
         className={styles.linkButton}
         onClick={() => {
           forgotFormik.resetForm();
-          setStep("forgot_password");
+          setStep(LoginStep.FORGOT_PASSWORD);
         }}
       >
-        Forgot password?
+        {authLink.FORGOT_PASSWORD}
       </button>
       <div ref={loginButtonWrapperRef} className={styles.actionsLogin}>
         <ButtonGroup activeIndex={1} buttonWidth={loginButtonWidthPx}>
@@ -634,30 +633,30 @@ export default function LoginForm({ onError }: LoginFormProps) {
             onClick={handleDemoLogin}
             disabled={submitting}
           >
-            Demo Account
+            {authButtonLabel.DEMO_ACCOUNT}
           </button>
           <button
             type="submit"
             disabled={submitting}
             aria-busy={submitting}
           >
-            {submitting ? "Logging in..." : "Login"}
+            {submitting ? authButtonLabel.LOGGING_IN : authButtonLabel.LOGIN}
           </button>
         </ButtonGroup>
       </div>
       <div className={styles.separator}>
         <div className={styles.separatorLine} />
-        <span>OR</span>
+        <span>{authMisc.OR}</span>
         <div className={styles.separatorLine} />
       </div>
       <div className={styles.secondaryActions}>
-        <span>Don't have an account?</span>
+        <span>{authMisc.NO_ACCOUNT}</span>
         <ButtonGroup buttonWidth={100}>
           <button
             type="button"
             data-flip
           >
-            Sign up
+            {authButtonLabel.SIGN_UP}
           </button>
         </ButtonGroup>
       </div>

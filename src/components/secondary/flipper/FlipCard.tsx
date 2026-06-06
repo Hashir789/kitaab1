@@ -1,18 +1,8 @@
 "use client";
 
-import React, { ReactNode, useCallback, useLayoutEffect, useRef, useState } from "react";
 import styles from "./flipcard.module.css";
-
-type FlipCardProps = {
-  front: ReactNode;
-  back: ReactNode;
-  ariaLabel?: string;
-  className?: string;
-  flipped?: boolean;
-  width?: number | string;
-  height?: number | string;
-  initialFlipped?: boolean;
-};
+import { FlipCardProps } from "./flipcard.interface";
+import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
 
 export default function FlipCard({
   front,

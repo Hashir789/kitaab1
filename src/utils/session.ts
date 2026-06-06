@@ -26,6 +26,37 @@ export function clearUserSession(): void {
   window.localStorage.removeItem(localStorageKeys.ACCESS_TOKEN_STORAGE_KEY);
 }
 
+export function getAccessToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(localStorageKeys.ACCESS_TOKEN_STORAGE_KEY);
+}
+
+function getTokenExpiry(token: string): number | null {
+  const parts = token.split(".");
+  if (parts.length !== 3) return null;
+  try {
+    const payload = JSON.parse(
+      atob(parts[1].replace(/-/g, "+").replace(/_/g, "/"))
+    );
+    return typeof payload.exp === "number" ? payload.exp : null;
+  } catch {
+    return null;
+  }
+}
+
+export function isAuthenticated(): boolean {
+  const token = getAccessToken();
+  if (!token) return false;
+
+  const exp = getTokenExpiry(token);
+  if (exp !== null && exp * 1000 <= Date.now()) {
+    clearUserSession();
+    return false;
+  }
+
+  return true;
+}
+
 export function logout(): void {
   clearUserSession();
   window.location.href = "/auth";

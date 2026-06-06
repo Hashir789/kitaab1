@@ -8,6 +8,7 @@ import Input from "@/components/secondary/input/Input";
 import Toast from "@/components/secondary/toast/Toast";
 import { useSubmitVisitorMessage } from "@/hooks/visitors";
 import TextArea from "@/components/secondary/textarea/TextArea";
+import { iconState as IconState, toastType } from "@/constants/enums";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
 
 type SubmitStatus = "idle" | "submitting" | "success" | "error";
@@ -135,10 +136,10 @@ export default function ContactForm() {
       return acc;
     }, {} as Partial<Record<keyof ContactFormValues, string>>);
 
-  const getIconState = (field: keyof ContactFormValues): "error" | "success" | undefined => {
-    if (showFieldError(field)) return "error";
+  const getIconState = (field: keyof ContactFormValues): IconState | undefined => {
+    if (showFieldError(field)) return IconState.ERROR;
     if (!formik.values[field]) return undefined;
-    return "success";
+    return IconState.SUCCESS;
   };
 
   const renderField = (field: FieldConfig) => {
@@ -186,18 +187,18 @@ export default function ContactForm() {
         </ButtonGroup>
       </div>
       <Toast
-        show={showErrorToast}
-        type="error"
         title="Invalid data"
+        show={showErrorToast}
+        type={toastType.ERROR}
         message={errorToastMessage}
         onClose={() => setShowErrorToast(false)}
       />
       <Toast
-        show={showSuccessToast}
-        type="success"
         title="Message sent"
-        message="Your message has been sent successfully."
+        show={showSuccessToast}
+        type={toastType.SUCCESS}
         onClose={() => setShowSuccessToast(false)}
+        message="Your message has been sent successfully."
       />
     </form>
   );

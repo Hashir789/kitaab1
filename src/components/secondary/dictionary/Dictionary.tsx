@@ -1,15 +1,5 @@
-import { ReactNode } from "react";
 import styles from "./dictionary.module.css";
-
-interface DictionaryProps {
-  word: string;
-  origin?: string;
-  pluralOf?: string;
-  className?: string;
-  darkMode?: boolean;
-  pronunciation?: string;
-  meaning: string | ReactNode;
-}
+import { DictionaryProps } from "./dictionary.interface";
 
 export default function Dictionary({
   word,

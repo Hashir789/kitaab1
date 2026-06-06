@@ -1,30 +1,19 @@
 "use client";
 
 import styles from "./buttongroup.module.css";
-import { ReactNode, Children, isValidElement, cloneElement } from "react";
-
-type ButtonGroupProps = {
-  gap?: number;
-  padding?: number;
-  fontSize?: number;
-  className?: string;
-  ariaLabel?: string;
-  children: ReactNode;
-  activeIndex?: number;
-  buttonWidth?: number;
-  buttonHeight?: number;
-};
+import { ButtonGroupProps } from "./buttongroup.interface";
+import { Children, isValidElement, cloneElement } from "react";
 
 export default function ButtonGroup({
   children,
-  activeIndex = -1,
-  buttonWidth = 100,
-  buttonHeight = 35,
   gap = 12,
+  ariaLabel,
   padding = 5,
   fontSize = 16,
   className = "",
-  ariaLabel,
+  activeIndex = -1,
+  buttonWidth = 100,
+  buttonHeight = 35,
 }: ButtonGroupProps) {
   const childrenArray = Children.toArray(children).filter(isValidElement);
   const leftPos = padding + (activeIndex === -1 ? 0 : activeIndex * (buttonWidth + gap));
