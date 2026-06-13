@@ -69,6 +69,7 @@ export enum authHeading {
 export enum authDescription {
   OTP_CODE_SUFFIX = ".",
   RESEND_CODE_PROMPT = "Didn't get the code?",
+  RESET_REDIRECTING = "Redirecting to login...",
   OTP_SENDING = "Hang on while we email your code...",
   FORGOT_LINK_SENT_SUFFIX = ". You may close this tab.",
   OTP_CODE_PREFIX = "Enter the 4-digit code we sent to ",

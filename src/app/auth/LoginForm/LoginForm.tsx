@@ -8,6 +8,7 @@ import styles from "./loginform.module.css";
 import Input from "@/components/secondary/input/Input";
 import type { LoginFormProps } from "./loginform.interface";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import Loader from "@/components/secondary/loader/Loader";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
 import { getUserIdFromToken, setPendingPassword } from "@/utils/session";
 import { FaLock, FaEye, FaEyeSlash, FaEnvelope, FaUser } from "react-icons/fa";
@@ -102,7 +103,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
             setOtpInitializing(true);
             setStep(LoginStep.OTP);
             resendVerificationLink(
-              { email, full_name: "" },
+              { email },
               {
                 onSettled: () => setOtpInitializing(false),
                 onError: (error) => onError?.(error.message),
@@ -267,7 +268,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
     if (resendingLink) return;
     setResendSent(false);
     resendVerificationLink(
-      { email: formik.values[loginField.EMAIL], full_name: "" },
+      { email: formik.values[loginField.EMAIL] },
       {
         onSuccess: () => {
           setResendSent(true);
@@ -305,7 +306,7 @@ export default function LoginForm({ onError }: LoginFormProps) {
               justifyContent: "center"
             }}
           >
-            <div className={styles.spinner} aria-hidden="true" />
+            <Loader />
             <div style={{ textAlign: "center", fontSize: 18, fontWeight: 500, color: "rgb(80, 80, 80)" }}>
               {authHeading.SENDING_VERIFICATION_CODE}
             </div>

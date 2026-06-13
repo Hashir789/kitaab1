@@ -53,7 +53,6 @@ export interface EmailVerifyResponse {
 
 export interface ResendLinkPayload {
   email: string;
-  full_name: string;
 }
 
 export interface ResendLinkResponse {

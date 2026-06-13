@@ -203,15 +203,6 @@
   background-color: rgb(245, 245, 245);
 }
 
-.spinner {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 3px solid rgb(225, 225, 225);
-  border-top-color: rgb(120, 120, 120);
-  animation: spinnerRotate 0.8s linear infinite;
-}
-
 .resendLink {
   border: none;
   padding: 0;
@@ -234,10 +225,4 @@
 
 .resendLink:disabled:hover {
   cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8' fill='none' stroke='%23606060' stroke-width='3.5'/%3E%3Cpath d='M6 6l8 8' stroke='%23606060' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E") 10 10, not-allowed;
-}
-
-@keyframes spinnerRotate {
-  to {
-    transform: rotate(360deg);
-  }
 }

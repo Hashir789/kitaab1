@@ -8,8 +8,8 @@ import { useResetPassword } from "@/hooks/auth";
 import { useState, type ChangeEvent } from "react";
 import styles from "./resetpasswordform.module.css";
 import Input from "@/components/secondary/input/Input";
+import Loader from "@/components/secondary/loader/Loader";
 import { FaKey, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
-import { getUserIdFromToken, setPendingPassword } from "@/utils/session";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
 import type { ResetPasswordFormProps } from "./resetpasswordform.interface";
 import { iconState as IconState, resetPasswordField } from "@/constants/enums";
@@ -17,6 +17,7 @@ import { authAria, authButtonLabel, authDescription, authHeading, authLabel, aut
 
 export default function ResetPasswordForm({ token, onError }: ResetPasswordFormProps) {
   const router = useRouter();
+  const [redirecting, setRedirecting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { mutate: resetUserPassword, isPending: submitting } = useResetPassword();
 
@@ -46,7 +47,7 @@ export default function ResetPasswordForm({ token, onError }: ResetPasswordFormP
     validateOnChange: true,
     validateOnBlur: true,
     onSubmit: (values) => {
-      if (submitting) return;
+      if (submitting || redirecting) return;
       resetUserPassword(
         {
           token,
@@ -55,9 +56,8 @@ export default function ResetPasswordForm({ token, onError }: ResetPasswordFormP
         },
         {
           onSuccess: () => {
-            setPendingPassword(values[resetPasswordField.NEW_PASSWORD]);
-            const userId = getUserIdFromToken();
-            if (userId) router.replace(`/user/${userId}`);
+            setRedirecting(true);
+            window.setTimeout(() => router.replace("/auth"), 1000);
           },
           onError: (error) => onError?.(error.message)
         }
@@ -91,6 +91,23 @@ export default function ResetPasswordForm({ token, onError }: ResetPasswordFormP
     if (!formik.values[field]) return undefined;
     return IconState.SUCCESS;
   };
+
+  if (redirecting) {
+    return (
+      <div className={styles.form} style={{ minHeight: 457.8 }}>
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
+          <Image
+            priority
+            width={75}
+            height={75}
+            src="/kitaab-logo.png"
+            alt={authAria.KITAAB_LOGO}
+          />
+        </div>
+        <Loader className={styles.loader} helperText={authDescription.RESET_REDIRECTING} />
+      </div>
+    );
+  }
 
   return (
     <form
@@ -167,8 +184,8 @@ export default function ResetPasswordForm({ token, onError }: ResetPasswordFormP
         <ButtonGroup activeIndex={0} buttonWidth={150}>
           <button
             type="submit"
-            disabled={submitting}
-            aria-busy={submitting}
+            disabled={submitting || redirecting}
+            aria-busy={submitting || redirecting}
           >
             {submitting ? authButtonLabel.UPDATING : authButtonLabel.UPDATE_PASSWORD}
           </button>

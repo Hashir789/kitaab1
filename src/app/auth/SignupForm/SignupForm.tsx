@@ -8,6 +8,7 @@ import styles from "./signupform.module.css";
 import { IoCaretDownOutline } from "react-icons/io5";
 import { generateRecoveryKey } from "@/utils/recovery";
 import Input from "@/components/secondary/input/Input";
+import Loader from "@/components/secondary/loader/Loader";
 import { FiDownload, FiAlertCircle } from "react-icons/fi";
 import Tooltip from "@/components/secondary/tooltip/Tooltip";
 import type { SignupFormProps } from "./signupform.interface";
@@ -183,7 +184,7 @@ export default function SignupForm({ onError }: SignupFormProps) {
           if (state === EmailVerifyState.UNVERIFIED) {
             setOtpInitializing(true);
             resendVerificationLink(
-              { full_name: values[signupField.FULL_NAME], email: values[signupField.EMAIL] },
+              { email: values[signupField.EMAIL] },
               { onSettled: () => setOtpInitializing(false) }
             );
             setPhase(Phase.OTP);
@@ -371,7 +372,7 @@ export default function SignupForm({ onError }: SignupFormProps) {
     if (resendingLink) return;
     setResendSent(false);
     resendVerificationLink(
-      { full_name: formik.values[signupField.FULL_NAME], email: formik.values[signupField.EMAIL] },
+      { email: formik.values[signupField.EMAIL] },
       {
         onSuccess: () => {
           setResendSent(true);
@@ -530,7 +531,7 @@ export default function SignupForm({ onError }: SignupFormProps) {
               justifyContent: "center"
             }}
           >
-            <div className={styles.spinner} aria-hidden="true" />
+            <Loader />
             <div style={{ textAlign: "center", fontSize: 18, fontWeight: 500, color: "rgb(80, 80, 80)" }}>
               {authHeading.RECORD_EXISTS}
             </div>

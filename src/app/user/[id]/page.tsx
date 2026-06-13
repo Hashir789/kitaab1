@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { mapMeToUserSession } from "@/utils/user";
 import type { UserSession } from "@/interfaces/user";
 import { useParams, useRouter } from "next/navigation";
+import Loader from "@/components/secondary/loader/Loader";
 import { accountMessage } from "@/constants/placeholders";
 import AccountScreen from "@/app/user/AccountScreen/AccountScreen";
 import { clearPendingPassword, getPendingPassword, getUserIdFromToken, isAuthenticated } from "@/utils/session";
@@ -58,12 +59,7 @@ export default function UserPage() {
 
   if (!canFetch || isLoading || !ready || !user) {
     return (
-      <div className={styles.loaderWrapper}>
-        <span className={styles.spinner} aria-hidden="true" />
-        <p className={styles.loaderText} role="status">
-          {accountMessage.FETCHING_DATA}
-        </p>
-      </div>
+      <Loader className={styles.loaderWrapper} helperText={accountMessage.FETCHING_DATA} />
     );
   }
 
