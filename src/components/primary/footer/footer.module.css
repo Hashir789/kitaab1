@@ -1,7 +1,13 @@
 .container {
+  width: 100%;
+  background: rgb(240, 240, 240);
+}
+
+.inner {
+  width: 100%;
+  margin: 0 auto;
   max-width: 1534px;
   padding: 34px 68px;
-  background: rgb(240, 240, 240);
 }
 
 .logo {
@@ -127,7 +133,7 @@
 }
 
 @media (max-width: 1124px) {
-  .container {
+  .inner {
     padding: 34px 68px;
   }
 
@@ -177,7 +183,7 @@
 }
 
 @media (max-width: 710px) {
-  .container {
+  .inner {
     padding: 34px 20px;
   }
 

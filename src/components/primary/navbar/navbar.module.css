@@ -6,6 +6,7 @@
   display: flex;
   margin: 0 auto;
   position: fixed;
+  isolation: isolate;
   max-width: 1534px;
   padding: 20px 68px;
   align-items: center;

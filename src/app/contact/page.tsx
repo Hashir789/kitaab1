@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import styles from "./contact.module.css";
 import ContactForm from "@/app/sections/contact/ContactForm";
+import { contactPageText, footerText } from "@/constants/placeholders";
 
 export const metadata: Metadata = {
   title: "Contact Us",
@@ -43,10 +44,10 @@ export default function Contact() {
       <div className={styles.layout}>
         <aside className={styles.infoCard}>
           <header className={styles.cardHeader}>
-            <p className={styles.cardKicker}>Get in touch</p>
-            <h2 className={styles.cardTitle}>Talk to the Kitaab team</h2>
+            <p className={styles.cardKicker}>{contactPageText.KICKER}</p>
+            <h2 className={styles.cardTitle}>{contactPageText.TITLE}</h2>
             <p className={styles.cardBody}>
-              We’re here to support you on your journey with Kitaab, whether you have questions, need help, or want to share feedback.
+              {contactPageText.BODY}
             </p>
           </header>
 
@@ -56,9 +57,9 @@ export default function Contact() {
                 <span className={styles.cardIcon}>@</span>
               </div>
               <div className={styles.cardEmailMeta}>
-                <p className={styles.cardLabel}>Email</p>
+                <p className={styles.cardLabel}>{contactPageText.EMAIL_LABEL}</p>
                 <div className={styles.cardValue}>
-                  <a href="mailto:support.kitaab@gmail.com">support.kitaab@gmail.com</a>
+                  <a href="mailto:support@kitaab.me">{footerText.EMAIL}</a>
                 </div>
               </div>
             </div>
@@ -68,14 +69,14 @@ export default function Contact() {
             <div className={styles.cardStats}>
               <div className={styles.cardStat}>
                 <span className={styles.cardDotGreen} />
-                <span>Typical response time: within 24 hours</span>
+                <span>{contactPageText.RESPONSE_TIME}</span>
               </div>
             </div>
           </div>
         </aside>
         <section className={styles.formPanel}>
           <p className={styles.description}>
-            Share your questions, feedback, or partnership ideas and we’ll respond as soon as possible.
+            {contactPageText.DESCRIPTION}
           </p>
           <ContactForm />
         </section>

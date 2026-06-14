@@ -71,6 +71,12 @@
   text-transform: uppercase;
 }
 
+@media (min-width: 1535px) {
+  .ayah {
+    font-size: 2.5vw;
+  }
+}
+
 @media (max-width: 1124px) {
   .ayahCard {
     height: auto;

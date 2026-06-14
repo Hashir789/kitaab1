@@ -8,7 +8,8 @@ import { IoCaretDownOutline } from "react-icons/io5";
 import LiesChart from "@/components/secondary/lieschart/LiesChart";
 import SliderDots from "@/components/secondary/sliderdots/SliderDots";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
-import PrayerChart, { PrayerFilter } from "@/components/secondary/prayerchart/PrayerChart";
+import PrayerChart from "@/components/secondary/prayerchart/PrayerChart";
+import type { PrayerFilter } from "@/components/secondary/prayerchart/prayerchart.interface";
 
 type PrayerLabel = PrayerFilter;
 
