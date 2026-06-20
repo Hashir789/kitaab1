@@ -26,7 +26,37 @@
   color: rgb(80, 80, 80);
 }
 
-.actionsLogin {
+.hasanaatForm {
+  gap: 12px;
+  display: flex;
+  padding: 12px 14px;
+  border-radius: 8px;
+  flex-direction: column;
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(230, 230, 230);
+}
+
+.formTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(80, 80, 80);
+}
+
+.statusError,
+.statusSuccess {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.statusError {
+  color: rgb(190, 65, 65);
+}
+
+.statusSuccess {
+  color: rgb(65, 140, 85);
+}
+
+.actionsSubmit {
   width: 100%;
   display: flex;
   justify-content: flex-end;

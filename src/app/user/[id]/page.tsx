@@ -8,15 +8,15 @@ import type { UserSession } from "@/interfaces/user";
 import { useParams, useRouter } from "next/navigation";
 import Loader from "@/components/secondary/loader/Loader";
 import { accountMessage } from "@/constants/placeholders";
-import AccountScreen from "@/app/user/AccountScreen/AccountScreen";
+import AfterLoginSidebar from "@/components/primary/afterloginsidebar/AfterLoginSidebar";
 import { clearPendingPassword, getPendingPassword, getUserIdFromToken, isAuthenticated } from "@/utils/session";
 
 export default function UserPage() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const [user, setUser] = useState<UserSession | null>(null);
-  const [ready, setReady] = useState(false);
   const tokenUserId = getUserIdFromToken();
+  const [ready, setReady] = useState(false);
   const canFetch = isAuthenticated() && tokenUserId === params.id;
   const { data, isLoading, isError } = useMe(canFetch);
 
@@ -28,6 +28,7 @@ export default function UserPage() {
 
     if (tokenUserId && tokenUserId !== params.id) {
       router.replace(`/user/${tokenUserId}`);
+      return;
     }
   }, [params.id, router, tokenUserId]);
 
@@ -64,19 +65,8 @@ export default function UserPage() {
   }
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100vh",
-        display: "flex",
-        padding: 20,
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <div style={{ width: 380, maxWidth: "100%" }}>
-        <AccountScreen user={user} />
-      </div>
+    <div className={styles.screen}>
+      <AfterLoginSidebar user={user} userId={params.id} />
     </div>
   );
 }

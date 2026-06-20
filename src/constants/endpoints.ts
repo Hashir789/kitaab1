@@ -16,5 +16,8 @@ export const ENDPOINTS = {
   },
   USERS: {
     ME: "users/me"
+  },
+  DEEDS: {
+    HASANAAT_ITEMS: "deeds/hasanaat/items"
   }
 } as const;

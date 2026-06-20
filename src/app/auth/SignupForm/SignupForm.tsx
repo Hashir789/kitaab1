@@ -172,7 +172,7 @@ export default function SignupForm({ onError }: SignupFormProps) {
             try {
               const result = await runEmailVerify(values[signupField.EMAIL]);
               if (formik.values[signupField.EMAIL] !== values[signupField.EMAIL]) return;
-              state = result.verified === true ? EmailVerifyState.EXISTS: result.verified === false ? EmailVerifyState.UNVERIFIED: EmailVerifyState.AVAILABLE;
+              state = getEmailVerifyState(result.verified);
               setEmailVerifyState(state);
               setVerifiedEmail(values[signupField.EMAIL]);
             } catch {
@@ -180,17 +180,7 @@ export default function SignupForm({ onError }: SignupFormProps) {
             }
           }
 
-          if (state === EmailVerifyState.EXISTS) return;
-          if (state === EmailVerifyState.UNVERIFIED) {
-            setOtpInitializing(true);
-            resendVerificationLink(
-              { email: values[signupField.EMAIL] },
-              { onSettled: () => setOtpInitializing(false) }
-            );
-            setPhase(Phase.OTP);
-            return;
-          }
-          setStep(SignupFormStep.PASSWORD);
+          await movePastDetailsAfterEmailCheck(state, values[signupField.EMAIL]);
           return;
         }
 
@@ -232,18 +222,55 @@ export default function SignupForm({ onError }: SignupFormProps) {
     },
   });
 
+  const getEmailVerifyState = (verified: boolean | null): EmailVerifyState =>
+    verified === true
+      ? EmailVerifyState.EXISTS
+      : verified === false
+        ? EmailVerifyState.UNVERIFIED
+        : EmailVerifyState.AVAILABLE;
+
+  const movePastDetailsAfterEmailCheck = async (state: EmailVerifyState, email: string) => {
+    if (phase !== Phase.FORM || step !== SignupFormStep.DETAILS) return;
+    if (formik.values[signupField.EMAIL] !== email) return;
+
+    try {
+      await schemas[SignupFormStep.DETAILS].validate(formik.values, { abortEarly: false });
+    } catch {
+      return;
+    }
+
+    if (formik.values[signupField.EMAIL] !== email) return;
+    if (state === EmailVerifyState.EXISTS) return;
+
+    if (state === EmailVerifyState.UNVERIFIED) {
+      setOtpInitializing(true);
+      resendVerificationLink(
+        { email },
+        { onSettled: () => setOtpInitializing(false) }
+      );
+      setPhase(Phase.OTP);
+      return;
+    }
+
+    setStep(SignupFormStep.PASSWORD);
+  };
+
   const handleEmailBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
     try {
       formik.handleBlur(e);
       const email = formik.values[signupField.EMAIL];
       if (!email) return;
       await schemas[SignupFormStep.DETAILS].validateAt(signupField.EMAIL, { [signupField.EMAIL]: email });
-      if (email === verifiedEmail) return;
+      if (email === verifiedEmail) {
+        await movePastDetailsAfterEmailCheck(emailVerifyState, email);
+        return;
+      }
       const result = await runEmailVerify(email);
       if (formik.values[signupField.EMAIL] !== email) return;
-      const next = result.verified === true ? EmailVerifyState.EXISTS: result.verified === false ? EmailVerifyState.UNVERIFIED: EmailVerifyState.AVAILABLE;
+      const next = getEmailVerifyState(result.verified);
       setEmailVerifyState(next);
       setVerifiedEmail(email);
+      await movePastDetailsAfterEmailCheck(next, email);
     } catch {
 
     }
