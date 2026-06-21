@@ -6,6 +6,7 @@ export type ButtonGroupProps = {
   fontSize?: number;
   className?: string;
   ariaLabel?: string;
+  bordered?: boolean;
   children: ReactNode;
   activeIndex?: number;
   buttonWidth?: number;

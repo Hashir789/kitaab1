@@ -8,8 +8,10 @@ import type { UserSession } from "@/interfaces/user";
 import { useParams, useRouter } from "next/navigation";
 import Loader from "@/components/secondary/loader/Loader";
 import { accountMessage } from "@/constants/placeholders";
-import AfterLoginSidebar from "@/components/primary/afterloginsidebar/AfterLoginSidebar";
+import Sidebar from "@/components/primary/sidebar/Sidebar";
+import Breadcrumbs from "@/components/secondary/breadcrumbs/Breadcrumbs";
 import { clearPendingPassword, getPendingPassword, getUserIdFromToken, isAuthenticated } from "@/utils/session";
+
 
 export default function UserPage() {
   const router = useRouter();
@@ -66,7 +68,8 @@ export default function UserPage() {
 
   return (
     <div className={styles.screen}>
-      <AfterLoginSidebar user={user} userId={params.id} />
+      <Sidebar user={user} userId={params.id} />
+      <Breadcrumbs count={6} buttonWidth={130} />
     </div>
   );
 }

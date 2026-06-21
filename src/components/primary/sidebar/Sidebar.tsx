@@ -3,27 +3,24 @@
 import Link from "next/link";
 import Image from "next/image";
 import { logout } from "@/utils/session";
+import styles from "./sidebar.module.css";
 import { FaNoteSticky } from "react-icons/fa6";
 import { IoClose, IoMenu } from "react-icons/io5";
+import { SidebarProps } from "./sidebar.interface";
 import { useEffect, useRef, useState } from "react";
-import styles from "./afterloginsidebar.module.css";
-import type { UserSession } from "@/interfaces/user";
+import { useAppSelector } from "@/store/hooks";
 import { BiSolidBarChartAlt2 } from "react-icons/bi";
 import { FaFolderOpen, FaUser } from "react-icons/fa";
 import { BsFillGrid3X3GapFill } from "react-icons/bs";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
-
-interface AfterLoginSidebarProps {
-  user: UserSession;
-  userId: string;
-}
+import { authAria, homeCharlieText, sidebarAria, sidebarLabel, sidebarMisc} from "@/constants/placeholders";
 
 const menuItems = [
-  { label: "Dashboard", icon: BsFillGrid3X3GapFill },
-  { label: "Records", icon: FaNoteSticky },
-  { label: "Scorecards", icon: BiSolidBarChartAlt2 },
-  { label: "Deeds", icon: FaFolderOpen },
-  { label: "Profile", icon: FaUser },
+  { label: sidebarLabel.DASHBOARD, icon: BsFillGrid3X3GapFill },
+  { label: sidebarLabel.RECORDS, icon: FaNoteSticky },
+  { label: sidebarLabel.SCORECARDS, icon: BiSolidBarChartAlt2 },
+  { label: sidebarLabel.DEEDS, icon: FaFolderOpen },
+  { label: sidebarLabel.PROFILE, icon: FaUser }
 ];
 
 function getInitials(value: string): string {
@@ -32,20 +29,25 @@ function getInitials(value: string): string {
     .split(/\s|[._-]/)
     .filter(Boolean);
 
-  if (parts.length === 0) return "U";
+  if (parts.length === 0) return sidebarMisc.INITIALS_FALLBACK;
   return parts
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase())
     .join("");
 }
 
-export default function AfterLoginSidebar({ user, userId }: AfterLoginSidebarProps) {
+export default function Sidebar({ user, userId }: SidebarProps) {
+  const isBelow880 = useAppSelector((state) => state.ui.isBelow880);
   const sidebarBottomRef = useRef<HTMLDivElement>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [actionWidth, setActionWidth] = useState(240);
-  const profileName = user.full_name || user.email || "Profile";
-  const profileEmail = user.email || "Signed in";
+  const profileName = user.full_name || user.email || sidebarMisc.PROFILE_FALLBACK;
+  const profileEmail = user.email || sidebarMisc.SIGNED_IN_FALLBACK;
   const safeActionWidth = Math.max(actionWidth, 180);
+
+  useEffect(() => {
+    if (!isBelow880) setSidebarOpen(false);
+  }, [isBelow880]);
 
   useEffect(() => {
     const updateActionWidth = () => {
@@ -62,39 +64,39 @@ export default function AfterLoginSidebar({ user, userId }: AfterLoginSidebarPro
     <>
       <button
         type="button"
-        className={styles.mobileToggle}
+        className={`${styles.mobileToggle} ${isBelow880 ? styles.mobileToggleVisible : ""}`}
         onClick={() => setSidebarOpen((open) => !open)}
-        aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
+        aria-label={sidebarOpen ? sidebarAria.CLOSE_SIDEBAR : sidebarAria.OPEN_SIDEBAR}
         aria-expanded={sidebarOpen}
       >
         {sidebarOpen ? <IoClose aria-hidden="true" /> : <IoMenu aria-hidden="true" />}
       </button>
 
-      {sidebarOpen ? (
+      {sidebarOpen && isBelow880 ? (
         <button
           type="button"
-          className={styles.mobileBackdrop}
+          className={`${styles.mobileBackdrop} ${styles.mobileBackdropVisible}`}
           onClick={() => setSidebarOpen(false)}
-          aria-label="Close sidebar"
+          aria-label={sidebarAria.CLOSE_SIDEBAR}
         />
       ) : null}
 
       <aside
-        className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}
-        aria-label="After login sidebar"
+        className={`${styles.sidebar} ${isBelow880 ? styles.sidebarMobile : styles.sidebarDesktop} ${sidebarOpen ? styles.sidebarOpen : ""}`}
+        aria-label={sidebarAria.AFTER_LOGIN_SIDEBAR}
       >
-        <Link href={`/user/${userId}`} className={styles.logo} aria-label="Kitaab dashboard">
+        <Link href={`/user/${userId}`} className={styles.logo} aria-label={sidebarAria.KITAAB_DASHBOARD}>
           <Image
             priority
             width={180}
             height={60}
             src="/kitaab-logo.png"
-            alt="Kitaab logo"
+            alt={authAria.KITAAB_LOGO}
             className={styles.logoImage}
           />
         </Link>
 
-        <nav className={styles.menu} aria-label="User menu">
+        <nav className={styles.menu} aria-label={sidebarAria.USER_MENU}>
           {menuItems.map((item, index) => {
             const Icon = item.icon;
 
@@ -121,8 +123,8 @@ export default function AfterLoginSidebar({ user, userId }: AfterLoginSidebarPro
             fontSize={13}
             buttonWidth={Math.floor((safeActionWidth - 20) / 2)}
           >
-            <button type="button">Hasanaat</button>
-            <button type="button">Saiyyiaat</button>
+            <button type="button">{homeCharlieText.HASANAAT}</button>
+            <button type="button">{homeCharlieText.SAYYIAAT}</button>
           </ButtonGroup>
 
           <div className={styles.profile}>
@@ -137,7 +139,7 @@ export default function AfterLoginSidebar({ user, userId }: AfterLoginSidebarPro
 
           <ButtonGroup activeIndex={-1} buttonWidth={safeActionWidth - 12} buttonHeight={36} fontSize={14}>
             <button type="button" onClick={logout}>
-              Logout
+              {sidebarLabel.LOGOUT}
             </button>
           </ButtonGroup>
         </div>

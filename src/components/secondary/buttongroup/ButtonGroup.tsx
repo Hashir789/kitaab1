@@ -11,15 +11,16 @@ export default function ButtonGroup({
   padding = 5,
   fontSize = 16,
   className = "",
+  bordered = true,
   activeIndex = -1,
   buttonWidth = 100,
   buttonHeight = 35,
 }: ButtonGroupProps) {
   const childrenArray = Children.toArray(children).filter(isValidElement);
+  const borderOffset = bordered ? 2 : 0;
   const leftPos = padding + (activeIndex === -1 ? 0 : activeIndex * (buttonWidth + gap));
-  const containerWidth =
-    padding * 2 + childrenArray.length * buttonWidth + (childrenArray.length - 1) * gap + 2;
-  const containerHeight = padding * 2 + buttonHeight + 2;
+  const containerWidth = padding * 2 + childrenArray.length * buttonWidth + (childrenArray.length - 1) * gap + borderOffset;
+  const containerHeight = padding * 2 + buttonHeight + borderOffset;
 
   const hasActive = activeIndex !== -1;
 

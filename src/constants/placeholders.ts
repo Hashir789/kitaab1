@@ -147,6 +147,35 @@ export enum accountMessage {
   FETCHING_DATA = "We are fetching data..."
 }
 
+export enum sidebarLabel {
+  DEEDS = "Deeds",
+  LOGOUT = "Logout",
+  RECORDS = "Records",
+  PROFILE = "Profile",
+  DASHBOARD = "Dashboard",
+  SCORECARDS = "Scorecards"
+}
+
+export enum sidebarAria {
+  USER_MENU = "User menu",
+  OPEN_SIDEBAR = "Open sidebar",
+  CLOSE_SIDEBAR = "Close sidebar",
+  KITAAB_DASHBOARD = "Kitaab dashboard",
+  AFTER_LOGIN_SIDEBAR = "After login sidebar"
+}
+
+export enum sidebarMisc {
+  INITIALS_FALLBACK = "U",
+  PROFILE_FALLBACK = "Profile",
+  SIGNED_IN_FALLBACK = "Signed in"
+}
+
+export enum breadcrumbAria {
+  BREADCRUMBS = "Breadcrumbs"
+}
+
+export const breadcrumbTabLabel = (index: number): string => `Tab ${index + 1}`;
+
 export enum homeBetaText {
   AYAH_ARABIC = "ﮭ ﮮ ﮯ ﮰ ﮱ ﯓ ﯔ",
   QUOTE_BODY_APP_NAME = "Kitaab",
