@@ -18,6 +18,12 @@ export const ENDPOINTS = {
     ME: "users/me"
   },
   DEEDS: {
-    HASANAAT_ITEMS: "deeds/hasanaat/items"
+    HASANAAT_ITEMS: "deeds/hasanaat/items",
+    SAIYYIAAT_ITEMS: "deeds/saiyyiaat/items",
+    HASANAAT_ITEMS_DISPLAY_ORDER: "deeds/hasanaat/items/display-order",
+    SAIYYIAAT_ITEMS_DISPLAY_ORDER: "deeds/saiyyiaat/items/display-order"
+  },
+  SCALES: {
+    ITEMS: (deedItemId: string) => `scales/${deedItemId}/items`
   }
 } as const;

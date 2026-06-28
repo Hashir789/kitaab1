@@ -1,38 +1,50 @@
 "use client";
 
+import Link from "next/link";
 import styles from "./breadcrumbs.module.css";
 import { useAppSelector } from "@/store/hooks";
 import { BreadcrumbsProps } from "./breadcrumbs.interface";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
-import { breadcrumbAria, breadcrumbTabLabel } from "@/constants/placeholders";
-
-function getStripWidth(count: number, buttonWidth: number, gap: number, padding: number) {
-  return padding * 2 + buttonWidth * count + gap * (count - 1);
-}
+import { breadcrumbAria } from "@/constants/placeholders";
+import { useParams, usePathname } from "next/navigation";
+import {
+  getBreadcrumbButtonWidth,
+  getBreadcrumbConfig,
+  getBreadcrumbStripWidth,
+} from "@/utils/breadcrumbs";
+import { useScaleItems } from "@/hooks/scales";
 
 const Breadcrumbs = ({
-  count = 5,
   gap = 12,
   padding = 5,
   className = "",
-  buttonWidth = 110,
   buttonHeight = 35,
   mobileOffset = 74,
   ariaLabel = breadcrumbAria.BREADCRUMBS,
-  getLabel = breadcrumbTabLabel,
 }: BreadcrumbsProps) => {
+  const pathname = usePathname();
+  const params = useParams<{ id: string; deedItemId?: string }>();
   const isBelow880 = useAppSelector((state) => state.ui.isBelow880);
   const stripRef = useRef<HTMLDivElement>(null);
   const hasScrolledToEndRef = useRef(false);
-  const [activeIndex, setActiveIndex] = useState(count - 1);
   const [stripScrollable, setStripScrollable] = useState(false);
+  const deedItemId = params.deedItemId;
+  const isDeedRoute = Boolean(deedItemId && pathname.includes(`/deeds/${deedItemId}`));
+  const { data: scaleItems = [] } = useScaleItems(deedItemId ?? "", isDeedRoute);
+  const hasScales = scaleItems.length > 0;
 
-  const stripWidth = getStripWidth(count, buttonWidth, gap, padding);
-
-  useEffect(() => {
-    setActiveIndex(count - 1);
-  }, [count]);
+  const { items, activeIndex } = useMemo(
+    () =>
+      getBreadcrumbConfig(pathname, params.id, {
+        hasScales,
+      }),
+    [pathname, params.id, hasScales]
+  );
+  const buttonWidth = items.length
+    ? Math.max(...items.map((item) => getBreadcrumbButtonWidth(item.label)))
+    : 0;
+  const stripWidth = getBreadcrumbStripWidth(items.length, buttonWidth, gap, padding);
 
   useEffect(() => {
     const strip = stripRef.current;
@@ -62,7 +74,7 @@ const Breadcrumbs = ({
     observer.observe(strip);
 
     return () => observer.disconnect();
-  }, [stripWidth, count]);
+  }, [stripWidth, items.length]);
 
   useLayoutEffect(() => {
     if (!stripScrollable) return;
@@ -71,7 +83,11 @@ const Breadcrumbs = ({
     if (!strip) return;
 
     strip.scrollLeft = strip.scrollWidth - strip.clientWidth;
-  }, [stripScrollable, count]);
+  }, [stripScrollable, items.length]);
+
+  if (items.length === 0) {
+    return null;
+  }
 
   return (
     <div
@@ -94,11 +110,31 @@ const Breadcrumbs = ({
           ariaLabel={ariaLabel}
           className={styles.stripGroup}
         >
-          {Array.from({ length: count }, (_, index) => (
-            <button key={index} type="button" onClick={() => setActiveIndex(index)}>
-              {getLabel(index)}
-            </button>
-          ))}
+          {items.map((item, index) => {
+            const isActive = index === activeIndex;
+
+            if (item.disabled || isActive) {
+              return (
+                <button key={`${item.href}-${item.label}`} type="button" disabled={item.disabled}>
+                  {item.label}
+                </button>
+              );
+            }
+
+            if (items.length === 1) {
+              return (
+                <button key={`${item.href}-${item.label}`} type="button">
+                  {item.label}
+                </button>
+              );
+            }
+
+            return (
+              <Link key={`${item.href}-${item.label}`} href={item.href}>
+                {item.label}
+              </Link>
+            );
+          })}
         </ButtonGroup>
       </div>
     </div>

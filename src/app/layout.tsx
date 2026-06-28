@@ -15,12 +15,12 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(isStaging ? `https://${host}` : "https://www.kitaab.me"),
 
     title: {
-      default: "Kitaab – Islamic Deed Tracker | Track Hasanaat & Sayyiaat",
+      default: "Kitaab – Islamic Deed Tracker | Track Hasanaat & Saiyyiaat",
       template: "%s | Kitaab",
     },
 
     description:
-      "Kitaab is an Islamic self-accountability app that helps Muslims track daily Hasanaat (good deeds) and Sayyiaat (bad deeds). Monitor progress, build consistency, and strengthen your spiritual growth.",
+      "Kitaab is an Islamic self-accountability app that helps Muslims track daily Hasanaat (good deeds) and Saiyyiaat (bad deeds). Monitor progress, build consistency, and strengthen your spiritual growth.",
 
     alternates: isStaging
       ? { canonical: undefined }
@@ -64,7 +64,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: "Kitaab – Islamic Deed Tracker",
       description:
-        "Track Hasanaat and Sayyiaat daily and strengthen your spiritual journey.",
+        "Track Hasanaat and Saiyyiaat daily and strengthen your spiritual journey.",
       images: ["/og-image.png"],
     },
 

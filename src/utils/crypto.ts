@@ -104,3 +104,11 @@ export async function encryptText(masterKey: string, value: string): Promise<str
   );
   return bytesToBase64(encrypted);
 }
+
+export async function decryptText(masterKey: string, encrypted: string): Promise<string> {
+  const plaintext = await aesGcmDecryptPacked(
+    base64ToBytes(masterKey),
+    base64ToBytes(encrypted)
+  );
+  return bytesToText(plaintext);
+}

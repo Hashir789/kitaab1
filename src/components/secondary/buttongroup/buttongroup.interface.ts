@@ -11,4 +11,7 @@ export type ButtonGroupProps = {
   activeIndex?: number;
   buttonWidth?: number;
   buttonHeight?: number;
+  fullWidth?: boolean;
+  truncateLabels?: boolean;
+  tooltipPosition?: "top" | "bottom" | "left" | "right";
 };

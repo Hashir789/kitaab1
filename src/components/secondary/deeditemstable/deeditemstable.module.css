@@ -1,0 +1,202 @@
+.tableWrap {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  border-radius: 14px;
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(230, 230, 230);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.table thead {
+  background: rgb(248, 248, 248);
+  border-bottom: 1px solid rgb(230, 230, 230);
+}
+
+.table th {
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  color: rgb(100, 100, 100);
+}
+
+.table td {
+  padding: 12px 16px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: rgb(70, 70, 70);
+  border-bottom: 1px solid rgb(235, 235, 235);
+  vertical-align: middle;
+  overflow: hidden;
+  max-width: 0;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover td {
+  background: rgb(252, 252, 252);
+}
+
+.table tbody tr:hover td.emptyCell {
+  background: transparent;
+}
+
+.table td.emptyCell {
+  padding: 40px 16px;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: center;
+  color: rgb(130, 130, 130);
+  max-width: none;
+  white-space: normal;
+}
+
+.truncate,
+.truncateCell {
+  overflow: hidden;
+  max-width: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.truncateCell .cellTooltip {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.cellTooltip {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.cellTooltipTrigger {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.table th:nth-child(1),
+.table td:nth-child(1) {
+  width: 22%;
+}
+
+.table th:nth-child(2),
+.table td:nth-child(2) {
+  width: 38%;
+}
+
+.table th:nth-child(3),
+.table td:nth-child(3) {
+  width: 24%;
+}
+
+.actionCol,
+.actionCell {
+  width: 176px;
+  min-width: 176px;
+  max-width: 176px;
+  padding-right: 16px;
+  overflow: visible;
+}
+
+.actionCell {
+  text-align: left;
+}
+
+.actionCellInner {
+  gap: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.tableActions {
+  flex: 0 0 auto;
+}
+
+.tableActions :global(li) button {
+  width: 100%;
+  height: 100%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.tableActions :global(li) button:disabled {
+  opacity: 0.5;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8' fill='none' stroke='%23606060' stroke-width='3.5'/%3E%3Cpath d='M6 6l8 8' stroke='%23606060' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E") 10 10, not-allowed;
+}
+
+.tableActions :global(li) button:disabled svg {
+  opacity: 0.5;
+}
+
+.tableActions :global(svg) {
+  width: 14px;
+  height: 14px;
+}
+
+.tableActions :global(li) button:disabled:hover {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8' fill='none' stroke='%23606060' stroke-width='3.5'/%3E%3Cpath d='M6 6l8 8' stroke='%23606060' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E") 10 10, not-allowed;
+}
+
+.tableActions :global(li) > *:has(button:disabled) {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8' fill='none' stroke='%23606060' stroke-width='3.5'/%3E%3Cpath d='M6 6l8 8' stroke='%23606060' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E") 10 10, not-allowed;
+}
+
+.tableActions :global(li) > *:has(button:disabled):hover {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8' fill='none' stroke='%23606060' stroke-width='3.5'/%3E%3Cpath d='M6 6l8 8' stroke='%23606060' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E") 10 10, not-allowed;
+}
+
+.tableActions :global(li) button:not(:disabled) {
+  color: rgb(70, 70, 70);
+}
+
+.tableActions :global(li) button:not(:disabled) svg {
+  color: rgb(70, 70, 70);
+}
+
+@media (max-width: 880px) {
+  .tableWrap {
+    overflow-x: hidden;
+    border-radius: 12px;
+  }
+
+  .table th,
+  .table td {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .actionCol,
+  .actionCell {
+    width: 168px;
+    min-width: 168px;
+    max-width: 168px;
+    padding: 10px 16px 10px 10px;
+    overflow: visible;
+  }
+}

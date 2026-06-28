@@ -6,7 +6,7 @@ import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Learn about Kitaab - an Islamic deed tracking application inspired by the concept of Amaal Naama (Book of Deeds). Discover our mission to help Muslims track Hasanaat and Sayyiaat for spiritual growth.",
+    "Learn about Kitaab - an Islamic deed tracking application inspired by the concept of Amaal Naama (Book of Deeds). Discover our mission to help Muslims track Hasanaat and Saiyyiaat for spiritual growth.",
   keywords: [
     "about Kitaab",
     "Islamic app",

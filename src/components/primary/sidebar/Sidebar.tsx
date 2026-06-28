@@ -8,20 +8,34 @@ import { FaNoteSticky } from "react-icons/fa6";
 import { IoClose, IoMenu } from "react-icons/io5";
 import { SidebarProps } from "./sidebar.interface";
 import { useEffect, useRef, useState } from "react";
-import { useAppSelector } from "@/store/hooks";
+import { usePathname } from "next/navigation";
+import { deedType } from "@/constants/enums";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { setDeedType } from "@/store/uiSlice";
 import { BiSolidBarChartAlt2 } from "react-icons/bi";
 import { FaFolderOpen, FaUser } from "react-icons/fa";
 import { BsFillGrid3X3GapFill } from "react-icons/bs";
 import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
-import { authAria, homeCharlieText, sidebarAria, sidebarLabel, sidebarMisc} from "@/constants/placeholders";
+import { authAria, homeCharlieText, sidebarAria, sidebarLabel, sidebarMisc } from "@/constants/placeholders";
 
 const menuItems = [
-  { label: sidebarLabel.DASHBOARD, icon: BsFillGrid3X3GapFill },
+  { label: sidebarLabel.DASHBOARD, icon: BsFillGrid3X3GapFill, segment: "" },
   { label: sidebarLabel.RECORDS, icon: FaNoteSticky },
   { label: sidebarLabel.SCORECARDS, icon: BiSolidBarChartAlt2 },
-  { label: sidebarLabel.DEEDS, icon: FaFolderOpen },
+  { label: sidebarLabel.DEEDS, icon: FaFolderOpen, segment: "deeds" },
   { label: sidebarLabel.PROFILE, icon: FaUser }
-];
+] as const;
+
+function getMenuHref(userId: string, segment?: string) {
+  return segment ? `/user/${userId}/${segment}` : `/user/${userId}`;
+}
+
+function isMenuItemActive(pathname: string, userId: string, segment?: string) {
+  if (segment === undefined) return false;
+  if (!segment) return pathname === `/user/${userId}`;
+  const href = `/user/${userId}/${segment}`;
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 function getInitials(value: string): string {
   const parts = value
@@ -37,6 +51,9 @@ function getInitials(value: string): string {
 }
 
 export default function Sidebar({ user, userId }: SidebarProps) {
+  const dispatch = useAppDispatch();
+  const pathname = usePathname();
+  const activeDeedType = useAppSelector((state) => state.ui.deedType);
   const isBelow880 = useAppSelector((state) => state.ui.isBelow880);
   const sidebarBottomRef = useRef<HTMLDivElement>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -97,19 +114,41 @@ export default function Sidebar({ user, userId }: SidebarProps) {
         </Link>
 
         <nav className={styles.menu} aria-label={sidebarAria.USER_MENU}>
-          {menuItems.map((item, index) => {
+          {menuItems.map((item) => {
             const Icon = item.icon;
+            const segment = "segment" in item ? item.segment : undefined;
+            const href = segment !== undefined ? getMenuHref(userId, segment) : "";
+            const isActive = isMenuItemActive(pathname, userId, segment);
+            const className = `${styles.menuItem} ${isActive ? styles.menuItemActive : ""}`;
+            const content = (
+              <>
+                <Icon aria-hidden="true" />
+                <span>{item.label}</span>
+              </>
+            );
+
+            if (segment !== undefined) {
+              return (
+                <Link
+                  key={item.label}
+                  href={href}
+                  className={className}
+                  aria-current={isActive ? "page" : undefined}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  {content}
+                </Link>
+              );
+            }
 
             return (
               <button
                 key={item.label}
                 type="button"
-                className={`${styles.menuItem} ${index === 0 ? styles.menuItemActive : ""}`}
-                aria-current={index === 0 ? "page" : undefined}
+                className={className}
                 onClick={() => setSidebarOpen(false)}
               >
-                <Icon aria-hidden="true" />
-                <span>{item.label}</span>
+                {content}
               </button>
             );
           })}
@@ -117,14 +156,18 @@ export default function Sidebar({ user, userId }: SidebarProps) {
 
         <div ref={sidebarBottomRef} className={styles.sidebarBottom}>
           <ButtonGroup
-            activeIndex={0}
+            activeIndex={activeDeedType === deedType.HASANAAT ? 0 : 1}
             buttonHeight={34}
             gap={8}
             fontSize={13}
             buttonWidth={Math.floor((safeActionWidth - 20) / 2)}
           >
-            <button type="button">{homeCharlieText.HASANAAT}</button>
-            <button type="button">{homeCharlieText.SAYYIAAT}</button>
+            <button type="button" onClick={() => dispatch(setDeedType(deedType.HASANAAT))}>
+              {homeCharlieText.HASANAAT}
+            </button>
+            <button type="button" onClick={() => dispatch(setDeedType(deedType.SAIYYIAAT))}>
+              {homeCharlieText.SAIYYIAAT}
+            </button>
           </ButtonGroup>
 
           <div className={styles.profile}>

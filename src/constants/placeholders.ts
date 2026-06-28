@@ -174,7 +174,132 @@ export enum breadcrumbAria {
   BREADCRUMBS = "Breadcrumbs"
 }
 
-export const breadcrumbTabLabel = (index: number): string => `Tab ${index + 1}`;
+export const breadcrumbTabLabel = (index: number): string => `${index + 1}`;
+
+export enum deedsLabel {
+  NAME = "Name",
+  CATEGORY_TYPE = "Category Type",
+  ACTION = "Action",
+  PARENT_ID = "Parent ID",
+  VISIBILITY = "Visibility",
+  MEASUREMENT_TYPE = "Measurement Type",
+  DESCRIPTION = "Description",
+  CREATED_AT = "Created at",
+  DISPLAY_ORDER = "Display order",
+  DEED = "Deed",
+  DEED_DETAILS = "Deed Details",
+  SCALE_DETAILS = "Scale Details",
+  NEW_DEED = "New Deed",
+  SUB_DEED = "Sub deed",
+  SUB_SUB_DEED = "Sub sub deed",
+  ADD_SUB_DEED_QUESTION = "Do you want to add a sub deed?",
+  ADD_SUB_SUB_DEED_QUESTION = "Do you want to add a sub sub deed?"
+}
+
+export enum deedsButtonLabel {
+  SEE_DETAILS = "See details",
+  DETAILS = "Details",
+  EDIT = "Edit",
+  DELETE = "Delete",
+  CANCEL = "Cancel",
+  CONFIRM = "Confirm",
+  DELETING = "Deleting...",
+  MINIMIZE = "Minimize",
+  MOVE_UP = "Move up",
+  MOVE_DOWN = "Move down",
+  ADD_SUB_DEED = "Add",
+  NEXT = "Next",
+  SAVE_AND_CONTINUE = "Save & Continue",
+  SUBMIT = "Submit",
+  SUBMITTING = "Submitting...",
+  SAVE = "Save",
+  SAVING = "Saving..."
+}
+
+export enum deedsPlaceholder {
+  NAME = "Namaz",
+  DESCRIPTION = "Enter description (optional)",
+  EMPTY = "—",
+  SELECT_ORDER = "Select order"
+}
+
+export enum deedsFormVisibility {
+  BOTH = "Both",
+  GRAPHS_ONLY = "On Graph(s)",
+  RECORDS_ONLY = "On Records Form"
+}
+
+export enum deedsFormMeasurementType {
+  SCALE = "Scale",
+  COUNT = "Count"
+}
+
+export enum deedsFormCategoryType {
+  HASANAAT = "Hasanaat",
+  SAIYYIAAT = "Saiyyiaat"
+}
+
+export enum deedsFormValidation {
+  NAME_REQUIRED = "Name is required",
+  NAME_MIN_LENGTH = "Please enter at least 2 characters",
+  NAME_DUPLICATE = "No duplications are allowed",
+  DESCRIPTION_MIN_LENGTH = "Please enter at least 2 characters"
+}
+
+export enum deedsFormMessage {
+  CREATE_SUCCESS = "Deed added successfully.",
+  CREATE_FAILED = "Failed to add deed.",
+  MASTER_KEY_MISSING = "Unable to encrypt deed data. Please sign in again.",
+  SCALE_CREATE_FAILED = "Failed to add scale items."
+}
+
+export enum scaleLabel {
+  SCALE_ITEM = "Scale item",
+  NEW_SCALE_ITEM = "New scale item",
+  ADD_SCALE_ITEM_QUESTION = "Do you want to add another scale item?"
+}
+
+export enum deedsAria {
+  ADD = "Add deed",
+  OPEN = "Open deed",
+  ADD_SUB_DEED = "Add sub deed",
+  EXPAND_DEED_SECTION = "Expand deed section",
+  COLLAPSE_DEED_SECTION = "Collapse deed section",
+  MINIMIZE_DEED_SECTION = "Minimize deed section",
+  EDIT_DEED_SECTION = "Edit deed",
+  DELETE_DEED_SECTION = "Delete deed",
+  MOVE_DEED_UP = "Move deed up",
+  MOVE_DEED_DOWN = "Move deed down"
+}
+
+export enum deedsMessage {
+  LOADING = "Loading deeds...",
+  FETCH_FAILED = "Failed to load deeds.",
+  DEED_NOT_FOUND = "Deed not found.",
+  EMPTY_TABLE = "Nothing to show yet. Click the + button to add a deed.",
+  DELETE_CONFIRM_TITLE = "Delete deed",
+  DELETE_CONFIRM_MESSAGE =
+    "Are you sure you want to delete this deed? All the associated sub deeds will also be deleted.",
+  DISPLAY_ORDER_SAVE_SUCCESS = "Display order saved.",
+  DISPLAY_ORDER_SAVE_FAILED = "Failed to save display order.",
+  DELETE_SUCCESS = "Deed deleted.",
+  DELETE_FAILED = "Failed to delete deed."
+}
+
+export enum deedsToast {
+  ORDER_SAVED_TITLE = "Display order saved",
+  ORDER_SAVED_MESSAGE = "Your deed order has been updated.",
+  ORDER_SAVE_FAILED_TITLE = "Could not save order",
+  ORDER_SAVE_FAILED_MESSAGE = "Please try again in a moment.",
+  DELETE_SUCCESS_TITLE = "Deed deleted",
+  DELETE_SUCCESS_MESSAGE = "It has been removed from your list.",
+  DELETE_FAILED_TITLE = "Could not delete deed",
+  DELETE_FAILED_MESSAGE = "Please try again in a moment.",
+  UPDATE_SUCCESS_TITLE = "Deed updated",
+  UPDATE_SUCCESS_MESSAGE = "Your changes have been saved.",
+  UPDATE_FAILED_TITLE = "Could not save deed",
+  UPDATE_FAILED_MESSAGE = "Please try again in a moment."
+}
 
 export enum homeBetaText {
   AYAH_ARABIC = "ﮭ ﮮ ﮯ ﮰ ﮱ ﯓ ﯔ",
@@ -191,19 +316,19 @@ export enum homeBetaText {
 
 export enum homeCharlieText {
   HASANAAT = "Hasanaat",
-  SAYYIAAT = "Sayyiaat",
+  SAIYYIAAT = "Saiyyiaat",
   QUOTE_MIDDLE = " and ",
   AYAH_ARABIC = "ﮱ ﯓ ﯔ ﯕ",
   QUOTE_APP_NAME = "Kitaab",
   DICTIONARY_ORIGIN = "Arabic",
   HASANAAT_PLURAL_OF = "Hasanah",
-  SAYYIAAT_PLURAL_OF = "Sayyi'ah",
+  SAIYYIAAT_PLURAL_OF = "Sayyi'ah",
   QUOTE_PREFIX = "With dedicated ",
   QUOTE_AFTER_SECTIONS = " sections, ",
   HASANAAT_PRONUNCIATION = "/ha-sa-naat/",
-  SAYYIAAT_PRONUNCIATION = "/say-yi-aat/",
+  SAIYYIAAT_PRONUNCIATION = "/sai-yyi-aat/",
   AYAH_TRANSLATION = "Indeed, good deeds remove bad deeds.",
-  SAYYIAAT_MEANING = "Bad deeds; sinful or wrongful actions.",
+  SAIYYIAAT_MEANING = "Bad deeds; sinful or wrongful actions.",
   HASANAAT_MEANING = "Good deeds; righteous or virtuous actions.",
   QUOTE_SUFFIX = " doesn't limit you to tracking prayers only; you can record any kind of good or bad deeds."
 }
@@ -324,7 +449,7 @@ export enum privacyPolicyText {
   OBJECT_PROCESSING = "Object to or restrict processing of your data",
   HOW_WE_USE_INFORMATION_BODY = "We use the information we collect to:",
   ENSURE_SECURITY = "Ensure the security and integrity of our platform",
-  DEED_TRACKING_DATA = "Deed tracking data (Hasanaat and Sayyiaat entries)",
+  DEED_TRACKING_DATA = "Deed tracking data (Hasanaat and Saiyyiaat entries)",
   PROCESS_TRANSACTIONS = "Process your transactions and manage your account",
   CONTACT_BODY = "If you have any questions about this Privacy Policy, please contact us at:",
   DESCRIPTION = "Learn how Kitaab protects your privacy and handles your personal information.",
@@ -370,7 +495,7 @@ export enum termsOfServiceText {
   AGREEMENT_BODY = "By accessing or using Kitaab, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or accessing this application.",
   USER_ACCOUNTS_BODY = "When you create an account with us, you must provide information that is accurate, complete, and current at all times. You are responsible for safeguarding the password and for all activities that occur under your account.",
   DISCLAIMER_BODY = "The information on this application is provided on an \"as is\" basis. To the fullest extent permitted by law, Kitaab excludes all representations, warranties, and conditions relating to our application and the use of this application.",
-  USER_CONTENT_BODY = "Our application allows you to track and store your personal deeds (Hasanaat and Sayyiaat). You retain ownership of any intellectual property rights that you hold in the content you submit. By submitting content, you grant us a license to use, store, and process that content.",
+  USER_CONTENT_BODY = "Our application allows you to track and store your personal deeds (Hasanaat and Saiyyiaat). You retain ownership of any intellectual property rights that you hold in the content you submit. By submitting content, you grant us a license to use, store, and process that content.",
   LIMITATION_OF_LIABILITY_BODY = "In no event shall Kitaab, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses."
 }
 

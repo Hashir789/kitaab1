@@ -1,0 +1,74 @@
+.overlay {
+  inset: 0;
+  z-index: 1300;
+  display: grid;
+  position: fixed;
+  place-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.dialog {
+  width: min(100%, 420px);
+  padding: 20px 24px 24px;
+  border-radius: 14px;
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(230, 230, 230);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+}
+
+.header {
+  position: relative;
+  display: flex;
+  min-height: 32px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.title {
+  margin: 0;
+  width: calc(100% - 48px);
+  position: absolute;
+  left: 50%;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+  color: rgb(70, 70, 70);
+  transform: translateX(-50%);
+}
+
+.closeButtonGroup {
+  flex-shrink: 0;
+}
+
+.closeButtonGroup :global(li) button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeButtonGroup :global(svg) {
+  width: 18px;
+  height: 18px;
+}
+
+.message {
+  margin: 16px 0 0;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: center;
+  color: rgb(100, 100, 100);
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.actions :global(.buttonGroup) button:disabled,
+.closeButtonGroup :global(.buttonGroup) button:disabled {
+  cursor: not-allowed;
+}

@@ -9,7 +9,9 @@ export enum localStorageKeys {
 
 export enum sessionStorageKeys {
   VISITOR_TRACKED = "visitor_tracked",
-  PENDING_PASSWORD = "pending_password"
+  PENDING_PASSWORD = "pending_password",
+  DEED_CREATE_SUCCESS = "deed_create_success",
+  PENDING_SCALE_DEED = "pending_scale_deed"
 }
 
 export enum step {
@@ -63,6 +65,28 @@ export enum toastType {
 
 export enum sessionStorageValues {
   TRACKED = "1"
+}
+
+export enum deedType {
+  HASANAAT = "hasanaat",
+  SAIYYIAAT = "saiyyiaat"
+}
+
+export enum deedVisibility {
+  BOTH = "none",
+  GRAPHS_ONLY = "hide_from_graphs",
+  RECORDS_ONLY = "hide_from_all"
+}
+
+export enum deedMeasurementType {
+  SCALE = "scale",
+  COUNT = "count"
+}
+
+export enum deedFormLevel {
+  ROOT = 0,
+  SUB = 1,
+  SUB_SUB = 2
 }
 
 export enum deviceType {

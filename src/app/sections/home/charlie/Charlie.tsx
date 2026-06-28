@@ -34,11 +34,11 @@ export default function LandingBeta() {
             reverse={true}
           >
             <Dictionary
-              word={homeCharlieText.SAYYIAAT}
-              pronunciation={homeCharlieText.SAYYIAAT_PRONUNCIATION}
+              word={homeCharlieText.SAIYYIAAT}
+              pronunciation={homeCharlieText.SAIYYIAAT_PRONUNCIATION}
               origin={homeCharlieText.DICTIONARY_ORIGIN}
-              pluralOf={homeCharlieText.SAYYIAAT_PLURAL_OF}
-              meaning={homeCharlieText.SAYYIAAT_MEANING}
+              pluralOf={homeCharlieText.SAIYYIAAT_PLURAL_OF}
+              meaning={homeCharlieText.SAIYYIAAT_MEANING}
               darkMode={true}
             />
           </Motion>
@@ -52,7 +52,7 @@ export default function LandingBeta() {
             <div className={styles.cardContent}>
               <blockquote className={styles.quote}>
                 <BiSolidQuoteAltLeft aria-hidden="true" className={styles.quoteIconLeft} />
-                <p>{homeCharlieText.QUOTE_PREFIX}<i>{homeCharlieText.HASANAAT}</i>{homeCharlieText.QUOTE_MIDDLE}<i>{homeCharlieText.SAYYIAAT}</i>{homeCharlieText.QUOTE_AFTER_SECTIONS}<strong>{homeCharlieText.QUOTE_APP_NAME}</strong>{homeCharlieText.QUOTE_SUFFIX}</p>
+                <p>{homeCharlieText.QUOTE_PREFIX}<i>{homeCharlieText.HASANAAT}</i>{homeCharlieText.QUOTE_MIDDLE}<i>{homeCharlieText.SAIYYIAAT}</i>{homeCharlieText.QUOTE_AFTER_SECTIONS}<strong>{homeCharlieText.QUOTE_APP_NAME}</strong>{homeCharlieText.QUOTE_SUFFIX}</p>
                 <BiSolidQuoteAltRight aria-hidden="true" className={styles.quoteIconRight} />
               </blockquote>
             </div>

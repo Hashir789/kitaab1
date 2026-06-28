@@ -1,4 +1,4 @@
-import { localStorageKeys, sessionStorageKeys } from "@/constants/enums";
+import { deedType, localStorageKeys, sessionStorageKeys, sessionStorageValues } from "@/constants/enums";
 
 interface TokenPayload {
   sub?: string;
@@ -75,6 +75,63 @@ export function getPendingPassword(): string | null {
 export function clearPendingPassword(): void {
   if (typeof window === "undefined") return;
   window.sessionStorage.removeItem(sessionStorageKeys.PENDING_PASSWORD);
+}
+
+export function setDeedCreateSuccessPending(): void {
+  if (typeof window === "undefined") return;
+  window.sessionStorage.setItem(
+    sessionStorageKeys.DEED_CREATE_SUCCESS,
+    sessionStorageValues.TRACKED
+  );
+}
+
+export function consumeDeedCreateSuccessPending(): boolean {
+  if (typeof window === "undefined") return false;
+
+  const pending =
+    window.sessionStorage.getItem(sessionStorageKeys.DEED_CREATE_SUCCESS) ===
+    sessionStorageValues.TRACKED;
+
+  if (pending) {
+    window.sessionStorage.removeItem(sessionStorageKeys.DEED_CREATE_SUCCESS);
+  }
+
+  return pending;
+}
+
+export type PendingScaleDeed = {
+  categoryType: deedType;
+  displayOrder: number;
+  deedId?: string;
+  deedItemId?: string;
+};
+
+export function setPendingScaleDeed(deed: PendingScaleDeed): void {
+  if (typeof window === "undefined") return;
+  window.sessionStorage.setItem(sessionStorageKeys.PENDING_SCALE_DEED, JSON.stringify(deed));
+}
+
+export function getPendingScaleDeed(): PendingScaleDeed | null {
+  if (typeof window === "undefined") return null;
+
+  const raw = window.sessionStorage.getItem(sessionStorageKeys.PENDING_SCALE_DEED);
+  if (!raw) return null;
+
+  try {
+    const parsed = JSON.parse(raw) as PendingScaleDeed;
+    if (parsed.categoryType === undefined || parsed.displayOrder === undefined) {
+      return null;
+    }
+
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+export function clearPendingScaleDeed(): void {
+  if (typeof window === "undefined") return;
+  window.sessionStorage.removeItem(sessionStorageKeys.PENDING_SCALE_DEED);
 }
 
 export function isAuthenticated(): boolean {

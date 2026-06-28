@@ -6,13 +6,13 @@ import ButtonGroup from "@/components/secondary/buttongroup/ButtonGroup";
 export const metadata: Metadata = {
   title: "Features",
   description:
-    "Discover the powerful features of Kitaab - an Islamic deed tracking app that helps you track Hasanaat and Sayyiaat, monitor your spiritual progress, and build consistency in your daily Islamic practice.",
+    "Discover the powerful features of Kitaab - an Islamic deed tracking app that helps you track Hasanaat and Saiyyiaat, monitor your spiritual progress, and build consistency in your daily Islamic practice.",
   keywords: [
     "Kitaab features",
     "Islamic app features",
     "deed tracker features",
     "Hasanaat tracker",
-    "Sayyiaat tracker",
+    "Saiyyiaat tracker",
     "spiritual tracking",
     "Islamic productivity",
   ],

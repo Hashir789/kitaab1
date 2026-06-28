@@ -1,0 +1,15 @@
+.createdAtCell {
+  overflow: hidden;
+}
+
+.createdAtSkeleton {
+  display: block;
+  max-width: 168px;
+}
+
+.actionSkeletons {
+  gap: 8px;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+}

@@ -27,6 +27,55 @@
   visibility: visible;
 }
 
+.tooltipFloating {
+  position: fixed;
+  z-index: 2000;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.tooltipFloatingTop::after {
+  top: 100%;
+  left: 50%;
+  content: "";
+  position: absolute;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: rgb(90, 90, 90);
+}
+
+.tooltipFloatingBottom::before {
+  left: 50%;
+  content: "";
+  bottom: 100%;
+  position: absolute;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-bottom-color: rgb(90, 90, 90);
+}
+
+.tooltipFloatingLeft::after {
+  top: 50%;
+  left: 100%;
+  content: "";
+  position: absolute;
+  transform: translateY(-50%);
+  border: 5px solid transparent;
+  border-left-color: rgb(90, 90, 90);
+}
+
+.tooltipFloatingRight::before {
+  top: 50%;
+  right: 100%;
+  content: "";
+  position: absolute;
+  transform: translateY(-50%);
+  border: 5px solid transparent;
+  border-right-color: rgb(90, 90, 90);
+}
+
 .tooltipTop {
   left: 50%;
   bottom: 100%;

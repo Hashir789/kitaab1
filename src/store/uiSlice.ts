@@ -1,9 +1,9 @@
-import { authMode } from "@/constants/enums";
+import { authMode, deedType } from "@/constants/enums";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface UiState {
   mode: authMode;
-  isBelow710: boolean;
+  deedType: deedType;  isBelow710: boolean;
   isBelow880: boolean;
   isBelow1124: boolean;
   viewportWidth: number;
@@ -16,9 +16,9 @@ const initialState: UiState = {
   isBelow1124: false,
   viewportWidth: 1920,
   viewportHeight: 1080,
-  mode: authMode.LOGIN
+  mode: authMode.LOGIN,
+  deedType: deedType.HASANAAT
 };
-
 const uiSlice = createSlice({
   name: "ui",
   initialState,
@@ -34,8 +34,11 @@ const uiSlice = createSlice({
     setMode: (state, action: PayloadAction<authMode>) => {
       state.mode = action.payload;
     },
+    setDeedType: (state, action: PayloadAction<deedType>) => {
+      state.deedType = action.payload;
+    },
   },
 });
 
 export default uiSlice.reducer;
-export const { updateViewport, setMode } = uiSlice.actions;
+export const { updateViewport, setMode, setDeedType } = uiSlice.actions;

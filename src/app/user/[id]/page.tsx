@@ -69,7 +69,7 @@ export default function UserPage() {
   return (
     <div className={styles.screen}>
       <Sidebar user={user} userId={params.id} />
-      <Breadcrumbs count={6} buttonWidth={130} />
+      <Breadcrumbs />
     </div>
   );
 }

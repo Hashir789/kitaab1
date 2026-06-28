@@ -1,0 +1,242 @@
+.form {
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sectionWrap {
+  gap: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.section {
+  gap: 16px;
+  display: flex;
+  min-width: 0;
+  padding: 20px;
+  border-radius: 14px;
+  flex-direction: column;
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(230, 230, 230);
+}
+
+.collapsedCard {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(210, 210, 210);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.collapsedCardSub {
+  margin-left: 48px;
+  border-left: 2px solid rgb(235, 235, 235);
+}
+
+.collapsedCardSubSub {
+  margin-left: 96px;
+  border-left: 2px solid rgb(235, 235, 235);
+}
+
+.collapsedCardActions,
+.expandedSectionActions {
+  flex: 0 0 auto;
+}
+
+.collapsedCardActions :global(li) button,
+.expandedSectionActions :global(li) button {
+  width: 100%;
+  height: 100%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.collapsedCardActions :global(li) button:disabled,
+.expandedSectionActions :global(li) button:disabled {
+  opacity: 0.5;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8' fill='none' stroke='%23606060' stroke-width='3.5'/%3E%3Cpath d='M6 6l8 8' stroke='%23606060' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E") 10 10, not-allowed;
+}
+
+.collapsedCardActions :global(li) button:disabled svg,
+.expandedSectionActions :global(li) button:disabled svg {
+  opacity: 0.5;
+}
+
+.collapsedCardActions :global(svg),
+.expandedSectionActions :global(svg) {
+  width: 14px;
+  height: 14px;
+}
+
+.collapsedCardActions :global(li) button:disabled:hover,
+.expandedSectionActions :global(li) button:disabled:hover {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8' fill='none' stroke='%23606060' stroke-width='3.5'/%3E%3Cpath d='M6 6l8 8' stroke='%23606060' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E") 10 10, not-allowed;
+  background: transparent;
+}
+
+.collapsedCardActions :global(li) > *:has(button:disabled),
+.expandedSectionActions :global(li) > *:has(button:disabled) {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8' fill='none' stroke='%23606060' stroke-width='3.5'/%3E%3Cpath d='M6 6l8 8' stroke='%23606060' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E") 10 10, not-allowed;
+}
+
+.collapsedCardActions :global(li) > *:has(button:disabled):hover,
+.expandedSectionActions :global(li) > *:has(button:disabled):hover {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8' fill='none' stroke='%23606060' stroke-width='3.5'/%3E%3Cpath d='M6 6l8 8' stroke='%23606060' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E") 10 10, not-allowed;
+  background-color: transparent;
+}
+
+.collapsedCardActions :global(li) button:not(:disabled),
+.expandedSectionActions :global(li) button:not(:disabled) {
+  opacity: 1;
+  color: rgb(90, 90, 90);
+}
+
+.collapsedCardActions :global(li) button:not(:disabled) svg,
+.expandedSectionActions :global(li) button:not(:disabled) svg {
+  color: rgb(90, 90, 90) !important;
+  fill: currentColor !important;
+  opacity: 1;
+}
+
+.sectionNested {
+  margin-top: 4px;
+  margin-left: 32px;
+  padding-left: 20px;
+  border-left: 2px solid rgb(235, 235, 235);
+}
+
+.sectionTitle {
+  margin: 0;
+  min-width: 0;
+  flex: 1;
+  font-size: 17px;
+  font-weight: 600;
+  color: rgb(80, 80, 80);
+  font-family: "Google Sans Flex", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.sectionCardHeader {
+  gap: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.sectionCardActions {
+  gap: 8px;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+}
+
+.sectionTitlePrompt {
+  gap: 8px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.fieldStack {
+  gap: 16px;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.twoColumnRow {
+  gap: 16px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.fieldBlock {
+  gap: 6px;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.fieldLabel {
+  font-size: 16px;
+  font-weight: 500;
+  padding-left: 10px;
+  color: rgb(100, 100, 100);
+  font-family: "Google Sans Flex", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.requiredMark {
+  margin-left: 4px;
+  color: rgb(170, 60, 60);
+}
+
+.addChildSeparator {
+  flex: 0 0 auto;
+  font-size: 12px;
+}
+
+.visibilityGroup {
+  width: 100%;
+}
+
+.addSubDeedRow {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.addSubDeedAction {
+  display: flex;
+  min-width: 0;
+  width: 100%;
+  align-items: center;
+  align-self: center;
+  justify-content: space-between;
+}
+
+.childrenStack {
+  gap: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.submitButton {
+  min-width: 120px;
+}
+
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+@media (max-width: 720px) {
+  .twoColumnRow {
+    grid-template-columns: 1fr;
+  }
+
+  .sectionNested {
+    margin-left: 16px;
+    padding-left: 14px;
+  }
+
+  .collapsedCardSub {
+    margin-left: 32px;
+  }
+
+  .collapsedCardSubSub {
+    margin-left: 64px;
+  }
+}

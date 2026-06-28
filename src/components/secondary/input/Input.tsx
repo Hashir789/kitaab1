@@ -12,6 +12,8 @@ export default function Input({
   label,
   value,
   width,
+  height,
+  borderRadius,
   onBlur,
   onChange,
   ariaLabel,
@@ -29,6 +31,7 @@ export default function Input({
   onLeftIconClick,
   onRightIconClick,
   widthVariant = "default",
+  readOnly = false,
 }: InputProps) {
   const toSize = (size?: number | string): string | undefined => {
     if (size === undefined) return undefined;
@@ -48,7 +51,12 @@ export default function Input({
 
   const valueProps = value !== undefined ? { value, onChange } : { defaultValue };
   const widthStyle = width !== undefined ? { width } : undefined;
-  const wrappedInputStyle = width !== undefined ? { width: "100%" } : undefined;
+  const inputStyle = {
+    ...(width !== undefined ? { width: "100%" } : undefined),
+    ...(height !== undefined ? { height: toSize(height) } : undefined),
+    ...(borderRadius !== undefined ? { borderRadius: toSize(borderRadius) } : undefined),
+  };
+  const hasInputStyle = Object.keys(inputStyle).length > 0;
   const hasLeftAdornment = !!leftIcon;
   const hasCustomRightIcon = !!rightIcon;
   const hasValidationRightIcon = !!iconState || showInfoIcon;
@@ -59,6 +67,7 @@ export default function Input({
     widthVariant === "waitlist" ? `${styles.input} ${styles.waitlistWidth}` : styles.input;
   const inputWithIconClassName = [
     baseInputClassName,
+    readOnly ? styles.inputReadOnly : undefined,
     hasLeftAdornment ? styles.inputWithLeftIcon : undefined,
     hasRightAdornment ? styles.inputWithRightIcon : undefined,
     hasTwoRightIcons ? styles.inputWithTwoRightIcons : undefined,
@@ -93,10 +102,11 @@ export default function Input({
           required={required}
           placeholder={placeholder}
           className={inputStateClassName}
-          style={wrappedInputStyle}
+          style={hasInputStyle ? inputStyle : undefined}
           autoComplete={autoComplete}
           inputMode={inputMode}
           aria-label={ariaLabel}
+          readOnly={readOnly}
           {...valueProps}
           onBlur={onBlur}
         />
@@ -168,10 +178,11 @@ export default function Input({
           required={required}
           placeholder={placeholder}
           className={inputStateClassName}
-          style={wrappedInputStyle}
+          style={hasInputStyle ? inputStyle : undefined}
           autoComplete={autoComplete}
           inputMode={inputMode}
           aria-label={ariaLabel}
+          readOnly={readOnly}
           {...valueProps}
           onBlur={onBlur}
         />

@@ -167,7 +167,7 @@ export default function HeroRightPortion() {
             fontSize={14}
           >
             <button onClick={() => setSlide(true)}>Hasanaat</button>
-            <button onClick={() => setSlide(false)}>Sayyiaat</button>
+            <button onClick={() => setSlide(false)}>Saiyyiaat</button>
           </ButtonGroup>
         </div>
         <div className={styles.sliderIndicatorMob}>

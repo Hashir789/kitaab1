@@ -16,12 +16,15 @@ export type InputProps = {
   iconState?: iconState;
   showInfoIcon?: boolean;
   width?: string | number;
+  height?: string | number;
+  borderRadius?: string | number;
   onLeftIconClick?: () => void;
   onRightIconClick?: () => void;
   leftIconSize?: number | string;
   rightIconSize?: number | string;
   widthVariant?: "default" | "waitlist";
   inputType?: "email" | "tel" | "text" | "password";
+  readOnly?: boolean;
   onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 };

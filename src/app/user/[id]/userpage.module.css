@@ -9,5 +9,12 @@
   display: flex;
   min-height: 100vh;
   align-items: stretch;
+  box-sizing: border-box;
   background: rgb(248, 249, 250);
+}
+
+@media (min-width: 881px) {
+  .screen {
+    padding-left: 312px;
+  }
 }

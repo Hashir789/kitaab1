@@ -1,7 +1,7 @@
 {
   "name": "Kitaab – Islamic Deed Tracker",
   "short_name": "Kitaab",
-  "description": "Track your daily Hasanaat and Sayyiaat. Be your own accountant and build spiritual consistency.",
+  "description": "Track your daily Hasanaat and Saiyyiaat. Be your own accountant and build spiritual consistency.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f8f9fa",
