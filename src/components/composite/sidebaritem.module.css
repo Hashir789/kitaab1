@@ -1,0 +1,34 @@
+.container {
+  gap: 5px;
+  width: 100%;
+  display: flex;
+  padding: 10px 0px;
+  border-radius: 5px;
+  align-items: center;
+  text-decoration: none;
+  flex-direction: column;
+  justify-content: center;
+  color: var(--foreground-2);
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.container:hover {
+  text-decoration: none;
+  color: var(--foreground-1);
+  transform: translateY(-2px);
+  background-color: var(--background-2);
+}
+
+.container.is__active__location {
+  color: var(--background-1);
+  background-color: var(--foreground-2);
+}
+
+.container.is__active__location:hover {
+  color: var(--background-3);
+  background-color: var(--foreground-1);
+}
+
+.text {
+  font-size: 12px;
+}

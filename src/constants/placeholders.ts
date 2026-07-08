@@ -1,0 +1,17 @@
+export const PLACEHOLDERS = {
+  KITAAB_LOGO_ALT: 'kitaab logo',
+  SIDEBAR_LI_DASHBOARD: 'Dashboard',
+  SIDEBAR_LI_RECORDS: 'Records',
+  SIDEBAR_LI_DEEDS: 'Deeds',
+  SIDEBAR_LI_NOTIFICATIONS: 'Notifications',
+  SIDEBAR_LI_SUPPORT: 'Support',
+  SIDEBAR_BTN_LOG_OUT: 'Logout',
+  SIDEBAR_LI_HREF_DASHBOARD: '/dashboard',
+  SIDEBAR_LI_HREF_RECORDS: '/records',
+  SIDEBAR_LI_HREF_DEEDS: '/deeds',
+  SIDEBAR_LI_HREF_NOTIFICATIONS: '/notifications',
+  SIDEBAR_LI_HREF_SUPPORT: '/support',
+  SIDEBAR_NAV_ARIA_LABEL: 'Primary',
+  SIDEBAR_BTN_SETTINGS: 'Settings',
+  SIDEBAR_BTN_HREF_SETTINGS: '/settings',
+};

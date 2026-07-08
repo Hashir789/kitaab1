@@ -1,0 +1,98 @@
+.backdrop {
+  inset: 0;
+  z-index: 999;
+  position: fixed;
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.aside {
+  width: 100px;
+  margin: 16px;
+  padding: 10px;
+  display: flex;
+  overflow: hidden;
+  border-radius: 10px;
+  align-items: center;
+  box-sizing: border-box;
+  flex-direction: column;
+  height: calc(100dvh - 32px);
+  transition: left 250ms ease;
+  box-shadow: var(--box-shadow);
+  justify-content: space-between;
+  max-height: calc(100dvh - 32px);
+  background-color: var(--background-3);
+}
+
+.aside.is__mobile {
+  top: 0;
+  margin: 0;
+  left: -100;
+  z-index: 1000;
+  height: 100dvh;
+  position: fixed;
+  height: calc(100dvh);
+  max-height: calc(100dvh);
+  border-radius: 0 10px 10px 0;
+  box-shadow: var(--box-shadow);
+  justify-content: space-between;
+}
+
+.aside.is__sidebar__expanded {
+  left: -100;
+}
+
+.aside.is__sidebar__collapsed {
+  left: 0;
+}
+
+.logo__light {
+  display: var(--display-light);
+}
+
+.logo__dark {
+  display: var(--display-dark);
+}
+
+.logo__dark .logo__normal,
+.logo__light .logo__normal {
+  opacity: 1;
+  display: block;
+}
+
+.logo__dark .logo__hover,
+.logo__light .logo__hover {
+  display: none;
+}
+
+.logo__dark:hover .logo__normal,
+.logo__light:hover .logo__normal {
+  display: none;
+}
+
+.logo__dark:hover .logo__hover,
+.logo__light:hover .logo__hover {
+  display: block;
+}
+
+.nav {
+  width: 100%;
+}
+
+.list {
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  list-style: none;
+  flex-direction: column;
+}
+
+.list li {
+  width: 100%;
+}
+
+.footer {
+  width: 100%;
+}
